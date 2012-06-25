@@ -25,6 +25,10 @@
     <scala.version>2.9.1</scala.version> <!-- MongoDB driver relies on scala 2.9.1  -->
   </properties>
   
+  <modules>
+    <module>../net.modelbased.mediation.library</module>
+  </modules>
+  
   <licenses>
     <license>
       <name>LGPL</name>
