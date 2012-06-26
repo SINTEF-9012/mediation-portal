@@ -10,4 +10,8 @@
   <artifactId>net.modelbased.mediation.library</artifactId>
   <packaging>pom</packaging>
   <name>Libraries defined in the Mediation Portal</name>
+  
+  <modules>
+  	<module>../net.modelbased.mediation.library.mapping</module>
+  </modules>
 </project>
