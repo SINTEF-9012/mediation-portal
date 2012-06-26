@@ -15,3 +15,4 @@ project/plugins/project/
 .settings
 .DS_Store
 net.modelbased.mediation.service.repository.model/.cache
+.cache
