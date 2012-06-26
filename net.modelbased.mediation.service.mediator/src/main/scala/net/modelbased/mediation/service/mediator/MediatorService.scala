@@ -4,7 +4,7 @@
  * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.portal
+ * Module: net.modelbased.mediation.service.mediator
  *
  * SensApp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,28 +20,29 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.portal
+package net.modelbased.mediation.service.mediator
 
-import akka.actor.{Props, ActorSystem}
+import net.modelbased.sensapp.library.system.{Service => SensAppService, URLHandler}
+import cc.spray.http._
 import cc.spray._
+import cc.spray.directives.PathElement
+import cc.spray.json._
+import RequestJsonProtocol._
 
-import net.modelbased.mediation.service.repository.model.ModelRepositoryService
-import net.modelbased.mediation.service.repository.mapping.MappingRepositoryService
-import net.modelbased.mediation.service.mediator.MediatorService
-
-import net.modelbased.sensapp.library.system._
-
-class Boot(override val system: ActorSystem) extends System {
+trait MediatorService extends SensAppService {
   
-  trait iod { 
-    lazy val partners = new Monolith { implicit val actorSystem = system }
-    implicit def actorSystem = system 
+  override lazy val name = "model-repository"
+    
+  val service = {
+    path ("mediator") {
+      post {
+        content(as[Request]) { request => context => 
+          context complete "pouet"
+        }
+      }
+    }
   }
-  
-  def services: List[Service] = List(
-      new ModelRepositoryService() with iod { },
-      new MappingRepositoryService() with iod { },
-      new MediatorService() with iod { }
-  )
-  
-} 
+
+}
+
+

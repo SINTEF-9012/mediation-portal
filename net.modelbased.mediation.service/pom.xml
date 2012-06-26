@@ -14,6 +14,7 @@
   <modules>
     <module>../net.modelbased.mediation.service.repository.model</module>
     <module>../net.modelbased.mediation.service.repository.mapping</module>
+    <module>../net.modelbased.mediation.service.mediator</module>
   </modules>
   
   <dependencies>
