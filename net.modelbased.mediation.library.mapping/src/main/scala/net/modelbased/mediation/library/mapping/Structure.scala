@@ -22,11 +22,13 @@
  */
 package net.modelbased.mediation.library.mapping
 
-sealed case class Mapping(val uid: String, var status: String, var content: List[Association]) {
-  require(List("RUNNING", "COMPLETED", "ERROR").contains(status))
+sealed case class Mapping(
+    val uid: String, 
+    var status: String, 
+    var content: Map[(String, String), Result]) {
+  require(List("EMPTY", "RUNNING", "COMPLETED", "ERROR").contains(status))
+  def apply(source: String, target: String): Option[Result] = content.get((source, target))
 }
-
-sealed case class Association(val source: String, val target: String, val result: Result)
 
 case class Result(val degree: Double, val origin: String) {
   require(degree >= 0 && degree <= 1)
