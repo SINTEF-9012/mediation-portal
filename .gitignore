@@ -14,3 +14,4 @@ project/plugins/project/
 .metadata/
 .settings
 .DS_Store
+net.modelbased.mediation.service.repository.model/.cache
