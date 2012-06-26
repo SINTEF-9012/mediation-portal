@@ -13,6 +13,7 @@
   
   <modules>
     <module>../net.modelbased.mediation.service.repository.model</module>
+    <module>../net.modelbased.mediation.service.repository.mapping</module>
   </modules>
   
   <dependencies>

@@ -4,7 +4,7 @@
  * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.service.repository.model
+ * Module: net.modelbased.mediation.service.repository.mapping
  *
  * SensApp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
