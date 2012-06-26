@@ -22,27 +22,23 @@
  */
 package net.modelbased.mediation.service.mediator
 
-import net.modelbased.sensapp.library.system.{Service => SensAppService, URLHandler}
-import cc.spray.http._
-import cc.spray._
-import cc.spray.directives.PathElement
+import akka.dispatch._
+import akka.util.duration._
+import cc.spray.client._
 import cc.spray.json._
-import RequestJsonProtocol._
+import cc.spray.typeconversion.DefaultUnmarshallers._
+import net.modelbased.sensapp.library.system._
 
-trait MediatorService extends SensAppService {
+object HttpHelper extends HttpSpraySupport {
+
+  def httpClientName = "mediator-helper"
   
-  override lazy val name = "mediator"
-    
-  val service = {
-    path ("mediator") {
-      post {
-        content(as[Request]) { request => context => 
-          context complete HttpHelper.createMappingInRepository(partners)
-        }
-      }
+  def createMappingInRepository(partners: PartnerHandler): Future[String] = {
+    val repository = partners("mapping-repository").get
+    val conduit = new HttpConduit(httpClient, repository._1, repository._2) {
+      val pipeline = simpleRequest ~> sendReceive ~> unmarshal[String]
     }
+    conduit.pipeline(Post("/mediation/repositories/mappings",None))
   }
-
-}
-
-
+    
+} 
