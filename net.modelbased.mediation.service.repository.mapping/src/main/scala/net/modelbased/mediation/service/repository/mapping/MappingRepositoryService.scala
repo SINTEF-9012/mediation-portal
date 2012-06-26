@@ -20,7 +20,7 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.service.repository.model
+package net.modelbased.mediation.service.repository.mapping
 
 import net.modelbased.sensapp.library.system.{ Service => SensAppService, URLHandler }
 import net.modelbased.mediation.service.repository.mapping._

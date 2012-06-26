@@ -26,6 +26,7 @@ import akka.actor.{Props, ActorSystem}
 import cc.spray._
 
 import net.modelbased.mediation.service.repository.model.ModelRepositoryService
+import net.modelbased.mediation.service.repository.mapping.MappingRepositoryService
 
 import net.modelbased.sensapp.library.system._
 
@@ -37,7 +38,8 @@ class Boot(override val system: ActorSystem) extends System {
   }
   
   def services: List[Service] = List(
-      new ModelRepositoryService() with iod { }
+      new ModelRepositoryService() with iod { },
+      new MappingRepositoryService() with iod { }
   )
   
 } 
