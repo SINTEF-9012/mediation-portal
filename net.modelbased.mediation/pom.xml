@@ -27,6 +27,8 @@
   
   <modules>
     <module>../net.modelbased.mediation.library</module>
+    <module>../net.modelbased.mediation.service</module>
+    <module>../net.modelbased.mediation.portal</module>
   </modules>
   
   <licenses>
