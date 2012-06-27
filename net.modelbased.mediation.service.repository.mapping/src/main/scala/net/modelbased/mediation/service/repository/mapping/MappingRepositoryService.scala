@@ -35,19 +35,19 @@ import cc.spray.directives.PathElement
  */
 trait MappingRepositoryService extends SensAppService {
 
-  override lazy val name = "mapping-repository"
+  override lazy implicit val partnerName = "mapping-repository"
 
   val service = {
     path("mediation" / "repositories" / "mappings") {
       get { context =>
-        val uris = (_registry retrieve (List())) map { buildUrl(context, _) }
+        val uris = (_registry retrieve (List())) map { e => URLHandler.build("/mediation/repositories/mappings/" + e.uid) }
         context complete uris
       } ~
         post { context => 
           val uid = java.util.UUID.randomUUID().toString
           val empty = Mapping(uid, "EMPTY", Map())
           _registry push empty
-          context complete buildUrl(context, empty)
+          context complete URLHandler.build("/mediation/repositories/mappings/" + empty.uid)
         } ~ cors("GET", "POST")
     } ~
       path("mediation" / "repositories" / "mappings" / PathElement) { uid =>
@@ -165,8 +165,6 @@ trait MappingRepositoryService extends SensAppService {
   }
 
   private[this] val _registry = new MappingRegistry() 
-
-  private def buildUrl(ctx: RequestContext, e: Mapping) = { URLHandler.build(ctx, ctx.request.path + "/" + e.uid) }
 
   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
     if (_registry exists ("uid", id))

@@ -32,12 +32,12 @@ import cc.spray.directives.PathElement
 
 trait ModelRepositoryService extends SensAppService {
   
-  override lazy val name = "model-repository"
+  override implicit lazy val partnerName = "model-repository"
 
       val service = { 
     path("mediation" / "repositories" / "models") {
       get { context =>
-        val uris = (_registry retrieve(List())) map { buildUrl(context, _) }
+        val uris = (_registry retrieve(List())) map { e => URLHandler.build("/mediation/repositories/models/"+ e.name) }
         context complete uris
       } ~
       post {
@@ -46,7 +46,7 @@ trait ModelRepositoryService extends SensAppService {
             context fail (StatusCodes.Conflict, "A Model identified as ["+ model.name +"] already exists!")
           } else {
             _registry push model
-            context complete (StatusCodes.Created, buildUrl(context, model))
+            context complete (StatusCodes.Created, URLHandler.build("/mediation/repositories/models/"+ model.name))
           }
         }
       } ~ cors("GET", "POST")
@@ -76,9 +76,7 @@ trait ModelRepositoryService extends SensAppService {
   }
   
   private[this] val _registry = new ModelRegistry()
-  
-  private def buildUrl(ctx: RequestContext, e: Model) = { URLHandler.build(ctx, ctx.request.path  + "/"+ e.name)  }
-  
+    
   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
     if (_registry exists ("name", id))
       lambda

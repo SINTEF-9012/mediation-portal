@@ -31,7 +31,7 @@ import RequestJsonProtocol._
 
 trait MediatorService extends SensAppService {
   
-  override lazy val name = "mediator"
+  override lazy val partnerName = "mediator"
     
   val service = {
     path ("mediator") {
