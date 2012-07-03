@@ -32,29 +32,43 @@ import java.util.UUID
  * @since 0.0.1
  */
 object Status extends Enumeration {
-  val READY = Value(1)
-  val RUNNING = Value(2)
-  val COMPLETE = Value(3)
-  val ERROR = Value(4)
+  val READY = Value("READY")
+  val RUNNING = Value("RUNNING")
+  val COMPLETE = Value("COMPLETE")
+  val ERROR = Value("ERROR")
 }
 
 /**
- * A simple mapping object that store relationship between elements.
+ * A simple mapping object that stores relationship between elements.
  *
  * @author Franck Chauvel - SINTEF ICT
  * @since 0.0.1
  */
-class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status.Value = Status.READY) { 
+class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status.Value = Status.READY) {
 
   private[this] var contents: Map[(String, String), Entry] = Map.empty
 
-  
+  /**
+   * @return all the entry contained in the mapping
+   */
+  def entries: List[Entry] =
+    contents.values.toList
+
   /**
    * @return the number of entries of the mapping
    */
   def size: Int =
     this.contents.size
-  
+    
+    
+  /**
+   * @return the number of entries that match a given source
+   * 
+   * @param source the source whose number of entries is needed
+   */
+  def size(source: String):Int =
+    this.contents.count{ case (k, v) => v.source == source}
+
   
   /**
    * Filter the mapping on a given source element
@@ -65,8 +79,6 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status
    */
   def get(source: String): List[Entry] =
     this.contents.filter { case ((s, t), v) => s == source }.values.toList
-
-  
 
   /**
    * Return the entry identified by its source and target element, or None if
@@ -81,16 +93,14 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status
   def get(source: String, target: String): Option[Entry] =
     this.contents.get((source, target))
 
-    
   /**
    * Update the entry identified by its source and target elements
-   *  
+   *
    * @param entry the entry that must be added
    */
   def add(entry: Entry) =
     this.contents += ((entry.source, entry.target) -> entry)
-    
-    
+
   /**
    * Add a collection of entries
    *
@@ -103,10 +113,10 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status
           acc + ((e.source, e.target) -> e)
       }
   }
-    
+
   /**
    * Remove an entry from the mapping
-   * 
+   *
    * @param entry the entry to remove
    */
   def remove(entry: Entry) =
@@ -114,16 +124,35 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status
     
     
   /**
-   * Remove a set of entries
+   * Remove all the entry with a a given source
    * 
+   * @param the source whose entry must be removed
+   */
+  def removeAll(source: String) = 
+    this.contents = this.contents.filter{ case (k,v) => v.source != source } 
+
+  
+  /**
+   * Remove all the entry with a a given source
+   * 
+   * @param the source whose entry must be removed
+   */
+  def removeAll(source: String, target: String) = 
+    this.contents = this.contents.filterKeys{ k => k == (source, target) } 
+  
+  
+  /**
+   * Remove a set of entries
+   *
    * @param the set of entry to remove
    */
   def removeAll(entries: Collection[Entry]) =
-  	this.contents = entries.foldLeft(this.contents){
-    	(acc, v) =>
-    	  acc - ((v.source, v.target))
+    this.contents = entries.foldLeft(this.contents) {
+      (acc, v) =>
+        acc - ((v.source, v.target))
     }
-    
+
+  
   /**
    * Erase the all mapping. No entry will remain
    */
@@ -134,7 +163,17 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status
 
 object Mapping {
 
-  val EMPTY = new Mapping()
+    /**
+     * Convert a mappingData into a mapping object
+     */
+    implicit def toMapping(md: MappingData): Mapping =
+      md.entries.foldLeft(new Mapping(md.uid, Status.withName(md.status))){ (acc, v) => acc.add(v) ; acc }
+    
+    /**
+     * Convert a mapping object into a mappingData
+     */
+    implicit def fromMapping(m: Mapping): MappingData =
+      new MappingData(m.uid, m.status.toString(), m.entries)
 
 }
 

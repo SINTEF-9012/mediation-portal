@@ -4,7 +4,7 @@
  * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.library.mapping
+ * Module: net.modelbased.mediation.service.repository.mapping
  *
  * SensApp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,13 +20,13 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.library.mapping
+package net.modelbased.mediation.service.repository.mapping.data
 
 import cc.spray.json._
 
 object MappingJsonProtocol extends DefaultJsonProtocol {
-  implicit val resultFormat = jsonFormat(Result, "degree", "origin")
-  implicit val mappingFormat = jsonFormat(Mapping, "uid", "status", "content")
+  implicit val entryFormat = jsonFormat(Entry, "source", "target", "degree", "origin")
+  implicit val mappingFormat = jsonFormat(MappingData, "uid", "status", "content")
 }
   
   

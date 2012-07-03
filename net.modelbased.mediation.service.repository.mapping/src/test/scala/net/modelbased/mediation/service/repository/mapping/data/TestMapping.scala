@@ -73,7 +73,7 @@ class TestMapping extends SpecificationWithJUnit {
 		  t2.size must_== 1
 	  } 
 	  
-	  "Make some entry unavailable" in {
+	  "Make some entries unavailable" in {
 		  t2.get("x", "v") must_== None
 		  t2.get("x") must_== List(e1)
 	  }
@@ -86,6 +86,13 @@ class TestMapping extends SpecificationWithJUnit {
 		  t2.removeAll
 		  t2.size must_== 0
 	  }
+	  
+	  "makes all entries unavailable" in {
+		  t2.get("x") must_== List.empty
+		  t2.get("x", "y") must_== None
+		  t2.get("x", "v") must_== None
+	  }
+	  
   }
   
   

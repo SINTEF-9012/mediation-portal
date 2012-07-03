@@ -23,9 +23,9 @@
 package net.modelbased.mediation.service.repository.mapping
 
 import net.modelbased.sensapp.library.system.{ Service => SensAppService, URLHandler }
-import net.modelbased.mediation.service.repository.mapping._
-import net.modelbased.mediation.library.mapping._
-import net.modelbased.mediation.library.mapping.MappingJsonProtocol._
+import net.modelbased.mediation.service.repository.mapping.data._
+import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol._
+import net.modelbased.mediation.service.repository.mapping.data.Mapping._
 import cc.spray.http._
 import cc.spray._
 import cc.spray.directives.PathElement
@@ -41,18 +41,17 @@ trait MappingRepositoryService extends SensAppService {
     path("mediation" / "repositories" / "mappings") {
       get { context =>
         val uris = (_registry retrieve (List())) map { e => URLHandler.build("/mediation/repositories/mappings/" + e.uid) }
-        context complete uris
+        context.complete(uris)
       } ~
         post { context => 
-          val uid = java.util.UUID.randomUUID().toString
-          val empty = Mapping(uid, "EMPTY", Map())
-          _registry push empty
-          context complete URLHandler.build("/mediation/repositories/mappings/" + empty.uid)
+          val m = new Mapping()
+          _registry push m
+          context complete URLHandler.build("/mediation/repositories/mappings/" + m.uid)
         } ~ cors("GET", "POST")
     } ~
-      path("mediation" / "repositories" / "mappings" / PathElement) { uid =>
+      path("mediation" / "repositories" / "mappings" / PathElement) { uid => 
         get { context =>
-          ifExists(context, uid, { context complete (_registry pull ("uid", uid)).get })
+          ifExists(context, uid, { context complete ((_registry pull("uid", uid)).get) }) 
         } ~
         delete { context =>
             ifExists(context, uid, {
@@ -72,8 +71,8 @@ trait MappingRepositoryService extends SensAppService {
         put {
           content(as[String]) { status => context =>
             ifExists(context, uid, {
-              val mapping = (_registry pull ("uid", uid)).get
-              mapping.status = status
+              val mapping: Mapping = ((_registry pull ("uid", uid)).get)
+              mapping.status = Status.withName(status)
               _registry push mapping
               context complete "done"
             })
@@ -83,16 +82,16 @@ trait MappingRepositoryService extends SensAppService {
       path("mediation" / "repositories" / "mappings" / PathElement / "content") { uid =>
         get { context =>
           ifExists(context, uid, {
-            val mapping = (_registry pull ("uid", uid)).get
-            context complete mapping.content
+            val mapping: Mapping = (_registry pull ("uid", uid)).get
+            context complete mapping.entries
           })
         } ~
         put {
-          content(as[Map[(String,String),Result]]) { data => context =>
+          content(as[List[Entry]]) { data => context =>
             ifExists(context, uid, {
-              val mapping = (_registry pull ("uid", uid)).get
-              val init = mapping.content.size
-              mapping.content = data
+              val mapping: Mapping = (_registry pull ("uid", uid)).get
+              val init = mapping.size
+              mapping addAll data
               _registry push mapping
               context complete ("%d added, %d removed".format(data.size, init))
             })
@@ -100,9 +99,9 @@ trait MappingRepositoryService extends SensAppService {
         } ~ 
         delete { context => 
           ifExists(context, uid, {
-            val mapping = (_registry pull ("uid", uid)).get
-            val init = mapping.content.size
-            mapping.content = Map()
+            val mapping: Mapping = (_registry pull ("uid", uid)).get
+            val init = mapping.size
+            mapping.removeAll
             _registry push mapping
             context complete ("0 added, %d removed".format(init))
           })
@@ -112,53 +111,34 @@ trait MappingRepositoryService extends SensAppService {
         get { context =>
           ifExists(context, uid, {
             val mapping = (_registry pull ("uid", uid)).get
-            val data = mapping.content.filter( _ match { case ((s, _), _) => s == source } )
+            val data = mapping.get(source)
             context complete data
           })
         } ~
-        put {
-          content(as[Map[(String,String),Result]]) { data => context =>
-            val mapping = (_registry pull ("uid", uid)).get
-            val init = mapping.content.size
-            val tokeep = mapping.content.filterNot( _ match { case ((s, _), _) => s == source } )
-            mapping.content = tokeep ++ data
-            _registry push mapping
-            context complete ("%d added, %d removed".format( data.size, init - tokeep.size))
-          }
-        } ~ 
         delete { context => 
           ifExists(context, uid, {
             val mapping = (_registry pull ("uid", uid)).get
-            val init = mapping.content.size
-            mapping.content = mapping.content.filterNot( _ match { case ((s, _), _) => s == source } )
+            val init = mapping.size
+            mapping.removeAll(source)
             _registry push mapping
-            context complete ("0 added, %d removed".format(init - mapping.content.size))
+            context complete ("0 added, %d removed".format(init - mapping.size))
           })
         } ~ cors("GET", "PUT", "DELETE")
       } ~ 
       path("mediation" / "repositories" / "mappings" / PathElement / "content" / PathElement / PathElement) { (uid, source, target) =>
         get { context =>
           ifExists(context, uid, {
-            val mapping = (_registry pull ("uid", uid)).get            
-            context complete mapping(source, target)
+            val mapping: Mapping = (_registry pull ("uid", uid)).get            
+            context complete mapping.get(source, target)
           })
         } ~
-        put {
-          content(as[Result]) { data => context =>
-            val mapping = (_registry pull ("uid", uid)).get
-            val init = mapping.content.size
-            mapping.content += (source,target) -> data
-            _registry push mapping
-            context complete ("1 added, %d removed".format(init - mapping.content.size))
-          }
-        } ~ 
         delete { context => 
           ifExists(context, uid, {
             val mapping = (_registry pull ("uid", uid)).get
-            val init = mapping.content.size
-            mapping.content -= ((source,target))
+            val init = mapping.size
+            mapping.removeAll(source, target)
             _registry push mapping
-            context complete ("0 added, %d removed".format(init - mapping.content.size))
+            context complete ("0 added, %d removed".format(init - mapping.size))
           })
         } ~ cors("GET", "PUT", "DELETE")
       }

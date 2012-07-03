@@ -4,7 +4,7 @@
  * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.samples.document
+ * Module: net.modelbased.mediation.service.repository.mapping
  *
  * SensApp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,18 +20,22 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.samples
+package net.modelbased.mediation.service.repository.mapping.data
+
 
 /**
- * @author ${user.name}
+ * This class is just a data container that enable the direct serialisation using
+ * Spray/JSON
+ * 
+ * @author Franck Chauvel - SINTEF ICT
+ * 
+ * @since 0.0.1
  */
-object App {
-  
-  def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
-  
-  def main(args : Array[String]) {
-    println( "Hello World!" )
-    println("concat arguments = " + foo(args))
-  }
+sealed case class MappingData(val uid: String, val status: String, val entries: List[Entry])
+ 
 
-}
+//object MappingData { 
+//  
+
+//  
+//}

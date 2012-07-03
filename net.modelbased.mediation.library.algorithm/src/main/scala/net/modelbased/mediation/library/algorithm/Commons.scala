@@ -20,43 +20,32 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.library.algorithm
+package net.modelbased.mediation.library.algorithm
 
 import net.modelbased.mediation.service.repository.mapping.data._ 
 import net.modelbased.mediation.service.repository.model.data._
 
 
-trait Computation {
-  protected[this] var _out: Mapping = Mapping.Empty 
-  def out = _out
-  def out_=(m: Mapping) { this._out = m } 
+
+class Translate extends ModelProcessor { def apply(m: Model): Model = m }
+
+class Prune extends ModelProcessor { def apply(m: Model): Model = m }
+
+class Filter(val threshold: Double) extends MappingProcessor {
+  def apply(m: Mapping): Mapping = { return null }
 }
 
-
-trait NotifiedComputation extends Computation {
-  def remote: Mapping
-  _out = remote
-}
-
-trait ModelProcessor extends Function1[Model, Model] with Computation
-
-
-trait MappingProcessor extends Function1[Mapping, Mapping] with Computation
-
-
-trait MappingAggregator extends Function1[Set[Mapping], Mapping] with Computation
-
-
-trait ModelAggregator extends Function1[Set[Model], Model] with Computation
-
-
-trait Mediation extends Function3[Mapping, Model, Model, Mapping] with Computation {
+object Commons {
+  val translate = new Translate()
+  val prune = new Prune()
+  val filter = new Filter(0.)
   
-  final def apply(in: Mapping, source: Model, target: Model): Mapping = {
-    execute(in, source, target)
-    out
-  }
+  val syntacticMatch : Mediation = null
   
-  protected def execute(in: Mapping, source: Model, target: Model): Unit
+  val semanticMatch : Mediation = null
+  
+  val randomMatch : Mediation = null
+  
+  val aggregateByMax : MappingAggregator = null
 
 }

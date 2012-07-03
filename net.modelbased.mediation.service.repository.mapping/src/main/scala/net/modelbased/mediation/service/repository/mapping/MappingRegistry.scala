@@ -25,9 +25,9 @@ package net.modelbased.mediation.service.repository.mapping
 
 import cc.spray.json._
 import net.modelbased.sensapp.library.datastore._
-import net.modelbased.mediation.library.mapping._
+import net.modelbased.mediation.service.repository.mapping.data._
 
-class MappingRegistry extends DataStore[Mapping]  {
+class MappingRegistry extends DataStore[MappingData]  {
 
   import MappingJsonProtocol._
   
@@ -35,10 +35,10 @@ class MappingRegistry extends DataStore[Mapping]  {
   override val collectionName = "repository.mappings" 
   override val key = "uid"
     
-  override def getIdentifier(e: Mapping) = e.uid
+  override def getIdentifier(e: MappingData) = e.uid
   
-  override def deserialize(json: String): Mapping = { json.asJson.convertTo[Mapping] }
+  override def deserialize(json: String): MappingData = { json.asJson.convertTo[MappingData] }
  
-  override def serialize(e: Mapping): String = { e.toJson.toString }
+  override def serialize(e: MappingData): String = { e.toJson.toString }
     
 }
