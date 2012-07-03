@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://net.modelbased.com/mediation/samples/document" xmlns:tns="http://net.modelbased.com/mediation/samples/document" elementFormDefault="qualified">
+
+    <complexType name="Document">
+    	<sequence>
+    		<element name="title" type="string" maxOccurs="1"/>
+    		<element name="subtitle" type="string" minOccurs="0" maxOccurs="1"/>
+    		<element name="version" type="string" maxOccurs="1"/>
+    		<element name="content" type="tns:Element" minOccurs="1" maxOccurs="1"/>
+    		<element name="authors" type="tns:Author" maxOccurs="unbounded"
+    	</sequence>
+    </complexType>
+
+    <complexType name="Element">
+    	<sequence>
+    		<element name="id" type="string"/>
+    		<element name="title" type="string"/>
+    		<element name="text" type="string" />
+    		<element name="child" type="tns:Element"/>
+    	</sequence>
+    </complexType>
+    
+    
+    <complexType name="Author">
+        <sequence>
+         <element name="name" type="string"/>
+         <element name="family-name" type="string"/>
+        </sequence>
+    </complexType>
+    
+    
+    <element name="document" type="tns:Document" />
+    
+</schema> 

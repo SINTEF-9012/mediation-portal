@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://net.modelbased.com/mediation/samples/article"
+	xmlns:tns="http://net.modelbased.com/mediation/samples/article" elementFormDefault="qualified">
+
+    <complexType name="Article">
+    	<sequence>
+    		<element name="title" type="string"></element>
+    		<element name="abstract" type="tns:Paragraph" minOccurs="0" maxOccurs="1"></element>
+    		<element name="parts" type="tns:Part" minOccurs="1" maxOccurs="unbounded" ></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Part">
+    	<sequence>
+    		<element name="label" type="string"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Paragraph">
+    	<complexContent>
+    	<extension base="tns:Part">
+    		<sequence>
+    			<element name="body" type="string"></element>
+    		</sequence>    	
+    	</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="Section">
+    	<complexContent>
+    	<extension base="tns:Part">
+    		<sequence>
+    			<element name="title" type="string"></element>
+    		</sequence>
+    	</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Author">
+    	<sequence>
+    		<element name="firstname" type="string"></element>
+    		<element name="lastname" type="string"></element>
+    		<element name="email" type="string"></element>
+    	</sequence>
+    </complexType>
+    
+    <element name="article" type="tns:Article"></element>
+    
+</schema>

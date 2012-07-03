@@ -9,9 +9,11 @@
   <groupId>net.modelbased.mediation</groupId>
   <artifactId>net.modelbased.mediation.library</artifactId>
   <packaging>pom</packaging>
-  <name>Libraries defined in the Mediation Portal</name>
   
   <modules>
   	<module>../net.modelbased.mediation.library.mapping</module>
+  	<module>../net.modelbased.mediation.library.algorithm</module>
   </modules>
+  <description>Libraries defined in the Mediation Portal</description>
+  <name>Mediation Library</name>
 </project>
