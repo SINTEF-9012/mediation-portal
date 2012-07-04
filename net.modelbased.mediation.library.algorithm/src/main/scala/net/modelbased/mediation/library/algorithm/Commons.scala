@@ -22,6 +22,7 @@
  */
 package net.modelbased.mediation.library.algorithm
 
+
 import net.modelbased.mediation.service.repository.mapping.data._ 
 import net.modelbased.mediation.service.repository.model.data._
 
@@ -35,12 +36,27 @@ class Filter(val threshold: Double) extends MappingProcessor {
   def apply(m: Mapping): Mapping = { return null }
 }
 
+
+/**
+ * Defines the common library of the internal DSL describing composite mediations
+ * 
+ * To publish a new function in this library, just create a val that is bound to
+ * the implementation of algorithms
+ * 
+ * @author Sebastien Mosser - SINETF ICT
+ * @author Franck Chauvel - SINTEF ICT
+ * 
+ * @since 0.0.1
+ */
 object Commons {
+  
   val translate = new Translate()
+  
   val prune = new Prune()
+  
   val filter = new Filter(0.)
   
-  val syntacticMatch : Mediation = null
+  val syntacticMatch : Mediation = new SyntacticMatch
   
   val semanticMatch : Mediation = null
   
