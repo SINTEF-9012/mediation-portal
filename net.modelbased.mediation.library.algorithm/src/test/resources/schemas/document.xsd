@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    This file is part of SensApp [ http://sensapp.modelbased.net ]
+
+    Copyright (C) 2012-  SINTEF ICT
+    Contact: Franck Chauvel <franck.chauvel@sintef.no>
+
+    Module: net.modelbased.mediation.samples.document
+
+    SensApp is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+
+    SensApp is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General
+    Public License along with SensApp. If not, see
+    <http://www.gnu.org/licenses/>.
+
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://net.modelbased.com/mediation/samples/document" xmlns:tns="http://net.modelbased.com/mediation/samples/document" elementFormDefault="qualified">
+
+    <complexType name="Document">
+    	<sequence>
+    		<element name="title" type="string" maxOccurs="1"/>
+    		<element name="subtitle" type="string" minOccurs="0" maxOccurs="1"/>
+    		<element name="version" type="string" maxOccurs="1"/>
+    		<element name="content" type="tns:Element" minOccurs="1" maxOccurs="1"/>
+    		<element name="authors" type="tns:Author" maxOccurs="unbounded" />
+    	</sequence>
+    </complexType>
+
+    <complexType name="Element">
+    	<sequence>
+    		<element name="id" type="string"/>
+    		<element name="title" type="string"/>
+    		<element name="text" type="string" />
+    		<element name="child" type="tns:Element"/>
+    	</sequence>
+    </complexType>
+    
+    
+    <complexType name="Author">
+        <sequence>
+         <element name="name" type="string"/>
+         <element name="family-name" type="string"/>
+        </sequence>
+    </complexType>
+    
+    
+    <element name="document" type="tns:Document" />
+    
+</schema> 

@@ -22,30 +22,32 @@
  */
 package net.modelbased.mediation.library.algorithm
 
-import net.modelbased.mediation.service.repository.mapping.data._ 
-import net.modelbased.mediation.service.repository.model.data._
+
+import scala.xml._
+import scala.io.Source
+import org.specs2.mutable._
 
 
+import net.modelbased.mediation.service.repository.model.data.Model
+import net.modelbased.mediation.service.repository.mapping.data.Mapping
+import net.modelbased.mediation.library.algorithm.Commons._
 
-class Translate extends ModelProcessor { def apply(m: Model): Model = m }
 
-class Prune extends ModelProcessor { def apply(m: Model): Model = m }
+class TestRandomMatch extends SpecificationWithJUnit {
 
-class Filter(val threshold: Double) extends MappingProcessor {
-  def apply(m: Mapping): Mapping = { return null }
-}
-
-object Commons {
-  val translate = new Translate()
-  val prune = new Prune()
-  val filter = new Filter(0.)
+  val source = new Model("source", Source.fromFile("src/test/resources/schemas/article.xsd").mkString)
+  val target = new Model("target", Source.fromFile("src/test/resources/schemas/document.xsd").mkString)	
+ 
+ 
+  "A RandomMatch" should {
+    
+    "return some mapping" in {
+      val m = randomMatch(new Mapping(), source, target)
+      println(m)
+      m.size must_== 5
+    }
+    
+  } 
   
-  val syntacticMatch : Mediation = null
   
-  val semanticMatch : Mediation = null
-  
-  val randomMatch : Mediation = new RandomMatch
-  
-  val aggregateByMax : MappingAggregator = null
-
 }
