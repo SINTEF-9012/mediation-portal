@@ -27,11 +27,12 @@ import cc.spray._
 
 import net.modelbased.mediation.service.repository.model.ModelRepositoryService
 import net.modelbased.mediation.service.repository.mapping.MappingRepositoryService
+import net.modelbased.mediation.service.repository.comparison.ComparisonRepositoryService
 import net.modelbased.mediation.service.mediator.MediatorService
 
 import net.modelbased.sensapp.library.system._
 
-class Boot(override val system: ActorSystem) extends System {
+class Boot(override val system: ActorSystem) extends System { 
   
   trait iod { 
     lazy val partners = new Monolith { implicit val actorSystem = system }
@@ -41,6 +42,7 @@ class Boot(override val system: ActorSystem) extends System {
   def services: List[Service] = List(
       new ModelRepositoryService() with iod { },
       new MappingRepositoryService() with iod { },
+      new ComparisonRepositoryService() with iod { },
       new MediatorService() with iod { }
   )
   

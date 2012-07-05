@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.modelbased.mediation.service</groupId>
   <artifactId>net.modelbased.mediation.service.mediator</artifactId>
-  <name>Mediator Service</name>
+  <name>Mediation Services - Mediator</name>
   <description>Service that actually executes mediation algorithms</description>
   <inceptionYear>2012</inceptionYear>
   

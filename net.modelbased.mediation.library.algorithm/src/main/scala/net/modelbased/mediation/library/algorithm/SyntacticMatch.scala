@@ -22,12 +22,14 @@
  */
 package net.modelbased.mediation.library.algorithm
 
+
 import scala.xml.{ XML, Node }
 
 import net.modelbased.mediation.service.repository.model.data.Model
 import net.modelbased.mediation.service.repository.mapping.data.{Mapping, Entry}
 
 import net.modelbased.mediation.library.util.StringMatching._
+
 
 /**
  * Match two XML schemas (XSD files) based on the similarity between the name

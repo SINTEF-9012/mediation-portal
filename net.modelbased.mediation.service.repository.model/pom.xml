@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.modelbased.mediation.service</groupId>
   <artifactId>net.modelbased.mediation.service.repository.model</artifactId>
-  <name>Model Repository Service</name>
+  <name>Mediation Services - Model Repository</name>
   <description>Model repository to store artifacts</description>
   <inceptionYear>2012</inceptionYear>
   

@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.modelbased.mediation.service</groupId>
+	<artifactId>net.modelbased.mediation.service.repository.comparison</artifactId>
+	<name>Mediation Services - Comparison Repository </name>
+	<description>A simple service to store comparison of mapping, made by the comparator service</description>
+	<inceptionYear>2012</inceptionYear>
+
+	<parent>
+		<groupId>net.modelbased.mediation</groupId>
+		<artifactId>net.modelbased.mediation.service</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../net.modelbased.mediation.service</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.modelbased.sensapp.library</groupId>
+			<artifactId>net.modelbased.sensapp.library.datastore</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+
+	</dependencies>
+
+</project>
