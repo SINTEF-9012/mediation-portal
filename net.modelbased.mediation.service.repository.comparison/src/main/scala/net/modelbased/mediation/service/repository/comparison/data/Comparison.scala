@@ -20,6 +20,7 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
 package net.modelbased.mediation.service.repository.comparison.data
 
 import java.util.Date
@@ -33,43 +34,53 @@ import java.util.UUID
  * @since 0.0.1
  */
 class Comparison(
-  val uid: String = UUID.randomUUID().toString,
-  val oracle: String, 
-  var contents: Map[String, Evaluation] = Map.empty,
+  initial: List[Evaluation],
   val note: String = "") {
+  require(!initial.isEmpty && !initial.exists{ e1 => initial.exists{ e2 => e1.oracle != e2.oracle }})
 
+  val oracle = initial.head.oracle
+  
+  private[this] var internal: Map[(String, String), Evaluation] = initial.foldLeft(Map[(String, String), Evaluation]()){(acc, e) => acc + ((e.oracle, e.mapping) -> e)}
+  
   /**
    * @returns the number of evaluations contained in this comparison
    */
   def size: Int =
-    this.contents.size
+  this.internal.size
+  
+  
+  /**
+   * @return the list of all the entries available for the record
+   */
+  def contents: List[Evaluation] =
+    this.internal.values.toList
 
-    
   /**
    * Look for the evaluation of a given mapping.
-   * 
+   *
    * @param mapping the mapping whose evaluation is needed
-   * 
+   *
    * @return the related evaluation if it exists, None otherwise
    */
   def get(mapping: String): Option[Evaluation] =
-    this.contents.get(mapping)
-    
-    
+    this.internal.get(oracle, mapping)
+
   /**
    * Clear out the comparison: any evaluation stored will be lost
    */
   def clear =
-    this.contents = Map.empty
+    this.internal = Map.empty
 
   /**
    * Add a new mapping evaluation in this comparison
    *
    * @param e the mapping evaluation to add
    */
-  def add(e: Evaluation) =
-    this.contents += (e.mapping -> e)
-
+  def add(e: Evaluation) = {
+	require(e.oracle == oracle)
+    this.internal += ((oracle, e.mapping) -> e)
+  }
+  
   /**
    * Remove the evaluation of the given mapping. If there is not evaluation of
    * the given mapping, nothing is changed.
@@ -78,7 +89,7 @@ class Comparison(
    *
    */
   def remove(mapping: String) =
-    this.contents = this.contents - (mapping)
+    this.internal = this.internal - ((oracle, mapping))
 
   /**
    * Remove the given evaluation. If it is not already in the comparison, nothing
@@ -87,23 +98,25 @@ class Comparison(
    * @param e the evaluation to remove
    */
   def remove(e: Evaluation) =
-    this.contents = this.contents - (e.mapping)
+    this.internal = this.internal - ((e.oracle, e.mapping))
 
   /**
    * Add a collection of enumerations.
    *
    * @param evaluations the list of evaluation to add
    */
-  def addAll(evaluations: List[Evaluation]) =
-    this.contents ++= evaluations.foldLeft(Map[String, Evaluation]()) { (acc, e) => acc + (e.mapping -> e) }
-
+  def addAll(evaluations: List[Evaluation]) = {
+    require(evaluations.forall(e => e.oracle == oracle))
+    this.internal ++= evaluations.foldLeft(Map[(String, String), Evaluation]()) { (acc, e) => acc + ((e.oracle, e.mapping) -> e) }
+  }
+  
   /**
    * @inheritdoc
    */
   override def toString: String =
     "Comparison with mapping %s:\n%s".format(
       oracle,
-      contents.map { e => " - " + e.toString }.mkString("\n"))
+      internal.map { e => " - " + e.toString }.mkString("\n"))
 
 }
 
@@ -112,29 +125,50 @@ class Comparison(
  *
  * @param mapping the UDI of the subject of the evaluation
  *
- * @param precision the precision measure
- *
- * @param recall the recall measure
- *
+ * @param tp the number of true positive match
+ * 
+ * @param tn the number of true negative match
+ * 
+ * @param fp the number of false positive match
+ * 
+ * @param fn the number of false negative match
  *
  * @author Franck Chauvel - SINTEF ICT
  *
  * @since 0.0.1
  *
  */
-case class Evaluation(val mapping: String, val precision: Double, val recall: Double) {
+case class Evaluation(val oracle:String, val mapping: String, val tp: Int, val tn: Int, val fp: Int, val fn: Int) {
 
   /**
-   * @returns the fMeasure, deduced from the precision and the recall
+   * @return the precision as a value in [0, 1]
+   */
+  def precision: Double = 
+    tp / (tp + fp).toDouble
+
+  /**
+   * @return the recall as a value in [0, 1]
+   */
+  def recall: Double = 
+    tp / (tp + fn).toDouble
+
+  /**
+   * @return the accuracy as a value in [0, 1]
+   */
+  def accuracy: Double = 
+    (tp + tn) / (tp + tn + fp + fn).toDouble
+
+  /**
+   * @return the fMeasure as a value in [0, 2]
    */
   def fMeasure: Double =
-    0.
+    2 * (precision * recall) / (precision + recall)
 
   /**
    * @inheritdoc
    */
   override def toString: String =
-    "%s - %6.4f %6.4f %6.4f".format(mapping, precision, recall, fMeasure)
+    "%s / %s : %7.3f %7.3f %7.3f %7.3f".format(oracle, mapping, precision * 100, recall * 100, fMeasure * 100, accuracy * 100)
 
 }
 

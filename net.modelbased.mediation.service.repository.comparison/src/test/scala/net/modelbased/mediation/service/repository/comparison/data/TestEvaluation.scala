@@ -22,52 +22,46 @@
  */
 package net.modelbased.mediation.service.repository.comparison.data
 
-
 import org.specs2.mutable._
 
-
 /**
- * A quick specification of the comparison behaviour
- * 
+ * Quick validation of the evaluation function, especially the precision and
+ * recall function
+ *
  * @author Franck Chauvel - SINTEF ICT
- * 
+ *
  * @since 0.0.1
  */
-class TestComparison extends SpecificationWithJUnit {
+class TestEvaluation extends SpecificationWithJUnit {
+  val tp = 45
+  val tn = 45
+  val fp = 5
+  val fn = 10
 
-  "Any comparison" should {
-    val e1 = new Evaluation("mappingX", "mappingY", 50, 10, 34, 12) 
-    val e2 = new Evaluation("mappingX", "mappingZ", 45, 4, 5, 56) 
-    val c = new Comparison(List(e1))
+  val eval = new Evaluation("x", "y", tp, tn, fp, fn)
 
-    
-    "not contains duplicate" in {
-      c.add(e1)
-      c.size must_== 1
-      c.get("mappingY") must_== Some(e1)
+  "evaluation objects" should {
+
+    "calculate precision properly" in {
+      val p = eval.precision
+      p must_== (tp / (tp + fp).toDouble)
     }
-    
-    "support removing old evaluations" in {
-      c.add(e1)
-      c.add(e2)
-      c.size must_== 2
-      c.get("mappingY") must_== Some(e1)
-      c.get("mappingZ") must_== Some(e2)
-      c.remove("mappingY")
-      c.size must_== 1
-      c.get("mappingZ") must_== Some(e2)
-      c.get("mappingY") must_== None
+
+    "calculate recall properly" in {
+      val r = eval.recall
+      r must_== (tp / (tp + fn).toDouble)
     }
-    
-    "support removing all its evaluations" in {
-      c.add(e1)
-      c.add(e2)
-      c.size must_== 2
-      c.clear
-      c.size must_== 0
-      c.get("mappingZ") must_== None
-      c.get("mappingY") must_== None
-    } 
-    
+
+    "calculate f-measure properly" in {
+      val f = eval.fMeasure
+      f must_== (2 * (eval.precision * eval.recall) / (eval.precision + eval.recall))
+    }
+
+    "calculate accuracy properly" in {
+      val a = eval.accuracy
+      a must_== ((tp + tn) / (tp + tn + fp + fn).toDouble)
+    }
+
   }
+
 }

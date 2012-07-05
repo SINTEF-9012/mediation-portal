@@ -26,6 +26,14 @@ package net.modelbased.mediation.service.repository.comparison.data
 import cc.spray.json.DefaultJsonProtocol
 
 
+/**
+ * Implicit conversion between the Comparison class and the equivalent JSON 
+ * case class.
+ * 
+ * @author Franck Chauvel - SINTEF ICT
+ * 
+ * @since 0.0.1
+ */
 object Conversions {
   
   /**
@@ -36,8 +44,7 @@ object Conversions {
    * @return a equivalent Comparison object
    */
   implicit def toComparison(jsc: JsonComparison) = {
-    val contents = jsc.contents.foldLeft(Map[String, Evaluation]()){(acc, e) => acc + (e.mapping -> e)}
-    new Comparison(jsc.uid, jsc.oracle, contents, jsc.note)
+    new Comparison(jsc.contents, jsc.note)
   }
   
   /**
@@ -48,7 +55,7 @@ object Conversions {
    * @return the equivalent JsonComparison objects
    */
   implicit def fromComparison(c: Comparison) =
-    new JsonComparison(c.uid, c.oracle, c.contents.values.toList, c.note) 
+    new JsonComparison(c.oracle, c.contents, c.note) 
 }
 
 
@@ -59,11 +66,11 @@ object Conversions {
  * 
  * @since 0.0.1
  */
-sealed case class JsonComparison (val uid: String, val oracle: String, val contents: List[Evaluation], val note: String)
+sealed case class JsonComparison (val oracle: String, val contents: List[Evaluation], val note: String)
 
 
 object JsonComparisonProtocol extends DefaultJsonProtocol {
-  implicit val entryFormat = jsonFormat(Evaluation, "mapping", "precision", "recall")
-  implicit val mappingFormat = jsonFormat(JsonComparison, "uid", "oracle", "contents", "note")
+  implicit val evaluationFormat = jsonFormat(Evaluation, "oracle", "mapping", "tp", "tn", "fp", "fn")
+  implicit val comparisonFormat = jsonFormat(JsonComparison, "oracle", "contents", "note")
 }
   

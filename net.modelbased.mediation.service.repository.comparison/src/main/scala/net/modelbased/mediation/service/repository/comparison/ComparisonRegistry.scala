@@ -43,7 +43,7 @@ class ComparisonRegistry extends DataStore[JsonComparison] {
   override val collectionName = "repository.comparisons" 
   override val key = "uid"
     
-  override def getIdentifier(e: JsonComparison) = e.uid
+  override def getIdentifier(e: JsonComparison) = e.oracle
   
   override def deserialize(json: String): JsonComparison = { json.asJson.convertTo[JsonComparison] }
  

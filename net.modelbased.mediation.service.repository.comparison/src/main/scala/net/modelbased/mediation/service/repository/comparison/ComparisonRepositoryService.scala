@@ -47,7 +47,7 @@ trait ComparisonRepositoryService extends SensAppService {
   private[this] val _registry = new ComparisonRegistry()
 
   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
-    if (_registry exists ("uid", id))
+    if (_registry exists ("oracle", id))
       lambda
     else
       context fail (StatusCodes.NotFound, "Unknown comparison [" + id + "]")
@@ -56,46 +56,62 @@ trait ComparisonRepositoryService extends SensAppService {
   val service = {
     path("mediation" / "repositories" / "comparisons") {
       get { context =>
-        val uris = (_registry retrieve (List())) map { e => URLHandler.build("/mediation/repositories/comparisons/" + e.uid) }
+        val uris = (_registry retrieve (List())) map { e => URLHandler.build("/mediation/repositories/comparisons/" + e.oracle) }
         context.complete(uris)
       } ~
-        post {
-          content(as[String]) { s =>
-            context =>
-              val comparison = new Comparison(oracle = s)
-              _registry push comparison
-              context complete URLHandler.build("/mediation/repositories/comparisons/" + comparison.uid)
-          }
-        } ~ cors("GET", "POST")
-    } ~
-      path("mediation" / "repositories" / "comparisons" / PathElement / "oracle") { uid =>
-        get { context =>
-          ifExists(context, uid, {
-            val comparison = (_registry pull ("uid", uid)).get
-            context complete comparison.oracle
-          })
-        }
-      } ~ cors("GET")
-  } ~
-    path("mediation" / "repositories" / "comparisons" / PathElement / "contents") { uid =>
-      get { context =>
-        ifExists(context, uid, {
-          val comparison = (_registry pull ("uid", uid)).get
-          context complete comparison.contents
-        })
-      } ~
         put {
-          content(as[List[Evaluation]]) { data =>
+          content(as[List[Evaluation]]) { evaluations =>
             context =>
-              ifExists(context, uid, {
-                val comparison: Comparison = (_registry pull ("uid", uid)).get
-                val init = data.map { x => x.mapping }.count { x => comparison.contents.contains(x) }
-                comparison addAll data
-                _registry push comparison
-                context complete ("%d added, %d removed".format(data.size - init, comparison.size - init))
-              })
+              val comparison = new Comparison(evaluations)
+              _registry push comparison
+              context complete URLHandler.build("/mediation/repositories/comparisons/" + comparison.oracle)
           }
-        }
-    } ~ cors("GET", "PUT")
-
+        } ~ cors("GET", "PUT")
+    } ~
+      path("mediation" / "repositories" / "comparisons" / PathElement) { oracle =>
+        get { context =>
+          ifExists(context, oracle, {
+            val comparison = (_registry pull ("oracle", oracle)).get
+            context complete comparison.contents
+          })
+        } ~
+          put {
+            content(as[List[Evaluation]]) { evaluations =>
+              context =>
+                ifExists(context, oracle, {
+                  val comparison: Comparison = (_registry pull ("oracle", oracle)).get
+                  comparison.addAll(evaluations)
+                  _registry.push(comparison)
+                  context.complete("%d evaluation(s) added.".format(evaluations.size))
+                })
+            }
+          } ~ cors("GET", "PUT")
+      } ~
+      path("mediation" / "repositories" / "comparisons" / PathElement / PathElement) { (oracle, mapping) =>
+        get { context =>
+          ifExists(context, oracle, {
+            val comparison = (_registry.pull("oracle", oracle)).get
+            context complete comparison.get(mapping)
+          })
+        } ~ put {
+            content(as[Evaluation]) { evaluation =>
+              context =>
+                ifExists(context, oracle, {
+                  val comparison: Comparison = (_registry.pull("oracle", oracle)).get
+                  comparison.add(evaluation)
+                  _registry.push(comparison)
+                  context.complete("1 evaluation added.")
+                })
+            }
+          } ~ cors("GET", "PUT")
+      } ~
+     path("mediation" / "repositories" / "comparisons" / PathElement / PathElement / "stats") { (oracle, mapping) =>
+        get { context =>
+          ifExists(context, oracle, {
+            val comparison = (_registry.pull("oracle", oracle)).get
+            context complete comparison.get(mapping).toString
+          })
+        } ~ cors("GET", "PUT")
+      } 
+  }
 }

@@ -147,9 +147,9 @@ trait MappingRepositoryService extends SensAppService {
   private[this] val _registry = new MappingRegistry() 
 
   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
-    if (_registry exists ("uid", id))
+    if (_registry exists ("oracle", id))
       lambda
     else
-      context fail (StatusCodes.NotFound, "Unknown mapping [" + id + "]")
+      context fail (StatusCodes.NotFound, "Unknown oracle [" + id + "]")
   }
 }
