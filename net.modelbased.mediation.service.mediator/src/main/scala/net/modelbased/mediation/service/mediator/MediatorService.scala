@@ -22,7 +22,7 @@
  */
 package net.modelbased.mediation.service.mediator
 
-import net.modelbased.sensapp.library.system.{Service => SensAppService, URLHandler}
+import net.modelbased.sensapp.library.system.{ Service => SensAppService, URLHandler }
 import cc.spray.http._
 import cc.spray._
 import cc.spray.directives.PathElement
@@ -30,14 +30,20 @@ import cc.spray.json._
 import RequestJsonProtocol._
 
 trait MediatorService extends SensAppService {
-  
+
   override lazy val partnerName = "mediator"
-    
+
+  private[this] val runner = new Runner(partners)
+
   val service = {
-    path ("mediator") {
+    path("mediator") {
       post {
-        content(as[Request]) { request => context => 
-          context complete HttpHelper.createMappingInRepository(partners)
+        content(as[Request]) { request =>
+          context =>
+            runner.process(request) match {
+              case Left(errorMsg) => context.complete(errorMsg)
+              case Right(mapping) => context.complete(mapping.toString)
+            }
         }
       }
     }

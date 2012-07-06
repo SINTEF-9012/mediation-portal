@@ -93,6 +93,7 @@ class Runner(val partners: PartnerHandler) extends HttpSpraySupport {
     }
   }
 
+  
   /**
    * Publish a given evaluation on the comparison repository
    *
