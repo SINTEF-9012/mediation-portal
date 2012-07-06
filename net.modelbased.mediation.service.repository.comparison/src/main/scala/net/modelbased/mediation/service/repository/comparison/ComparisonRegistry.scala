@@ -41,7 +41,7 @@ class ComparisonRegistry extends DataStore[JsonComparison] {
   
   override val databaseName = "mediation_portal" 
   override val collectionName = "repository.comparisons" 
-  override val key = "uid"
+  override val key = "oracle"
     
   override def getIdentifier(e: JsonComparison) = e.oracle
   

@@ -4,7 +4,7 @@
  * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.service.repository.mapping
+ * Module: net.modelbased.mediation.service.comparator
  *
  * SensApp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,13 +20,30 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.service.repository.mapping.data
+package net.modelbased.mediation.service.comparator
 
+import net.modelbased.sensapp.library.system.{ Service => SensAppService, URLHandler }
+import cc.spray.http._
+import cc.spray._
+import cc.spray.directives.PathElement
 import cc.spray.json._
+import RequestJsonProtocol._
 
-object MappingJsonProtocol extends DefaultJsonProtocol {
-  implicit val entryFormat = jsonFormat(Entry, "source", "target", "degree", "origin")
-  implicit val mappingDataFormat = jsonFormat(MappingData, "uid", "capacity", "status", "content")
+trait ComparatorService extends SensAppService {
+
+  val runner = new Runner(partners)
+
+  override lazy val partnerName = "comparator"
+
+  val service = {
+    path("comparator") {
+      post {
+        content(as[Request]) { request =>
+          context =>
+            context complete runner.process(request)
+        }
+      }
+    }
+  }
+
 }
-  
-  

@@ -25,7 +25,7 @@ package net.modelbased.mediation.service.repository.mapping
 import net.modelbased.sensapp.library.system.{ Service => SensAppService, URLHandler }
 import net.modelbased.mediation.service.repository.mapping.data._
 import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol._
-import net.modelbased.mediation.service.repository.mapping.data.Mapping._
+import net.modelbased.mediation.service.repository.mapping.data.Conversions._
 import cc.spray.http._
 import cc.spray._
 import cc.spray.directives.PathElement
@@ -44,7 +44,7 @@ trait MappingRepositoryService extends SensAppService {
         context.complete(uris)
       } ~
         post { context => 
-          val m = new Mapping()
+          val m: Mapping = new Mapping() 
           _registry push m
           context complete URLHandler.build("/mediation/repositories/mappings/" + m.uid)
         } ~ cors("GET", "POST")
@@ -138,18 +138,18 @@ trait MappingRepositoryService extends SensAppService {
             val init = mapping.size
             mapping.removeAll(source, target)
             _registry push mapping
-            context complete ("0 added, %d removed".format(init - mapping.size))
+            context complete ("0 added, %d removed".format(init - mapping.size)) 
           })
         } ~ cors("GET", "PUT", "DELETE")
       }
   }
 
-  private[this] val _registry = new MappingRegistry() 
+  private[this] val _registry = new MappingRegistry()  
 
   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
-    if (_registry exists ("oracle", id))
+    if (_registry exists ("uid", id))
       lambda
     else
-      context fail (StatusCodes.NotFound, "Unknown oracle [" + id + "]")
+      context fail (StatusCodes.NotFound, "Unknown mapping [" + id + "]")
   }
 }

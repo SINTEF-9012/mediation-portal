@@ -44,16 +44,25 @@ object Status extends Enumeration {
  * @author Franck Chauvel - SINTEF ICT
  * @since 0.0.1
  */
-class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status.Value = Status.READY) {
+class Mapping(val uid: String = UUID.randomUUID().toString(), var capacity: Int = 10, var status: Status.Value = Status.READY) {
 
   private[this] var contents: Map[(String, String), Entry] = Map.empty
 
+ 
+  
   /**
    * @return all the entry contained in the mapping
    */
   def entries: List[Entry] =
     contents.values.toList
 
+    
+  /**
+   * @check whether the mapping contains a given entry 
+   */
+  def contains(e: Entry): Boolean =
+    contents.contains((e.source, e.target))
+    
   /**
    * @return the number of entries of the mapping
    */
@@ -177,19 +186,19 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var status: Status
 
 }
 
-object Mapping {
+object Conversions {
 
     /**
      * Convert a mappingData into a mapping object
      */
     implicit def toMapping(md: MappingData): Mapping =
-      md.entries.foldLeft(new Mapping(md.uid, Status.withName(md.status))){ (acc, v) => acc.add(v) ; acc }
+      md.entries.foldLeft(new Mapping(md.uid, md.capacity, Status.withName(md.status))){ (acc, v) => acc.add(v) ; acc }
     
     /**
      * Convert a mapping object into a mappingData
      */
     implicit def fromMapping(m: Mapping): MappingData =
-      new MappingData(m.uid, m.status.toString(), m.entries)
+      new MappingData(m.uid, m.capacity, m.status.toString(), m.entries)
 
 }
 

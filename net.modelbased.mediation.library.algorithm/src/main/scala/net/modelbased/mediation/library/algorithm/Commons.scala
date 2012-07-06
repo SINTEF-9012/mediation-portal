@@ -43,7 +43,7 @@ class Filter(val threshold: Double) extends MappingProcessor {
  * To publish a new function in this library, just create a val that is bound to
  * the implementation of algorithms
  * 
- * @author Sebastien Mosser - SINETF ICT
+ * @author Sebastien Mosser - SINTEF ICT
  * @author Franck Chauvel - SINTEF ICT
  * 
  * @since 0.0.1

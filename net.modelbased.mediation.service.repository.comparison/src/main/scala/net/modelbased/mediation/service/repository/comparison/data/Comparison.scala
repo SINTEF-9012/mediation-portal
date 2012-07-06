@@ -138,7 +138,7 @@ class Comparison(
  * @since 0.0.1
  *
  */
-case class Evaluation(val oracle:String, val mapping: String, val tp: Int, val tn: Int, val fp: Int, val fn: Int) {
+sealed case class Evaluation(val oracle:String, val mapping: String, val tp: Int, val tn: Int, val fp: Int, val fn: Int) {
 
   /**
    * @return the precision as a value in [0, 1]

@@ -29,6 +29,7 @@ import net.modelbased.mediation.service.repository.model.ModelRepositoryService
 import net.modelbased.mediation.service.repository.mapping.MappingRepositoryService
 import net.modelbased.mediation.service.repository.comparison.ComparisonRepositoryService
 import net.modelbased.mediation.service.mediator.MediatorService
+import net.modelbased.mediation.service.comparator.ComparatorService
 
 import net.modelbased.sensapp.library.system._
 
@@ -43,7 +44,8 @@ class Boot(override val system: ActorSystem) extends System {
       new ModelRepositoryService() with iod { },
       new MappingRepositoryService() with iod { },
       new ComparisonRepositoryService() with iod { },
-      new MediatorService() with iod { }
+      new MediatorService() with iod { },
+      new ComparatorService() with iod { }
   )
   
 } 
