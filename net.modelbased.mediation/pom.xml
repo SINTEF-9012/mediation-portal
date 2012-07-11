@@ -13,11 +13,32 @@
   </description>
 	<inceptionYear>2012</inceptionYear>
 
+
+	<developers>
+		<developer>
+			<id>seb</id>
+			<name>Sebastien Mosser</name>
+			<email>sebastien.mosser@sintef.no</email>
+			<organization>SINTEF ICT</organization>
+		</developer>
+		<developer>
+			<id>franckc</id>
+			<name>Franck Chauvel</name>
+			<email>franck.chauvel@sintef.no</email>
+			<organization>SINTEF ICT</organization>
+		</developer>
+	</developers>
+
 	<scm>
 		<connection>scm:git:git@github.com:mosser/mediation-portal.git</connection>
 		<url>scm:git:git@github.com:mosser/mediation-portal.git</url>
 		<developerConnection>scm:git:git@github.com:mosser/mediation-portal.git</developerConnection>
 	</scm>
+
+	<ciManagement>
+		<system>jenkins</system>
+		<url>https://sintef.ci.cloudbees.com/job/Mediation%20Environment/</url>
+	</ciManagement>
 
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
@@ -193,8 +214,60 @@
 					</dependency>
 				</dependencies>
 				<configuration>
+					<inherited>false</inherited>
+					<siteDirectory>${project.basedir}/src/site</siteDirectory>
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
+					<reportPlugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-project-info-reports-plugin</artifactId>
+							<version>2.4</version>
+							<configuration>
+								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+								<argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
+								<aggregate>true</aggregate>
+							</configuration>
+							<reports>
+								<report>index</report>
+								<report>project-team</report>
+								<report>license</report>
+								<report>mailing-list</report>
+								<report>dependencies</report>
+								<report>dependency-convergence</report>
+								<report>plugin-management</report>
+								<report>cim</report>
+								<!-- <report>issue-tracking</report> -->
+								<report>scm</report>
+								<report>summary</report>
+							</reports>
+						</plugin>
+						<plugin>
+							<groupId>org.scala-tools</groupId>
+							<artifactId>maven-scala-plugin</artifactId>
+							<version>2.15.2</version>
+							<configuration>
+								<aggregate>true</aggregate>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-surefire-report-plugin</artifactId>
+							<version>2.12</version>
+							<configuration>
+								<aggregate>true</aggregate>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-jxr-plugin</artifactId>
+							<version>2.3</version>
+							<configuration>
+								<aggregate>true</aggregate>
+							</configuration>
+						</plugin>
+					</reportPlugins>
 				</configuration>
 			</plugin>
 
@@ -205,6 +278,23 @@
 				<version>2.2.2</version>
 			</plugin>
 		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<configuration>
+						<siteDirectory>../net.modelbased.mediation/src/site</siteDirectory>
+						<outputDirectory>../net.modelbased.mediation/target/site/${project.artifactId}</outputDirectory>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 	</build>
+
+
+
 
 </project>
