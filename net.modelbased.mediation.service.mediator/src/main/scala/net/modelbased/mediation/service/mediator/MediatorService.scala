@@ -42,7 +42,7 @@ trait MediatorService extends SensAppService {
           context =>
             runner.process(request) match {
               case Left(errorMsg) => context.complete(errorMsg)
-              case Right(mapping) => context.complete(mapping.toString)
+              case Right(mapping) => context.complete(StatusCodes.Created, runner.Urls.MAPPING_REPOSITORY + "/" + mapping.uid )
             }
         }
       }

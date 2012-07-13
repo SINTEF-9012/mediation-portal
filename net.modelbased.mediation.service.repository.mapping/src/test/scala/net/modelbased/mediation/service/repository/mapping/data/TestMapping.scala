@@ -39,7 +39,23 @@ class TestMapping extends SpecificationWithJUnit {
 	val e2 = new Entry("x", "v", 0.75, "test")
 	t2.addAll(List(e1, e2))
     t3.addAll(List(e1, e2))
+  
     
+   "Conversions" should {
+	  
+	  "not alter mappings " in {
+		  val md1 = Conversions.fromMapping(t2)
+		  val m = Conversions.toMapping(md1)
+		  m.uid must_== t2.uid
+		  m.capacity must_== t2.capacity
+		  m.status must_== t2.status
+		  m.entries must_== t2.entries
+		  
+		  val md2 = Conversions.fromMapping(m)
+		  md1 must_== md2
+	  }
+	  
+	}
   
   "The empty mapping string" should {
 	  
@@ -94,6 +110,6 @@ class TestMapping extends SpecificationWithJUnit {
 	  }
 	  
   }
-  
+    
   
 }

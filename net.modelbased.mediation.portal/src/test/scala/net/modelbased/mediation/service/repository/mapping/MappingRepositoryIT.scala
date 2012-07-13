@@ -20,7 +20,7 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.service.repository.model
+package net.modelbased.mediation.service.repository.mapping
 
 import org.specs2.mutable._
 import scala.xml._
@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat
  */
 class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
 
+    
   val httpClientName = "test-mapping-repository"
 
   val MAPPING_REPOSITORY_URL = "/mediation/repositories/mappings"

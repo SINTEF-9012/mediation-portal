@@ -33,11 +33,10 @@ import cc.spray.typeconversion.DefaultUnmarshallers._
 import cc.spray.json.DefaultJsonProtocol._
 
 import net.modelbased.mediation.service.repository.mapping.data._
-import net.modelbased.mediation.service.repository.comparison.data._
 import net.modelbased.mediation.service.repository.mapping.data.Conversions._
-import net.modelbased.mediation.service.repository.comparison.data.Conversions._
 import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol._
-import net.modelbased.mediation.service.repository.comparison.data.JsonComparisonProtocol._
+import net.modelbased.mediation.service.repository.comparison.data._
+import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluationProtocol._
 
 /**
  * This singleton implements the comparator service. It accepts a mapping oracle,
@@ -67,7 +66,7 @@ class Runner(val partners: PartnerHandler) extends HttpSpraySupport {
     val evaluations = request.toCompare.foldLeft(List[Evaluation]()){ 
       (acc, v) =>
       	val model = this.fetch(v)
-      	evaluate(oracle, model) :: acc
+      	model.evaluateAgainst(oracle) :: acc
     }
     publishEvaluation(evaluations)
     
@@ -83,6 +82,7 @@ class Runner(val partners: PartnerHandler) extends HttpSpraySupport {
    * @return the corresponding mapping object
    */
   private[this] def fetch(mappingUid: String): Mapping = {
+    println("Fetching mapping '%s' ... ".format(mappingUid))
     val repository = partners("mapping-repository").get
     val conduit = new HttpConduit(httpClient, repository._1, repository._2) {
       val pipeline = simpleRequest ~> sendReceive ~> unmarshal[MappingData] 
@@ -101,30 +101,15 @@ class Runner(val partners: PartnerHandler) extends HttpSpraySupport {
    *
    * @return the REST response as a string
    */
-  private[this] def publishEvaluation(evaluations: List[Evaluation]): String = {
+  private[this] def publishEvaluation(evaluations: List[Evaluation]): List[String] = {
+    println("Publishing %d evaluations ... ".format(evaluations.size))
     val repository = partners("comparison-repository").get
     val conduit = new HttpConduit(httpClient, repository._1, repository._2) {
-      val pipeline = simpleRequest[List[Evaluation]] ~> sendReceive ~> unmarshal[String]
+      val pipeline = simpleRequest[List[Evaluation]] ~> sendReceive ~> unmarshal[List[String]]
     }
-    var r = conduit.pipeline(Put(COMPARISON_REPOSITORY_URL, evaluations))
+    var r = conduit.pipeline(Post(COMPARISON_REPOSITORY_URL, evaluations))
     Await.result(r, 5 seconds)
   }
 
-  /**
-   * Compare one mapping against the oracle and returns the associated report
-   *
-   * @param oracle the mapping that will be considered as correct during the evaluation
-   *
-   * @param subject the mapping that must be compared to the oracle
-   *
-   * @return a report describing how close is the subject from the oracle
-   */
-  private[this] def evaluate(oracle: Mapping, subject: Mapping): Evaluation = {
-    val falsePositive = subject.entries.count { e => !oracle.contains(e) }
-    val truePositive = oracle.entries.count { e => subject.contains(e) }
-    val falseNegative = oracle.entries.count { e => !subject.contains(e) }
-    val trueNegative = oracle.capacity - (falsePositive + truePositive + falseNegative)
-    return new Evaluation(oracle.uid, subject.uid, truePositive, trueNegative, falsePositive, falseNegative)
-  }
 
 }

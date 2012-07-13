@@ -30,8 +30,7 @@ import cc.spray.directives.PathElement
 
 import net.modelbased.mediation.service.repository.comparison._
 import net.modelbased.mediation.service.repository.comparison.data._
-import net.modelbased.mediation.service.repository.comparison.data.Conversions._
-import net.modelbased.mediation.service.repository.comparison.data.JsonComparisonProtocol._
+import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluationProtocol._
 
 /**
  * REST protocol of the mapping comparison repository service
@@ -42,9 +41,11 @@ import net.modelbased.mediation.service.repository.comparison.data.JsonCompariso
  */
 trait ComparisonRepositoryService extends SensAppService {
 
+  val REPOSITORY_URL = "/mediation/repositories/comparisons"
+
   override lazy implicit val partnerName = "comparison-repository"
 
-  private[this] val _registry = new ComparisonRegistry()
+  private[this] val _registry = new EvaluationRegistry()
 
   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
     if (_registry exists ("oracle", id))
@@ -56,62 +57,70 @@ trait ComparisonRepositoryService extends SensAppService {
   val service = {
     path("mediation" / "repositories" / "comparisons") {
       get { context =>
-        val uris = (_registry retrieve (List())) map { e => URLHandler.build("/mediation/repositories/comparisons/" + e.oracle) }
-        context.complete(uris)
+        val urls = _registry.allOracles.map { o => URLHandler.build(REPOSITORY_URL + "/" + o) }
+        context.complete(urls)
       } ~
-        put {
+        post {
           content(as[List[Evaluation]]) { evaluations =>
             context =>
-              val comparison = new Comparison(evaluations)
-              _registry push comparison
-              context complete URLHandler.build("/mediation/repositories/comparisons/" + comparison.oracle)
+              evaluations.foreach { e => _registry.add(e) }
+              val urls = _registry.allOracles.map { o => URLHandler.build(REPOSITORY_URL + "/" + o) }
+              context.complete(urls)
           }
-        } ~ cors("GET", "PUT")
+        } ~ cors("GET", "POST")
     } ~
       path("mediation" / "repositories" / "comparisons" / PathElement) { oracle =>
         get { context =>
-          ifExists(context, oracle, {
-            val comparison = (_registry pull ("oracle", oracle)).get
-            context complete comparison.contents
-          })
+            val evaluations = _registry.findByOracle(oracle)
+            context.complete(evaluations) 
         } ~
           put {
             content(as[List[Evaluation]]) { evaluations =>
               context =>
-                ifExists(context, oracle, {
-                  val comparison: Comparison = (_registry pull ("oracle", oracle)).get
-                  comparison.addAll(evaluations)
-                  _registry.push(comparison)
-                  context.complete("%d evaluation(s) added.".format(evaluations.size))
-                })
+                val (discarded, toAdd) = evaluations.partition { e => e.oracle == oracle }
+                toAdd.foreach { e => _registry.add(e) }
+                val message = "%d added/updated (%d discard because of irrelevant oracle)".format(toAdd.size, discarded.size)
+                context.complete(message)
             }
           } ~ cors("GET", "PUT")
       } ~
       path("mediation" / "repositories" / "comparisons" / PathElement / PathElement) { (oracle, mapping) =>
         get { context =>
-          ifExists(context, oracle, {
-            val comparison = (_registry.pull("oracle", oracle)).get
-            context complete comparison.get(mapping)
-          })
+         _registry.findByOracleAndMapping(oracle, mapping) match {
+           case None => 
+             val message = "No evaluation of '%s' against '%s'.".format(mapping, oracle)
+             context.complete(StatusCodes.NotFound, message)
+           case Some(e) =>
+             context.complete(e)
+         }
         } ~ put {
-            content(as[Evaluation]) { evaluation =>
-              context =>
-                ifExists(context, oracle, {
-                  val comparison: Comparison = (_registry.pull("oracle", oracle)).get
-                  comparison.add(evaluation)
-                  _registry.push(comparison)
-                  context.complete("1 evaluation added.")
-                })
-            }
-          } ~ cors("GET", "PUT")
-      } ~
-     path("mediation" / "repositories" / "comparisons" / PathElement / PathElement / "stats") { (oracle, mapping) =>
-        get { context =>
-          ifExists(context, oracle, {
-            val comparison = (_registry.pull("oracle", oracle)).get
-            context complete comparison.get(mapping).toString
-          })
+          content(as[Evaluation]) { evaluation =>
+            context =>
+              _registry.findByOracleAndMapping(oracle, mapping) match {
+                case None => 
+                  _registry.add(evaluation)
+                  val message = "1 evaluation added."
+                  context.complete(StatusCodes.OK, message)
+                case Some(e) =>
+                  _registry.add(e)
+                  val message = "1 evaluation replaced."
+                  context.complete(StatusCodes.OK, message)
+              }
+           
+          }
         } ~ cors("GET", "PUT")
-      } 
+      } ~
+      path("mediation" / "repositories" / "comparisons" / PathElement / PathElement / "stats") { (oracle, mapping) =>
+        get { context =>
+          _registry.findByOracleAndMapping(oracle, mapping) match {
+           case None => 
+             val message = "No evaluation of '%s' against '%s'.".format(mapping, oracle)
+             context.complete(StatusCodes.NotFound, message)
+           case Some(e) =>
+             context.complete(e.toStatistics)  
+         }
+        } ~ cors("GET", "PUT")
+      }
   }
+
 }

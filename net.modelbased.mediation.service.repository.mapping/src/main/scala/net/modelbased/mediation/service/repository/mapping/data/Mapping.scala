@@ -25,6 +25,8 @@ package net.modelbased.mediation.service.repository.mapping.data
 
 import java.util.UUID
 
+import net.modelbased.mediation.service.repository.comparison.data.Evaluation 
+
 /**
  * Describe the possible states in which a mapping object can be
  *
@@ -49,6 +51,22 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var capacity: Int 
   private[this] var contents: Map[(String, String), Entry] = Map.empty
 
  
+  /**
+   * Compare the mapping with a given oracle. This returns a comparison object
+   * containing both relative metrics
+   * 
+   * @param oracle the mapping against which the evaluation shall be done
+   * 
+   * @return an evaluation of the mapping
+   */
+  def evaluateAgainst(oracle: Mapping): Evaluation = { 
+    val falsePositive = this.entries.count { e => !oracle.contains(e) }
+    val truePositive = oracle.entries.count { e => this.contains(e) }
+    val falseNegative = oracle.entries.count { e => !this.contains(e) }
+    val trueNegative = oracle.capacity - (falsePositive + truePositive + falseNegative)
+    return new Evaluation(oracle.uid, this.uid, truePositive, trueNegative, falsePositive, falseNegative)
+  }
+  
   
   /**
    * @return all the entry contained in the mapping
@@ -202,6 +220,6 @@ object Conversions {
 
 }
 
-case class Entry(val source: String, val target: String, val degree: Double, val origin: String)
+sealed case class Entry(val source: String, val target: String, val degree: Double, val origin: String)
 
 
