@@ -15,6 +15,7 @@
   
   <modules>
   	<module>../net.modelbased.mediation.samples.document</module>
+  	<module>../net.modelbased.mediation.samples.envision</module>
   </modules>
   
 </project>
