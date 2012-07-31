@@ -22,76 +22,100 @@
  */
 package net.modelbased.mediation.library.algorithm
 
-
+import net.modelbased.mediation.library.algorithm.mof._
+import net.modelbased.mediation.library.algorithm.mof.reader.MofReader
 import scala.util.Random
-import scala.xml.{XML, Node}
-
 import net.modelbased.mediation.service.repository.mapping.data._
 import net.modelbased.mediation.service.repository.model.data._
+import net.modelbased.mediation.library.algorithm.xsd.XsdToMof
+
+/**
+ * Implement a random match algorithm, which given two Mof models, outputs a random
+ * mapping between the types and elements declared in the two schemas.
+ *
+ * Random mappings are needed when effectiveness of matching algorithms
+ * must be checked against the null hypothesis.
+ *
+ * @author Franck Chauvel - SINTEF ICT
+ *
+ * @since 0.0.1
+ */
+class RandomMatch extends Mediation {
+
+   private[this] val reader = new MofReader
+
+   /**
+    * @inheritdoc
+    *
+    * We basically extract all the source and target types that are defined as
+    * complex types in models received as input. Then we shuffle the target types
+    * and associate them to the source type. The degree of match is generated
+    * randomly.
+    *
+    */
+   override def execute(in: Mapping, source: Model, target: Model): Unit = {
+      out = new Mapping()
+
+      val mofSource = reader.readPackage(source.content)
+      mofSource match {
+         case Right(sp: Package) =>
+            val mofTarget = reader.readPackage(target.content)
+            mofTarget match {
+               case Right(tp: Package) =>
+                  val randomizer = new Random()
+
+                  // Manage the types
+                  val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+                  val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+                  allSourceTypes.foldLeft((randomizer.shuffle(allTargetTypes.toList), out)) {
+                     case ((Nil, m), v) =>
+                        val l = (randomizer.shuffle(allTargetTypes.toList))
+                        m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
+                        (l.tail, m)
+                     case ((head :: tail, m), v) =>
+                        m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
+                        (tail, m)
+                  }
+
+                  // Manage Elements
+                  val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+                  val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+                  val (m2, _) = allSourceFeatures.foldLeft((randomizer.shuffle(allTargetFeatures.toList), out)) {
+                     case ((Nil, m), v) =>
+                        val l = (randomizer.shuffle(allTargetFeatures.toList))
+                        m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
+                        (l.tail, m)
+                     case ((head :: tail, m), v) =>
+                        m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
+                        (tail, m)
+                  }
+
+            }
+      }
+   }
+
+}
 
 
 
 /**
- * Implement a random match algorithm, which given two XSD schemas, outputs a random
- * mapping between the types declared in the two schemas.
- * 
- * Random mappings are needed when effectiveness of matching algorithms
- * must be checked against the null hypothesis.
+ * A simple random mediation between XSD files
  * 
  * @author Franck Chauvel - SINTEF ICT
  * 
  * @since 0.0.1
  */
-class RandomMatch extends Mediation {
+class RandomXsdMediation extends Mediation {
 
+   val toMof = new XsdToMof()
+   val syntacticMatch = new SyntacticMatch()
 
-  /**
-   * @inheritdoc
-   * 
-   * We basically extract all the source and target types that are defined as
-   * complex types in models received as input. Then we shuffle the target types
-   * and associate them to the source type. The degree of match is generated 
-   * randomly.
-   * 
-   * @todo take care of complexTypes declared inside elements ...
-   */
-  override def execute(in: Mapping, source: Model, target:Model): Unit = {
-    val randomizer = new Random()
-    val sourceXSD = XML.loadString(source.content)
-    val targetXSD = XML.loadString(target.content)
-    val sourceTypes = sourceXSD \\ "complexType" //\ "@name"
-    val targetTypes = targetXSD \\ "complexType" //\ "@name"
-    val (_, m) = sourceTypes.foldLeft((randomizer.shuffle(targetTypes.toList), new Mapping())){ 
-      case ((Nil, m), v) =>
-        val l = (randomizer.shuffle(targetTypes.toList))
-        m.add(new Entry(extractName(v), extractName(l.head), randomizer.nextDouble(), "randomMatch"))
-        (l.tail, m)
-      case ((head::tail, m), v) =>
-          val sName = extractName(v)
-          val tName = extractName(head)
-          m.add(new Entry(sName, tName, randomizer.nextDouble(), "randomMatch"))
-          (tail, m)
-    }
-    out = m  // We place the result into the out place holder
-  }
-  
-
-  /**
-   * Helper function that searches for an attribute labelled "name" in a given
-   * XML node. If the attribute exist, it returns its label, otherwise it returns
-   * "anonymous" as a default value. If there exist several attributes labelled
-   * "name", it returns the value of the first one.
-   * 
-   * @param node the XML node whose "name" attribute must be retrieved
-   * 
-   * @return 	the value of the first attribute labelled "name", or the value 
-   * 			"anonymous" if there is no such attribute on the given node 
-   */
-  private[this] def extractName(node: Node): String =
-    node.attribute("name") match {
-    	case None => "anonymous"
-    	case Some(x) => x.head.text
-  	}
- 
+   override def execute(in: Mapping, source: Model, target: Model): Unit = {
+      val sourceAsMof = toMof(source)
+      //println(sourceAsMof.content)
+      val targetAsMof = toMof(target)
+      //println(targetAsMof.content)
+      out = syntacticMatch(new Mapping(), sourceAsMof, targetAsMof)
+   }
 
 }

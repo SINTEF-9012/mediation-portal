@@ -22,17 +22,19 @@
  */
 package net.modelbased.mediation.library.algorithm
 
-
-import scala.xml.{ XML, Node }
-
+import scala.xml.{ Utility, XML, Node }
 import net.modelbased.mediation.service.repository.model.data.Model
-import net.modelbased.mediation.service.repository.mapping.data.{Mapping, Entry}
-
+import net.modelbased.mediation.service.repository.mapping.data.{ Mapping, Entry }
 import net.modelbased.mediation.library.util.StringMatching._
-
+import net.modelbased.mediation.library.algorithm.xsd.Utils
+import net.modelbased.mediation.library.algorithm.mof.reader.MofReader
+import net.modelbased.mediation.library.algorithm.mof.Collector
+import net.modelbased.mediation.library.util.MinEditDistance
+import net.modelbased.mediation.library.algorithm.mof._
+import net.modelbased.mediation.library.algorithm.xsd.XsdToMof
 
 /**
- * Match two XML schemas (XSD files) based on the similarity between the name
+ * Match two MoF models based on the similarity between the name
  * of the types they contain. The similarity is calculated as the opposite of
  * a Levenshtein distance (1 - distance).
  *
@@ -42,31 +44,66 @@ import net.modelbased.mediation.library.util.StringMatching._
  */
 class SyntacticMatch extends Mediation {
 
-  /**
-   * @inheritdoc
-   */
-  override def execute(context: Mapping, source: Model, target: Model) = {
-    val sourceXSD = XML.loadString(source.content)
-    val targetXSD = XML.loadString(target.content)
-    val sourceTypes = (sourceXSD \ "complexType" ). map {x => ( x \ "@name") .text }
-    val targetTypes = (targetXSD \ "complexType" ). map {x => ( x \ "@name") .text }
-    
-    out = new Mapping()
-    for (st <- sourceTypes) {
-      val (s, t, d) = targetTypes.foldLeft(("", "", 1.)) {
-        case ((x, y, d), v) =>
-          val distance = minEdit(st, v)
-          //println("med(%s,%s)=%.2f".format(st, v, distance))
-          if (distance <= d) {
-            (st, v, distance)
-          } else {
-            (x, y, d)
-          }
-      }
-      val entry = new Entry(s, t, 1.-d, "syntax")
-      out.add(entry)
-    }
+   private[this] val reader = new MofReader
+   private[this] val distance = new MinEditDistance()
 
-  }
+   /**
+    * @inheritdoc
+    */
+   override def execute(context: Mapping, source: Model, target: Model) = {
+      out = new Mapping()
+
+      val mofSource = reader.readPackage(source.content)
+      mofSource match {
+         case Right(sp: Package) =>
+            val mofTarget = reader.readPackage(target.content)
+            mofTarget match {
+               case Right(tp: Package) =>
+                  // Handle types
+                  val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+                  for (st <- allSourceTypes) {
+                     val n = st.name
+                     val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+                     val min = allTargetTypes.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
+                     out.add(new Entry(st.qualifiedName, min.qualifiedName, distance(st.name, min.name), "syntactic matching"))
+                  }
+
+                  // Handle features
+                  val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+                  for (sf <- allSourceFeatures) {
+                     val n = sf.name
+                     val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+                     val min = allTargetFeatures.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
+                     out.add(new Entry(sf.qualifiedName, min.qualifiedName, distance(sf.name, min.name), "syntactic matching"))
+                  }
+
+            }
+      }
+
+   }
+
+}
+
+
+/**
+ * A basic syntactic matching between XSD files, based on the above Mof model
+ * syntactic matching
+ * 
+ * @author Franck Chauvel - SINTEF ICT
+ * 
+ * @since 0.0.1
+ */
+class SyntacticXsdMediation extends Mediation {
+
+   val toMof = new XsdToMof()
+   val syntacticMatch = new SyntacticMatch()
+
+   override def execute(in: Mapping, source: Model, target: Model): Unit = {
+      val sourceAsMof = toMof(source)
+      //println(sourceAsMof.content)
+      val targetAsMof = toMof(target)
+      //println(targetAsMof.content)
+      out = syntacticMatch(new Mapping(), sourceAsMof, targetAsMof)
+   }
 
 }

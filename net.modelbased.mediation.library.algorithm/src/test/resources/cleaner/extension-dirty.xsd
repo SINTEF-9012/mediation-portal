@@ -1,0 +1,24 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://net.modelbased.com/mediation/samples/document"
+	xmlns:tns="http://net.modelbased.com/mediation/samples/document"
+	elementFormDefault="qualified">
+
+	<complexType name="fooType">
+		<sequence>
+			<element name="foo" type="string" />
+		</sequence>
+	</complexType>
+
+	<element name="bar">
+		<complexType>
+			<complexContent>
+				<extension base="fooType">
+					<sequence>
+						<element name="bar" type="string" />
+					</sequence>
+				</extension>
+			</complexContent>
+		</complexType>
+	</element>
+
+</schema>

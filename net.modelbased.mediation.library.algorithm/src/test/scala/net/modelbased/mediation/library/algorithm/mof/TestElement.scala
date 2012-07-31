@@ -4,7 +4,7 @@
  * Copyright (C) 2010-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.samples.envision
+ * Module: net.modelbased.mediation.library.algorithm
  *
  * SensApp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,18 +20,35 @@
  * Public License along with SensApp. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.samples.envision
+package net.modelbased.mediation.library.algorithm.mof
 
-/**
- * @author ${user.name}
- */
-object App {
+import org.specs2.specification.Scope
+import org.specs2.mutable.Specification
+
+
+trait TestElement extends Specification {
   
-  def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
+  this: SampleMof =>
   
-  def main(args : Array[String]) {
-    println( "Hello World!" )
-    println("concat arguments = " + foo(args))
+  
+  "An element" should {
+    
+    "support name update" in {
+      val newName = theElement.name + "Foo"
+      theElement.name = newName
+      theElement.name must beEqualTo(newName)
+    }
+    
+    
+    "reject null as name update" in  {
+      theElement.name must not beNull
+    }
+    
+    
+    "have a non null qualified name" in {
+      theElement.qualifiedName must not beNull
+    }
+    
   }
-
+  
 }

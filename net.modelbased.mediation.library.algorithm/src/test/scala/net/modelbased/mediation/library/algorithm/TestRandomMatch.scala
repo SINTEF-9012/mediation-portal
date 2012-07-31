@@ -33,18 +33,20 @@ import net.modelbased.mediation.service.repository.mapping.data.Mapping
 import net.modelbased.mediation.library.algorithm.Commons._
 
 
-class TestRandomMatch extends SpecificationWithJUnit {
+class TestRandomMatch extends SpecificationWithJUnit with SampleXsdMediations {
 
-  val source = new Model("source", Source.fromFile("src/test/resources/schemas/article.xsd").mkString)
-  val target = new Model("target", Source.fromFile("src/test/resources/schemas/document.xsd").mkString)	
+  val xsd = Utility.trim(XML.loadFile("src/test/resources/schemas/article.xsd"))
+  val source = new Model("source", xsd.toString)
+  val target = new Model("target", Utility.trim(XML.loadFile("src/test/resources/schemas/document.xsd")).toString)	
  
  
   "A RandomMatch" should {
     
     "return some mapping" in {
-      val m = randomMatch(new Mapping(), source, target)
-      println(m)
-      m.size must_== 5
+      val m = randomMediation(new Mapping(), source, target)
+      //println(m)
+      val expected = (xsd \\ "complexType").size + (xsd \\ "element").size + 1 // +1 for the schema itself (considered as en element)
+      m.size must_== expected
     }
     
   } 

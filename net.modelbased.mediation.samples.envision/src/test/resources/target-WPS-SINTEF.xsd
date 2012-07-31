@@ -1,0 +1,4 @@
+<xsd:schema targetNamespace="http://www.sintef.no/WPS/DroughtIn" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xsd:element name="observationCollectionInput"  type="xsd:anyType"/>
+	<xsd:element name="featureCollectionInput"  type="xsd:anyType"/>
+</xsd:schema>

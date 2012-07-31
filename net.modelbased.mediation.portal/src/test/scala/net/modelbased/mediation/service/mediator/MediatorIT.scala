@@ -95,7 +95,7 @@ class MediatorIT extends SpecificationWithJUnit with HttpSpraySupport {
               // We trigger the mediation
               println("OK, URL = " + url)
               println("Triggering mediation")
-              val mediationRequest = new Request(source.name, target.name, "syntactic")
+              val mediationRequest = new Request(source.name, target.name, "xsd-syntactic")
               val conduit = new HttpConduit(httpClient, "localhost", 8080) {
                 val pipeline = { simpleRequest[Request] ~> sendReceive ~> unmarshal[String] }
               }

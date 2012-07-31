@@ -60,14 +60,14 @@ class Runner(partners: PartnerHandler) extends HttpSpraySupport {
   val httpClientName = "mediator"
 
   /**
-   * Bind each mediation algorithm to a specific name. This is definitiely quick
+   * Bind each mediation algorithm to a specific name. This is definitely quick
    * and dirty
    *
    * @todo refactor
    */
   private[this] val mediations: Map[String, Mediation] = Map(
-    "random" -> new RandomMatch(),
-    "syntactic" -> new SyntacticMatch())
+    "xsd-random" -> new RandomXsdMediation(), 
+    "xsd-syntactic" -> new SyntacticXsdMediation()) 
 
   /**
    * Query the model repository to retrieve a model from the given model id. This

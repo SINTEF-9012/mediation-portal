@@ -192,13 +192,13 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var capacity: Int 
    */
   override def toString: String = {
     def summary(s: String): String = 
-    	s.splitAt(12) match {
+    	s.splitAt(22) match {
     		case (l, "") => l
     		case (l, r) => l + "..."
         }
       
     this.contents.values.foldLeft(""){
-	  (acc, e) => acc + " - %15s --> %15s (at %+4.2f by %15s)\n".format(summary(e.source), summary(e.target), e.degree, summary(e.origin)) 
+	  (acc, e) => acc + " - %25s --> %25s (at %+4.2f by %25s)\n".format(summary(e.source), summary(e.target), e.degree, summary(e.origin)) 
     }
   }
 

@@ -22,37 +22,28 @@
  */
 package net.modelbased.mediation.library.algorithm
 
-import scala.xml._
-import scala.io.Source
-import org.specs2.mutable._
 
+import org.specs2.mutable.Specification
 import net.modelbased.mediation.service.repository.model.data.Model
 import net.modelbased.mediation.service.repository.mapping.data.Mapping
-import net.modelbased.mediation.library.algorithm.Commons._
+import net.modelbased.mediation.library.algorithm.xsd.XsdToMof
+
 
 /**
- * Sample execution of a mediation between two XSD files
+ * Define a sample mediation algorithm between two XSD schemas. In this simple
+ * case, we just convert the source and target XSD schemas into mof models. Then
+ * we apply a basic syntactic matching between the two.
  * 
  * @author Franck Chauvel - SINTEF ICT
  * 
  * @since 0.0.1
  */
-class TestSyntacticMatch extends SpecificationWithJUnit with SampleXsdMediations {
-
-  val xsd = Utility.trim(XML.loadFile("src/test/resources/schemas/article.xsd"))
-  val source = new Model("source", xsd.toString)
-  val target = new Model("target", Utility.trim(XML.loadFile("src/test/resources/schemas/document.xsd")).toString)
+trait SampleXsdMediations extends Specification {
 
   
-  "A Syntactic mediation" should {
-
-    "return a mapping for all features and all types" in {
-      val m = syntacticMediation(new Mapping(), source, target)
-      //println(m)
-      val expected = (xsd \\ "complexType").size + (xsd \\ "element").size + 1 // +1 for the schema itself (considered as en element)
-      m.size must_== expected
-    }
-
-  }
-
+   val syntacticMediation = new SyntacticXsdMediation
+ 
+   
+   val randomMediation = new RandomXsdMediation
+   
 }
