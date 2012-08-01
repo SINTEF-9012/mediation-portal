@@ -34,6 +34,9 @@ import scala.collection.mutable
 abstract class Element(initialName: String) extends Visitable {
 
    protected[this] var _name: String = initialName
+   
+   private[this] var _annotations = mutable.Map[String, String]()
+   
 
    /**
     * @return the name of the element
@@ -55,6 +58,41 @@ abstract class Element(initialName: String) extends Visitable {
    def qualifiedName: String =
       _name
 
+   /**
+    * @return all the annotations attached to the element
+    */
+   def annotations: List[(String, String)] =
+      _annotations.toList
+      
+   /**
+    * @param key the key that identify the annotation
+    * 
+    * @return the annotation attached to a given key, or None if no such key is defined 
+    */
+   def annotation(key: String): Option[String] =
+      _annotations.get(key)
+         
+   /**
+    * Attach a new annotation to this element. If there already exists an annotation
+    * which the given key, it will be replaced by the given one.
+    * 
+    * @param key the key that will be later used to retrieve the annotation
+    * 
+    * @param value the value of the annotation
+    */
+   def addAnnotation(key: String, value: String): Unit =
+      _annotations += (key -> value)
+   
+   
+   /**
+    * Delete a given annotation
+    * 
+    * @param key the key that identify the annotation to delete 
+    */
+   def deleteAnnotation(key: String): Unit = 
+      _annotations -= key
+      
+      
    /**
     * @inheritdoc
     *
