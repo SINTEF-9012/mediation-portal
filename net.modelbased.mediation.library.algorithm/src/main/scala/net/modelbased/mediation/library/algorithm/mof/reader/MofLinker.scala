@@ -62,7 +62,8 @@ class MofLinker extends AstVisitor[List[MofError], List[MofError]] {
                               try {
                                  c.addSuperClass(sc)
                                  acc
-                              } catch {
+                              }
+                              catch {
                                  case e: CircularClassInheritance =>
                                     new CircularInheritance(node, scr.toString) :: acc
                               }
@@ -75,6 +76,11 @@ class MofLinker extends AstVisitor[List[MofError], List[MofError]] {
    }
 
    def visitFeatureNode(node: FeatureNode, input: List[MofError]): List[MofError] = {
+      val errors1 = resolveFeatureType(node, input)
+      resolveFeatureOpposite(node, errors1)
+   }
+
+   private[this] def resolveFeatureType(node: FeatureNode, input: List[MofError]): List[MofError] = {
       node.modelElement match {
          case None => new InternalError(node, "The node should have been processed by a builder") :: input
          case Some(feature: Feature) =>
@@ -93,6 +99,28 @@ class MofLinker extends AstVisitor[List[MofError], List[MofError]] {
                      case Some(pt: PrimitiveType) => feature.`type` = pt; input
                   }
                case _ => new InternalError(node, "Illegal type") :: input
+            }
+      }
+   }
+
+   private[this] def resolveFeatureOpposite(node: FeatureNode, input: List[MofError]): List[MofError] = {
+      node.modelElement match {
+         case None => new InternalError(node, "The node should have been processed by a builder") :: input
+         case Some(feature: Feature) =>
+            node.opposite match {
+               case None => input
+               case Some(ref: Reference) =>
+                  node.resolve(ref) match {
+                     case None => new UnknownFeatureOpposite(node, ref.toString) :: input
+                     case Some(fn: FeatureNode) =>
+                        fn.modelElement match {
+                           case None => new InternalError(node, "The node should have been processed by a builder") :: input
+                           case Some(f: Feature) =>
+                              feature.opposite = Some(f)
+                              input
+                        }
+                     case _ => new IllegalFeatureOpposite(node, ref.toString) :: input 
+                  }
             }
       }
    }

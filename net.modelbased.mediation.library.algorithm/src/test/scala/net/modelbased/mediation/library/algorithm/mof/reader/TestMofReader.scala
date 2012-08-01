@@ -105,6 +105,24 @@ class TestMofReader extends SpecificationWithJUnit {
             case _ => ko
          }
       }
+      
+      "build class where features have opposites" in {
+         val text = "class Foo { foo: String [0..1] ~ bar bar: String ~ foo }"
+         val result = reader.readClass(text)
+         result must beRight.like {
+            case c: Class =>
+               c.name must beEqualTo("Foo")
+               c.features.size must beEqualTo(2)
+               c.featureNamed("foo") must beSome.like{
+                  case foo: Feature =>
+                     c.featureNamed("bar") must beSome.like{
+                        case bar: Feature =>
+                        	foo.opposite must beSome.which{ x => x == bar }
+                     }
+               }
+            case _ => ko
+         }
+      }
 
       "report about undefined super classes" in {
          val text = "class Foo extends Bar { foo: String [0..1] }"
@@ -182,6 +200,28 @@ class TestMofReader extends SpecificationWithJUnit {
                test must beTrue
             case _ => ko
          }
+      }
+      
+      "report about illegal feature opposite" in {
+         val text = "package test { class ClassA { partner: ClassB ~ ClassB } class ClassB { associate: ClassA ~ ClassA.partner } }"
+         val result = reader.readPackage(text)
+         result must beLeft.like {
+            case errors: List[MofError] =>
+               val test = errors.exists { e => e.isInstanceOf[IllegalFeatureOpposite] }
+               test must beTrue
+            case _ => ko
+         }  
+      }
+      
+      "report about unknown feature opposite" in {
+         val text = "package test { class ClassA { partner: ClassB ~ ClassB.asso } class ClassB { associate: ClassA ~ ClassA.partner } }"
+         val result = reader.readPackage(text)
+         result must beLeft.like {
+            case errors: List[MofError] =>
+               val test = errors.exists { e => e.isInstanceOf[UnknownFeatureOpposite] }
+               test must beTrue
+            case _ => ko
+         }  
       }
 
       "support reuse" in {

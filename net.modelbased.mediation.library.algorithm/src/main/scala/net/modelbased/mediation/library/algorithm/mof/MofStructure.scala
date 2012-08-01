@@ -630,7 +630,7 @@ class Feature(
       min: Int = 0,
       max: Option[Int] = Some(1),
       var isOrdered: Boolean = false,
-      var isUnique: Boolean = false) extends Element(initialName) {
+      var isUnique: Boolean = false, initialOpposite: Option[Feature] = None) extends Element(initialName) {
 
    private[this] var _lower: Int = min
 
@@ -638,7 +638,11 @@ class Feature(
 
    private[this] var _container: Option[Class] = None
 
+   private[this] var _opposite: Option[Feature] = None
+   
    container = theClass
+   
+   opposite = initialOpposite
 
    /**
     * Update the name of the feature
@@ -673,7 +677,30 @@ class Feature(
       oldContainer.map { c => c.deleteFeature(name) }
       newContainer.map { c => if (!c.features.contains(this)) c.addFeature(this) }
    }
+   
+   
+   /**
+    * @return the opposite of this feature, or None if this feature as no opposite
+    */
+   def opposite: Option[Feature] =
+      _opposite
 
+   
+   /**
+    * Update the opposite feature of this feature. This has the side effect of 
+    * also updating the opposite of the given feature.
+    * 
+    * @param feature the new opposite feature of this feature
+    */
+   def opposite_=(feature: Option[Feature]): Unit = {
+      val oldOpposite = _opposite
+      _opposite = feature
+      oldOpposite.map{ f => f.opposite = None }
+      if (!feature.map{ x => x.opposite.map{ x => x == this}.getOrElse(false) }.getOrElse(false)) {
+         feature.map{ x => x.opposite = Some(this) }
+      }
+   }
+      
    /**
     * @return the lower bound multiplicity of this feature
     */

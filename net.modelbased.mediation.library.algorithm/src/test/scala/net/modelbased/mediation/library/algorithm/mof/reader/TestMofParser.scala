@@ -92,6 +92,20 @@ class TestMofParser extends SpecificationWithJUnit {
             case _ => ko
          }
       }
+      
+      "parse feature with an opposite" in {
+         val text = "names: String [0..*] ~ ClassA.children"
+         parser.parse(parser.feature, text) match {
+            case parser.Success(f: FeatureNode, _) =>
+               f.name must beEqualTo("names")
+               f.`type`must beEqualTo(new Reference("String"))
+               f.lower must beEqualTo(0)
+               f.upper must beNone
+               f.isOrdered must beTrue
+               f.isUnique must beFalse
+               f.opposite must beSome.which{ r => r == new Reference("ClassA", "children") }
+         }
+      }
 
       "parse features that are collections" in {
          val text = "name: String [0..*]"

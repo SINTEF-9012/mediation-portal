@@ -88,12 +88,17 @@ class MofParser extends RegexParsers {
       
    
    def feature: Parser[FeatureNode] =
-      identifier ~ (":" ~> reference) ~ opt(multiplicity) ^^ {
-         case name ~ ref ~ mul => 
+      identifier ~ (":" ~> reference) ~ opt(multiplicity) ~ opt(opposite) ^^ {
+         case name ~ ref ~ mul ~ opposite => 
             mul match {
-               case None => new FeatureNode(global, name, ref)
-               case Some((l, u)) => new FeatureNode(global, name, ref, l, u)
+               case None => new FeatureNode(global, name, ref, opposite=opposite)
+               case Some((l, u)) => new FeatureNode(global, name, ref, l, u, opposite=opposite)
             }
+      }
+   
+   def opposite: Parser[Reference] =
+      "~" ~> reference ^^ {
+         case ref => ref
       }
 
    def reference: Parser[Reference] =
