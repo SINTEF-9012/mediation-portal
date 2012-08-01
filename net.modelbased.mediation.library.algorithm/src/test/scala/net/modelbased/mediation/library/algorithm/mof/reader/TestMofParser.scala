@@ -92,6 +92,20 @@ class TestMofParser extends SpecificationWithJUnit {
             case _ => ko
          }
       }
+      
+      "parse feature with an opposite" in {
+         val text = "names: String [0..*] ~ ClassA.children"
+         parser.parse(parser.feature, text) match {
+            case parser.Success(f: FeatureNode, _) =>
+               f.name must beEqualTo("names")
+               f.`type`must beEqualTo(new Reference("String"))
+               f.lower must beEqualTo(0)
+               f.upper must beNone
+               f.isOrdered must beTrue
+               f.isUnique must beFalse
+               f.opposite must beSome.which{ r => r == new Reference("ClassA", "children") }
+         }
+      }
 
       "parse features that are collections" in {
          val text = "name: String [0..*]"
@@ -176,7 +190,41 @@ class TestMofParser extends SpecificationWithJUnit {
          }
       }
 
-      // parse empty classes
+      "discard comment in a shell-script fashion" in {
+         val text = """
+            # This is a comment
+            package test {
+               
+               class SuperClass
+            
+               class TestClass extends SuperClass {
+                  feature1: String [0..1]
+               }
+            }
+            """
+           parser.parse(parser.`package`, text) match {
+            case parser.Success(p, _) =>
+               p.name must beEqualTo("test")
+               p.elements.size must beEqualTo(2)
+               val testClassExists =
+                  p.elements.exists { e =>
+                     e match {
+                        case c: ClassNode => c.name == "TestClass"
+                        case _            => false
+                     }
+                  }
+               testClassExists must beTrue
+               val superClassExists =
+                  p.elements.exists { e =>
+                     e match {
+                        case c: ClassNode => c.name == "SuperClass"
+                        case _                  => false
+                     }
+                  }
+               superClassExists must beTrue
+         } 
+         
+      }
 
       "parse explicit multiplicities (e.g., [3, 8])" in {
          val text = "[3..8]"

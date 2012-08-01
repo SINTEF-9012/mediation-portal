@@ -44,7 +44,9 @@ trait ListDistance extends Function2[List[String], List[String], Double]
  *
  * @since 0.0.1
  */
-object StringMatching {
+object StringToolBox {
+   
+  val split = new SplitJavaIdentifier()
 
   val minEdit = new MinEditDistance()
 

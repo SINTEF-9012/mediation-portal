@@ -33,6 +33,16 @@ class UnknownFeatureType(override val context: Node,
       extends MofError(context,
          "Unknown feature's type '%s'".format(typeName))
 
+class UnknownFeatureOpposite(override val context: Node,
+                             val opposite: String)
+      extends MofError(context, 
+            "Unknown feature opposite '%s'".format(opposite))
+
+class IllegalFeatureOpposite(override val context: Node,
+                             val opposite: String)
+      extends MofError(context, 
+            "Illegal feature opposite '%s'".format(opposite))
+
 class InternalError(override val context: Node,
                     override val message: String)
       extends MofError(context, message)
@@ -43,7 +53,7 @@ class UnknownSuperClass(override val context: Node,
          "Unknown super class '%s'".format(superClassName))
 
 class CircularInheritance(override val context: Node,
-                        val superClassName: String)
+                          val superClassName: String)
       extends MofError(context,
          "Circular inheritance hierarchy of class '%s'".format(superClassName))
 
@@ -63,7 +73,6 @@ class DuplicateFeature(override val context: Node,
                        val featureName: String)
       extends MofError(context,
          "duplicate feature named '%s'".format(featureName))
-
 
 class DuplicateElement(override val context: Node,
                        val elementName: String)

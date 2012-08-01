@@ -50,22 +50,31 @@ class TestMofLinker extends SpecificationWithJUnit with SampleMofAst {
                element.modelElement.map { me => f.`type` must beEqualTo(me) }.getOrElse(ko)
             case _ => ko
          }
-         true must beTrue
       }
 
-      // properly link a feature to its opposite
+      "properly link a feature to its opposite" in {
+         test.accept(builder, Nil)
+         val errors = next.accept(linker, Nil)
+         errors must beEmpty
+         next.modelElement must beSome.like {
+            case f: Feature =>
+               previous.modelElement must beSome.like {
+                  case fp: Feature =>
+                     f.opposite must beSome.which { x => x == fp }
+               }
+            case _ => ko
+         }
+      }
 
-      // properly link a class to its super classes
       "properly link a class to its super class" in {
          test.accept(builder, Nil)
-         val errors = specialElement.accept(linker, Nil) 
+         val errors = specialElement.accept(linker, Nil)
          errors must beEmpty
          specialElement.modelElement must beSome.like {
             case c: Class =>
                element.modelElement.map { me => c.superClasses must contain(me) }.getOrElse(ko)
             case _ => ko
          }
-         true must beTrue
       }
    }
 

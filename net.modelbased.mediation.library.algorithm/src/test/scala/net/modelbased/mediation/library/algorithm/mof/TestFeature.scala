@@ -63,6 +63,17 @@ class TestFeature extends SpecificationWithJUnit with TestElement with SampleFea
       theFeature.`type` must beEqualTo(Boolean)
     }
     
+    "have not specific opposite property initially defined" in {
+       theFeature.opposite must beNone
+    }
+    
+    "support update of its opposite" in {
+       val newFeature = new Feature(None, "theNewFeature", String)
+       theFeature.opposite = Some(newFeature)
+       theFeature.opposite must beSome.which{ x => x == newFeature}
+       newFeature.opposite must beSome.which{ x => x == theFeature}
+    }
+    
     "have a qualified name that refer to the containing class" in {
        theFeature.qualifiedName must contain("/").when(theFeature.container.isDefined)
     }
