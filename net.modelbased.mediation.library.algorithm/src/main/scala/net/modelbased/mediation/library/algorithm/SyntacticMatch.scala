@@ -25,10 +25,10 @@ package net.modelbased.mediation.library.algorithm
 import scala.xml.{ Utility, XML, Node }
 import net.modelbased.mediation.service.repository.model.data.Model
 import net.modelbased.mediation.service.repository.mapping.data.{ Mapping, Entry }
-import net.modelbased.mediation.library.util.StringMatching._
+import net.modelbased.mediation.library.util.StringToolBox._
 import net.modelbased.mediation.library.algorithm.xsd.Utils
 import net.modelbased.mediation.library.algorithm.mof.reader.MofReader
-import net.modelbased.mediation.library.algorithm.mof.Collector
+import net.modelbased.mediation.library.algorithm.mof.Collector 
 import net.modelbased.mediation.library.util.MinEditDistance
 import net.modelbased.mediation.library.algorithm.mof._
 import net.modelbased.mediation.library.algorithm.xsd.XsdToMof
