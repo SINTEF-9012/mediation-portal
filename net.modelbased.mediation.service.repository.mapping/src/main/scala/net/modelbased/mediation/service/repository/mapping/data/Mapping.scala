@@ -220,6 +220,6 @@ object Conversions {
 
 }
 
-sealed case class Entry(val source: String, val target: String, val degree: Double, val origin: String)
+sealed case class Entry(val source: String, val target: String, val degree: Double, val origin: String, val isValidated: Boolean=false)
 
 
