@@ -37,6 +37,9 @@ class MofParser extends RegexParsers {
    
    var global: Option[Node] = Some(MofAst.createGlobalScope)
    
+   // Redefine the notion white space so as to eliminate comments starting with '#'
+   protected override val whiteSpace = """(\s|#.*)+""".r
+   
    def integerLiteral: Parser[Int] =
       """[0-9]+""".r ^^ {
          case v => Integer.decode(v)
