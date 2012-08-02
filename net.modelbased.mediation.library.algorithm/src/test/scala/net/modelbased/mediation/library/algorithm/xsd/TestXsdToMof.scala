@@ -43,15 +43,13 @@ class TestXsdToMof extends SpecificationWithJUnit {
 
    "Converting XSD to MOF" should {
 
-
-
       "properly handle namespaces" in {
          val xsd = <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="pouet" xmlns:tns="pouet" xmlns:xs="http://www.w3.org/2001/XMLSchema">
                       <element name="foo" type="xs:string"/>
                    </schema>
          val model = new Model("test", xsd.toString)
          val result = convert(model)
-        //println(result.content)
+         //println(result.content)
          mof.readPackage(result.content) must beRight.like {
             case p: Package =>
                p.name must beEqualTo("tns")
@@ -60,13 +58,14 @@ class TestXsdToMof extends SpecificationWithJUnit {
                   case c: Class =>
                      c.features.size must beEqualTo(1)
                      c.featureNamed("foo") must beSome.like {
-                        case f : Feature =>
+                        case f: Feature =>
                            f.`type` must beEqualTo(String)
                      }
                }
          }
       }
-
+      
+     
       "properly handle simple elements at the root level" in {
          val xsd = <schema><element name="foo" type="string"/></schema>
          val model = new Model("test", xsd.toString)
@@ -421,6 +420,39 @@ class TestXsdToMof extends SpecificationWithJUnit {
             }
       }
 
+   }
+
+   "properly handle enumerations" in {
+      val xsd = <schema>
+                   <simpleType name="Currency">
+                      <restriction base="xsd:string">
+                         <enumeration value="EUR"/>
+                         <enumeration value="GDP"/>
+                         <enumeration value="USD"/>
+                         <enumeration value="NOK"/>
+                      </restriction>
+                   </simpleType>
+                   <element name="foo" type="Currency"/>
+                </schema>
+      val model = new Model("test", xsd.toString)
+      val result = convert(model)
+      //println(result.content)
+      mof.readPackage(result.content) must beRight.like {
+         case p: Package =>
+            p.elements.size must beEqualTo(2)
+            p.elementNamed("Schema") must beSome.like {
+               case c: Class =>
+                  c.features.size must beEqualTo(1)
+            }
+            p.elementNamed("Currency") must beSome.like {
+               case e: Enumeration =>
+                  e.literals.size must beEqualTo(4)
+                  e.literalNamed("EUR") must beSome
+                  e.literalNamed("GDP") must beSome
+                  e.literalNamed("USD") must beSome
+                  e.literalNamed("NOK") must beSome
+            }
+      }
    }
 
 }

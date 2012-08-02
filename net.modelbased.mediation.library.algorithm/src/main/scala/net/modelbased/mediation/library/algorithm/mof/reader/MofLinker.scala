@@ -98,6 +98,12 @@ class MofLinker extends AstVisitor[List[MofError], List[MofError]] {
                      case None                    => new InternalError(node, "PrimitiveType have not been properly initialized in the global scope") :: input
                      case Some(pt: PrimitiveType) => feature.`type` = pt; input
                   }
+               case Some(en: EnumerationNode) =>
+                  en.modelElement match {
+                     case None => new InternalError(node, "EnumerationType '%s' have not been properly initialized in the global scope".format(en.name)) :: input
+                     case Some(e: Enumeration) => feature.`type` = e; input
+                        
+                  }
                case _ => new InternalError(node, "Illegal type") :: input
             }
       }

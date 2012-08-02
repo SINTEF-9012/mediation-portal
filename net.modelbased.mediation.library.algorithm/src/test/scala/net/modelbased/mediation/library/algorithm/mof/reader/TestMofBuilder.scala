@@ -86,13 +86,11 @@ class TestMofBuilder extends SpecificationWithJUnit with SampleMofAst {
                c.isAbstract must beFalse
                c.superClasses must beEmpty
                c.subClasses must beEmpty
-               c.features.size must beEqualTo(3)
-               val countFeatureNamedName = c.features.count{ f => f.name == "name" }
-               countFeatureNamedName must beEqualTo(1)
-               val countFeatureNamedNext = c.features.count{ f => f.name == "next" }
-               countFeatureNamedNext must beEqualTo(1)
-               val countFeatureNamedPrevious = c.features.count{ f => f.name == "previous" }
-               countFeatureNamedPrevious must beEqualTo(1)
+               c.features.size must beEqualTo(4)
+               c.featureNamed("name") must beSome
+               c.featureNamed("next") must beSome
+               c.featureNamed("previous") must beSome
+               c.featureNamed("day") must beSome
             case _ => 
                ko
          }

@@ -62,7 +62,8 @@ trait SampleMofAst extends Specification {
    val name = new FeatureNode(Some(global), "name", new Reference("String"), opposite = None)
    val next = new FeatureNode(Some(global), "next", new Reference("Element"), opposite = Some(Reference("previous")))
    val previous = new FeatureNode(Some(global), "previous", new Reference("test", "Element"), opposite = Some(Reference("Element", "next")))
-   val element = new ClassNode(Some(global), "Element", false, Seq(name, next, previous), Seq.empty)
+   val day = new FeatureNode(Some(global), "day", new Reference("data", "WeekDays"), opposite = None)
+   val element = new ClassNode(Some(global), "Element", false, Seq(name, next, previous, day), Seq.empty)
 
    
    val description = new FeatureNode(Some(global), "description", new Reference("String"), opposite = None)

@@ -53,6 +53,8 @@ class XsdToMof extends ModelProcessor {
       val cleanXsd = clean(input)
 
       val xsd = Utility.trim(XML.loadString(cleanXsd.content))
+      //println(xsd.toString)
+
       targetNamespace = xsd.attribute("targetNamespace").map { x => x.text }.getOrElse(null)
       xsd match {
          case Elem(_, "schema", _, scope, _*) =>
@@ -61,7 +63,7 @@ class XsdToMof extends ModelProcessor {
          //            println("PREFIX: " + prefix)
       }
 
-      val typeDefinition = createTypes(xsd \ "complexType")
+      val typeDefinition = createTypes(xsd \ "complexType" ++ xsd \ "simpleType" )
 
       val schemaClass = createSchemaClass(xsd)
 
@@ -85,57 +87,86 @@ class XsdToMof extends ModelProcessor {
 
    private[this] def toType(node: Node): String = {
       node match {
-         case Elem(_, "complexType", _, _, Elem(_, "complexContent", _, _, e @ Elem(_, "extension", _, _, Elem(_, "sequence", _, _, c @ _*)))) =>
-            val superClass = e.attribute("base").map { x => x.text }.getOrElse("Any")
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
-            "class %s extends %s { %s }".format(asMofIdentifier(name), processName(node, superClass), features)
+         case Elem(_, "simpleType", _, _, stc) =>
+           val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
+            stc match {
+               case Elem(_, "restriction", _, _, rc @ Elem(_, "enumeration", _, _) *) =>
+                  toEnumeration(name, rc)
 
-         case Elem(_, "complexType", _, _, Elem(_, "complexContent", _, _, e @ Elem(_, "extension", _, _, Elem(_, "all", _, _, c @ _*)))) =>
-            val superClass = e.attribute("base").map { x => x.text }.getOrElse("Any")
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
-            "class %s extends %s { %s }".format(asMofIdentifier(name), processName(node, superClass), features)
+               case _ =>
+                  "crap!"
+            }
 
-         case Elem(_, "complexType", _, _, Elem(_, "complexContent", _, _, e @ Elem(_, "extension", _, _, Elem(_, "choice", _, _, c @ _*)))) =>
-            val superClass = e.attribute("base").map { x => x.text }.getOrElse("Any")
+         case Elem(_, "complexType", _, _, ctc) =>
             val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toSubClass(f, name) }
-            "class %s extends %s %s".format(asMofIdentifier(name), processName(node, superClass), features)
+            ctc match {
+               case Elem(_, "complexContent", _, _, ccc) =>
+                  ccc match {
+                     case e @ Elem(_, "extension", _, _, ec) =>
+                        val superClass = e.attribute("base").map { x => x.text }.getOrElse("Any")
+                        ec match {
+                           case Elem(_, "sequence", _, _, c @ _*) =>
+                              val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
+                              "class %s extends %s { %s }".format(asMofIdentifier(name), processName(node, superClass), features)
 
-         case Elem(_, "complexType", _, _, Elem(_, "complexContent", _, _, Elem(_, "sequence", _, _, c @ _*))) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
-            "class %s { %s }".format(asMofIdentifier(name), features)
+                           case Elem(_, "all", _, _, c @ _*) =>
+                              val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
+                              "class %s extends %s { %s }".format(asMofIdentifier(name), processName(node, superClass), features)
 
-         case Elem(_, "complexType", _, _, Elem(_, "complexContent", _, _, Elem(_, "all", _, _, c @ _*))) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
-            "class %s { %s }".format(asMofIdentifier(name), features)
+                           case Elem(_, "choice", _, _, c @ _*) =>
+                              val features = c.foldLeft("") { (acc, f) => acc + " " + toSubClass(f, name) }
+                              "class %s extends %s %s".format(asMofIdentifier(name), processName(node, superClass), features)
 
-         case Elem(_, "complexType", _, _, Elem(_, "complexContent", _, _, Elem(_, "choice", _, _, c @ _*))) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toSubClass(f, name) }
-            "class %s %s".format(asMofIdentifier(name), features)
+                           case _ =>
+                              "crap!"
+                        }
 
-         case Elem(_, "complexType", _, _, Elem(_, "sequence", _, _, c @ _*)) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
-            "class %s { %s }".format(asMofIdentifier(name), features)
+                     case Elem(_, "sequence", _, _, c @ _*) =>
+                        val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
+                        "class %s { %s }".format(asMofIdentifier(name), features)
 
-         case Elem(_, "complexType", _, _, Elem(_, "all", _, _, c @ _*)) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
-            "class %s { %s }".format(asMofIdentifier(name), features)
+                     case Elem(_, "all", _, _, c @ _*) =>
+                        val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
+                        "class %s { %s }".format(asMofIdentifier(name), features)
 
-         case Elem(_, "complexType", _, _, Elem(_, "choice", _, _, c @ _*)) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
-            val features = c.foldLeft("") { (acc, f) => acc + " " + toSubClass(f, name) }
-            "class %s %s".format(asMofIdentifier(name), features)
+                     case Elem(_, "choice", _, _, c @ _*) =>
+                        val features = c.foldLeft("") { (acc, f) => acc + " " + toSubClass(f, name) }
+                        "class %s %s".format(asMofIdentifier(name), features)
+
+                     case _ =>
+                        "crap!"
+                  }
+               case Elem(_, "sequence", _, _, c @ _*) =>
+                  val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
+                  "class %s { %s }".format(asMofIdentifier(name), features)
+
+               case Elem(_, "all", _, _, c @ _*) =>
+                  val features = c.foldLeft("") { (acc, f) => acc + " " + toFeature(f) }
+                  "class %s { %s }".format(asMofIdentifier(name), features)
+
+               case Elem(_, "choice", _, _, c @ _*) =>
+                  val features = c.foldLeft("") { (acc, f) => acc + " " + toSubClass(f, name) }
+                  "class %s %s".format(asMofIdentifier(name), features)
+
+               case _ =>
+                  "crap!"
+            }
 
          case _ =>
-            " crap"
+            "crap!"
       }
+   }
+
+   private[this] def toEnumeration(name: String, literals: NodeSeq): String = {
+      val literalsText = literals.map { x =>
+         x match {
+            case e @ Elem(_, "enumeration", _, _) =>
+               e.attribute("value").map { x => x.text }.getOrElse("Anonymous")
+            case _ =>
+               "crap!"
+         }
+      }.mkString(",")
+      "enumeration %s { %s }".format(name, literalsText)
    }
 
    private[this] def toSubClass(node: Node, superClassName: String): String = {
@@ -161,9 +192,9 @@ class XsdToMof extends ModelProcessor {
 
    private[this] def convertType(xsdTypeName: String): String =
       xsdTypeName match {
-         case "string" => "String"
-         case "anyType"    => "Any"
-         case _        => xsdTypeName
+         case "string"  => "String"
+         case "anyType" => "Any"
+         case _         => xsdTypeName
       }
 
    private[this] def processName(context: Node, name: String): String = {
@@ -182,7 +213,7 @@ class XsdToMof extends ModelProcessor {
       }
       //println("prefix: " + prefix + " ; label: " + label)
    }
-   
+
    private[this] def asMofIdentifier(name: String): String = name.replace("-", "_")
 
 }
