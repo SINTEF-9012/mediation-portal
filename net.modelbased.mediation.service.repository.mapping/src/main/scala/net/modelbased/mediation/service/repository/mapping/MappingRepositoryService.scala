@@ -86,6 +86,14 @@ trait MappingRepositoryService extends SensAppService {
             }
           } ~ cors("GET", "PUT")
       } ~
+      path("mediation" / "repositories" / "mappings" / PathElement / "asXML") { uid => 
+         get { context =>
+          ifExists(context, uid, {
+            val mapping: Mapping = (_registry pull ("uid", uid)).get
+            context complete mapping.toXml.toString
+          })
+        } ~ cors("GET")
+      } ~
       path("mediation" / "repositories" / "mappings" / PathElement / "content") { uid =>
         get { context =>
           ifExists(context, uid, {

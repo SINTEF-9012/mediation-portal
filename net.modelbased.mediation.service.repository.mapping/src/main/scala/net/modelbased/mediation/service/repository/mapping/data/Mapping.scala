@@ -24,6 +24,8 @@ package net.modelbased.mediation.service.repository.mapping.data
 
 import java.util.UUID
 
+import scala.xml.Node
+
 import net.modelbased.mediation.service.repository.comparison.data.Evaluation 
 
 /**
@@ -200,6 +202,17 @@ class Mapping(val uid: String = UUID.randomUUID().toString(), var capacity: Int 
 	  (acc, e) => acc + " - %25s --> %25s (at %+4.2f by %25s)\n".format(summary(e.source), summary(e.target), e.degree, summary(e.origin)) 
     }
   }
+  
+  
+  /**
+   * Convert this mapping into an XML document. This was needed in the ENVISION 
+   * context, so as to connect with the 
+   * 
+   * @return the equivalent XML document matching Roy's schema
+   */
+  def toXml(): Node = {
+     <mediation>{entries.map{ e => e.toXml() }}</mediation>
+  }
 
 }
 
@@ -219,6 +232,12 @@ object Conversions {
 
 }
 
-sealed case class Entry(val source: String, val target: String, val degree: Double, val origin: String, val isValidated: Boolean=false)
+sealed case class Entry(val source: String, val target: String, val degree: Double, val origin: String, val isValidated: Boolean=false) {
+   
+   
+   def toXml(): Node =
+      <mapping source={source} targetIdentifier={target} />
+   
+}
 
 

@@ -49,55 +49,82 @@ import java.text.SimpleDateFormat
  */
 class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
 
-    
-  val httpClientName = "test-mapping-repository"
+   val httpClientName = "test-mapping-repository"
 
-  val MAPPING_REPOSITORY_URL = "/mediation/repositories/mappings"
+   val MAPPING_REPOSITORY_URL = "/mediation/repositories/mappings"
 
-  "The mapping repository " should {
+   "The mapping repository " should {
 
-    /**
-     * Here we test that the mapping repository returns the list of existing
-     * mapping, by sending a GET a the repository URL, and checking that we retrieve
-     * a list (potentially empty)
-     */
-    "returns a list of existing mappings" in {
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
+      /**
+       * Here we test that the mapping repository returns the list of existing
+       * mapping, by sending a GET a the repository URL, and checking that we retrieve
+       * a list (potentially empty)
+       */
+      "returns a list of existing mappings" in {
+         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+            val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
+         }
+         val futureUrl = conduit.pipeline(Get(MAPPING_REPOSITORY_URL))
+         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
+            case l: List[String] => ok
+         }
       }
-      val futureUrl = conduit.pipeline(Get(MAPPING_REPOSITORY_URL))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case l: List[String] => ok
-      }
-    }
 
-    /**
-     * Here we POST a new mapping at repository URL. We ensure that the URL we get
-     * as an answer points effectively towards the mapping that we pushed
-     */
-    "store properly new mappings" in {
-      val formatter = new SimpleDateFormat("yyMMddHHmmss")
-      val mapping = new Mapping()
-      mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
+      /**
+       * Here we POST a new mapping at repository URL. We ensure that the URL we get
+       * as an answer points effectively towards the mapping that we pushed
+       */
+      "store properly new mappings" in {
+         val formatter = new SimpleDateFormat("yyMMddHHmmss")
+         val mapping = new Mapping()
+         mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
+         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+            val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
+         }
+         val futureUrl = conduit.pipeline(Post(MAPPING_REPOSITORY_URL, mapping))
+         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
+            case url: String => {
+               println("THE URL:" + url)
+               val conduit2 = new HttpConduit(httpClient, "localhost", 8080) {
+                  val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[MappingData] }
+               }
+               val futureModel = conduit2.pipeline(Get(url))
+               Await.result(futureModel, intToDurationInt(5) seconds) must beLike {
+                  case m: MappingData =>
+                     m must_== fromMapping(mapping)
+               }
+            }
+         }
       }
-      val futureUrl = conduit.pipeline(Post(MAPPING_REPOSITORY_URL, mapping))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case url: String => {
-          println("THE URL:" + url)
-          val conduit2 = new HttpConduit(httpClient, "localhost", 8080) {
-            val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[MappingData] }
-          }
-          val futureModel = conduit2.pipeline(Get(url))
-          Await.result(futureModel, intToDurationInt(5) seconds) must beLike {
-            case m: MappingData =>
-              m must_== fromMapping(mapping)
-          }
-        }
-      }
-    }
 
-  }
+      /**
+       * Provide an XML version of existing mapping at the URL ~/asXML
+       */
+      "provide conversion in XML for each mapping" in {
+         val formatter = new SimpleDateFormat("yyMMddHHmmss")
+         val mapping = new Mapping()
+         mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
+         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+            val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
+         }
+         val futureUrl = conduit.pipeline(Post(MAPPING_REPOSITORY_URL, mapping))
+         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
+            case url: String => {
+               println("THE URL:" + url)
+               val conduit2 = new HttpConduit(httpClient, "localhost", 8080) {
+                  val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[String] }
+               }
+               val futureModel = conduit2.pipeline(Get(url + "/asXML"))
+               Await.result(futureModel, intToDurationInt(5) seconds) must beLike {
+                  case s: String =>
+                     XML.loadString(s) must beLike {
+                        case n: Node => ok
+                     }
+               }
+            }
+         }
+      }
+
+   }
 
 }

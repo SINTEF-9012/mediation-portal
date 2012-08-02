@@ -40,6 +40,16 @@ class TestMapping extends SpecificationWithJUnit {
     t3.addAll(List(e1, e2))
   
     
+   "A sample mapping" should {
+	   
+	   "support conversions to XML" in {
+	      val expectation = <mediation><mapping source="x" targetIdentifier="y"/><mapping source="x" targetIdentifier="v"/></mediation>
+	      val xml = t2.toXml()
+	      xml must beEqualToIgnoringSpace(expectation)
+	   }
+	} 
+    
+    
    "Conversions" should {
 	  
 	  "not alter mappings " in {
@@ -109,6 +119,7 @@ class TestMapping extends SpecificationWithJUnit {
 	  }
 	  
   }
+  
     
   
 }
