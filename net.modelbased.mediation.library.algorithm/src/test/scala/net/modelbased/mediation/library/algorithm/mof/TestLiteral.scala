@@ -66,7 +66,7 @@ class TestLiteral extends SpecificationWithJUnit with TestElement with SampleLit
     }
     
     "have qualified name properly formatted" in {
-       literalA.qualifiedName must contain("/").when(literalA.container.isDefined)
+       literalA.qualifiedName must contain(".").when(literalA.container.isDefined)
     }
     
   }

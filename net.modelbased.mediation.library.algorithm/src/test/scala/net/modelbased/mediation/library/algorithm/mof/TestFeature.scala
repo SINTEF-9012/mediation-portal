@@ -75,7 +75,7 @@ class TestFeature extends SpecificationWithJUnit with TestElement with SampleFea
     }
     
     "have a qualified name that refer to the containing class" in {
-       theFeature.qualifiedName must contain("/").when(theFeature.container.isDefined)
+       theFeature.qualifiedName must contain(".").when(theFeature.container.isDefined)
     }
 
     "support change of its isOrdered property" in  {

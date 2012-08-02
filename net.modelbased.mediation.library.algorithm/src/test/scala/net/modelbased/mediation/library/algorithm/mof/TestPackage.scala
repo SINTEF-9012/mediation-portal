@@ -51,7 +51,7 @@ trait TestPackageable extends TestElement {
       }
       
       "have a non null qualified named" in {
-         thePackageable.qualifiedName must contain("/").when(thePackageable.container.isDefined)
+         thePackageable.qualifiedName must contain(".").when(thePackageable.container.isDefined)
       }
 
       "reject update container updates that creates duplicated package elements" in {

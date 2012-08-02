@@ -163,7 +163,7 @@ class Packageable(initialContainer: Package = null, initialName: String) extends
     * @inheritdoc
     */
    override def qualifiedName: String =
-      _container.map { c => c.qualifiedName + "/" }.getOrElse("") ++ name
+      _container.map { c => c.qualifiedName + "." }.getOrElse("") ++ name
 }
 
 /**
@@ -454,7 +454,7 @@ class Literal(initialContainer: Enumeration = null, initialName: String) extends
     * @inheritdoc
     */
    override def qualifiedName: String =
-      _container.map { x => x.qualifiedName + "/" }.getOrElse("") + name
+      _container.map { x => x.qualifiedName + "." }.getOrElse("") + name
 
    /**
     * @inheritdoc
@@ -733,7 +733,7 @@ class Feature(
    }
 
    override def qualifiedName: String =
-      _container.map { x => x.qualifiedName + "/" }.getOrElse("") + name
+      _container.map { x => x.qualifiedName + "." }.getOrElse("") + name
 
    /**
     * @inheritdoc
