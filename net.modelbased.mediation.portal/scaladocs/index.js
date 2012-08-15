@@ -1,0 +1,1 @@
+Index.PACKAGES = {"net" : [], "net.modelbased" : [], "net.modelbased.mediation" : [], "net.modelbased.mediation.portal" : [{"class" : "net\/modelbased\/mediation\/portal\/Boot.html", "name" : "net.modelbased.mediation.portal.Boot"}]};

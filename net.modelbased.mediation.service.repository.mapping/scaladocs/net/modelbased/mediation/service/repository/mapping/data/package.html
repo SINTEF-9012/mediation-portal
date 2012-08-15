@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>net.modelbased.mediation.service.repository.mapping.data</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../../../../../lib/template.css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../lib/package_big.png" />
+        <p id="owner"><a name="net" class="extype" href="../../../../../../package.html">net</a>.<a name="net.modelbased" class="extype" href="../../../../../package.html">modelbased</a>.<a name="net.modelbased.mediation" class="extype" href="../../../../package.html">mediation</a>.<a name="net.modelbased.mediation.service" class="extype" href="../../../package.html">service</a>.<a name="net.modelbased.mediation.service.repository" class="extype" href="../../package.html">repository</a>.<a name="net.modelbased.mediation.service.repository.mapping" class="extype" href="../package.html">mapping</a></p>
+        <h1>data</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">package</span>
+      <span class="symbol"> 
+        <span class="name">data</span>
+        
+        
+      </span>
+      </h4>
+      
+          <div class="fullcommenttop" id="comment"></div>
+        
+
+      <div id="template">
+
+        <div id="mbrsel">
+          <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+          
+          
+          <div id="visbl">
+              <span class="filtertype">Visibility</span>
+              <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+            </div>
+        </div>
+
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="net.modelbased.mediation.service.repository.mapping.data.Entry" data-isabs="false">
+      <a id="Entry:Entry"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="Entry.html"><span class="name">Entry</span></a>
+        
+        <span class="params">(<span name="source">source: String</span>, <span name="target">target: String</span>, <span name="degree">degree: Double</span>, <span name="origin">origin: String</span>, <span name="isValidated">isValidated: Boolean</span>)</span><span class="result"> extends Product with Serializable</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="net.modelbased.mediation.service.repository.mapping.data.Mapping" data-isabs="false">
+      <a id="Mapping:Mapping"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="Mapping.html"><span class="name">Mapping</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A simple mapping object that stores relationship between elements.</p>
+    </li><li visbl="pub" name="net.modelbased.mediation.service.repository.mapping.data.MappingData" data-isabs="false">
+      <a id="MappingData:MappingData"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="MappingData.html"><span class="name">MappingData</span></a>
+        
+        <span class="params">(<span name="uid">uid: String</span>, <span name="capacity">capacity: Int</span>, <span name="status">status: String</span>, <span name="entries">entries: List[Entry]</span>)</span><span class="result"> extends Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">This class is just a data container that enable the direct serialisation using
+Spray/JSON
+</p>
+    </li></ol>
+            </div>
+        
+        
+
+        <div class="values members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="net.modelbased.mediation.service.repository.mapping.data.Conversions" data-isabs="false">
+      <a id="Conversions:Conversions"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="Conversions$.html"><span class="name">Conversions</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol" data-isabs="false">
+      <a id="MappingJsonProtocol:MappingJsonProtocol"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="MappingJsonProtocol$.html"><span class="name">MappingJsonProtocol</span></a>
+        
+        <span class="result"> extends DefaultJsonProtocol</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.service.repository.mapping.data.Status" data-isabs="false">
+      <a id="Status:Status"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="Status$.html"><span class="name">Status</span></a>
+        
+        <span class="result"> extends Enumeration</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Describe the possible states in which a mapping object can be
+</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
+      </html>

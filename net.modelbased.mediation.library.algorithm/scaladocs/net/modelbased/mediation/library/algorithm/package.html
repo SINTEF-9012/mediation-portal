@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>net.modelbased.mediation.library.algorithm</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../../../lib/template.css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../lib/package_big.png" />
+        <p id="owner"><a name="net" class="extype" href="../../../../package.html">net</a>.<a name="net.modelbased" class="extype" href="../../../package.html">modelbased</a>.<a name="net.modelbased.mediation" class="extype" href="../../package.html">mediation</a>.<a name="net.modelbased.mediation.library" class="extype" href="../package.html">library</a></p>
+        <h1>algorithm</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">package</span>
+      <span class="symbol"> 
+        <span class="name">algorithm</span>
+        
+        
+      </span>
+      </h4>
+      
+          <div class="fullcommenttop" id="comment"></div>
+        
+
+      <div id="template">
+
+        <div id="mbrsel">
+          <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+          
+          
+          <div id="visbl">
+              <span class="filtertype">Visibility</span>
+              <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+            </div>
+        </div>
+
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="net.modelbased.mediation.library.algorithm.Computation" data-isabs="true">
+      <a id="Computation:Computation"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="Computation.html"><span class="name">Computation</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.Filter" data-isabs="false">
+      <a id="Filter:Filter"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="Filter.html"><span class="name">Filter</span></a>
+        
+        <span class="result"> extends MappingProcessor</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.MappingAggregator" data-isabs="true">
+      <a id="MappingAggregator:MappingAggregator"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="MappingAggregator.html"><span class="name">MappingAggregator</span></a>
+        
+        <span class="result"> extends (Set[Mapping]) ⇒ Mapping with Computation</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.MappingProcessor" data-isabs="true">
+      <a id="MappingProcessor:MappingProcessor"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="MappingProcessor.html"><span class="name">MappingProcessor</span></a>
+        
+        <span class="result"> extends (Mapping) ⇒ Mapping with Computation</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.Mediation" data-isabs="true">
+      <a id="Mediation:Mediation"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="Mediation.html"><span class="name">Mediation</span></a>
+        
+        <span class="result"> extends (Mapping, Model, Model) ⇒ Mapping with Computation</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.ModelAggregator" data-isabs="true">
+      <a id="ModelAggregator:ModelAggregator"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="ModelAggregator.html"><span class="name">ModelAggregator</span></a>
+        
+        <span class="result"> extends (Set[Model]) ⇒ Model with Computation</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.ModelProcessor" data-isabs="true">
+      <a id="ModelProcessor:ModelProcessor"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="ModelProcessor.html"><span class="name">ModelProcessor</span></a>
+        
+        <span class="result"> extends (Model) ⇒ Model with Computation</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.NotifiedComputation" data-isabs="true">
+      <a id="NotifiedComputation:NotifiedComputation"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="NotifiedComputation.html"><span class="name">NotifiedComputation</span></a>
+        
+        <span class="result"> extends Computation</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.Prune" data-isabs="false">
+      <a id="Prune:Prune"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="Prune.html"><span class="name">Prune</span></a>
+        
+        <span class="result"> extends ModelProcessor</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.RandomMatch" data-isabs="false">
+      <a id="RandomMatch:RandomMatch"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="RandomMatch.html"><span class="name">RandomMatch</span></a>
+        
+        <span class="result"> extends Mediation</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Implement a random match algorithm, which given two Mof models, outputs a random
+mapping between the types and elements declared in the two schemas.</p>
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.RandomXsdMediation" data-isabs="false">
+      <a id="RandomXsdMediation:RandomXsdMediation"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="RandomXsdMediation.html"><span class="name">RandomXsdMediation</span></a>
+        
+        <span class="result"> extends Mediation</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A simple random mediation between XSD files
+</p>
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.SyntacticMatch" data-isabs="false">
+      <a id="SyntacticMatch:SyntacticMatch"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SyntacticMatch.html"><span class="name">SyntacticMatch</span></a>
+        
+        <span class="result"> extends Mediation</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Match two MoF models based on the similarity between the name
+of the types they contain.</p>
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.SyntacticXsdMediation" data-isabs="false">
+      <a id="SyntacticXsdMediation:SyntacticXsdMediation"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SyntacticXsdMediation.html"><span class="name">SyntacticXsdMediation</span></a>
+        
+        <span class="result"> extends Mediation</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A basic syntactic matching between XSD files, based on the above Mof model
+syntactic matching
+</p>
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.Translate" data-isabs="false">
+      <a id="Translate:Translate"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="Translate.html"><span class="name">Translate</span></a>
+        
+        <span class="result"> extends ModelProcessor</span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+        
+        
+
+        <div class="values members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="net.modelbased.mediation.library.algorithm.Commons" data-isabs="false">
+      <a id="Commons:Commons"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="Commons$.html"><span class="name">Commons</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Defines the common library of the internal DSL describing composite mediations</p>
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.mof" data-isabs="false">
+      <a id="mof:mof"></a>
+      <h4 class="signature">
+      <span class="kind">package</span>
+      <span class="symbol"> 
+        <a href="mof/package.html"><span class="name">mof</span></a>
+        
+        
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="net.modelbased.mediation.library.algorithm.xsd" data-isabs="false">
+      <a id="xsd:xsd"></a>
+      <h4 class="signature">
+      <span class="kind">package</span>
+      <span class="symbol"> 
+        <a href="xsd/package.html"><span class="name">xsd</span></a>
+        
+        
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
+      </html>
