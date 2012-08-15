@@ -13,7 +13,7 @@
   </description>
 	<inceptionYear>2012</inceptionYear>
 
-  <url>http://mosser.github.com/mediation-portal</url>
+  <url>http://sintef-9012.github.com/mediation-portal/</url>
 
 	<developers>
 		<developer>
@@ -35,6 +35,15 @@
 		<url>scm:git:git@github.com:mosser/mediation-portal.git</url>
 		<developerConnection>scm:git:git@github.com:mosser/mediation-portal.git</developerConnection>
 	</scm>
+
+  <distributionManagement>
+    <site>
+      <id>local</id>
+      <name>local website</name>
+      <url>file:///tmp/mediation-portal/net.modelbased.mediation</url>
+      </site>
+    </distributionManagement>
+
 
 	<ciManagement>
 		<system>jenkins</system>
@@ -317,7 +326,7 @@
 								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
 								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 								<argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
-								<aggregate>true</aggregate>
+								<!-- <aggregate>true</aggregate> -->
 							</configuration>
         <reportSets>
           <reportSet>
