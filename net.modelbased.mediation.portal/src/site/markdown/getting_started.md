@@ -1,13 +1,9 @@
-# Mediation Framework #
-
-This is a simple console test of the markdown plugin for doxia! Let's how
-far we can go using it and markdown, maybe we can do some nice documentation
-with it!
+# Getting Started #
 
 
 Mediating between to models, (XML schemas so far) is a 3-step process:
 
-1. Publish the models that you want to mediate
+1. Publish the models that you want to mediate between
 2. Send a mediation request to the mediation portal
 3. (Optional) Evaluate the resulting mapping against an existing mapping
 
