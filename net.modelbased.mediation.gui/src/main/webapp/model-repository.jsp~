@@ -32,7 +32,7 @@
 
   <body>
 
-     <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -43,11 +43,12 @@
           <a class="brand" href="#">Mediation Portal</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active"><a href="index.jsp"><i class="icon-home icon-white"></i> Home</a></li>
-              <li><a href="repositories.jsp"><i class="icon-book icon-white"></i> Repositories</a></li>
-              <li><a href="mediator.jsp"><i class="icon-random icon-white"></i> Mediator</a></li>
-              <li><a href="comparator.jsp"><i class="icon-signal icon-white"></i> Comparator</a></li>
-              <li><a href="about.jsp"><i class="icon-user icon-white"></i> About</a></li>
+              <li class="active"><a href="index.jsp">Home</a></li>
+              <li><a href="repositories.jsp">Respositories</a></li>
+              <li><a href="#">Mediator</a></li>
+              <li><a href="#">Comparator</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -56,32 +57,22 @@
 
     <div class="container">
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <h1>Mediation Portal <small>v0.1 - SINTEF ICT</small></h1>
-        <p>This Mediation Portal, developped by SINTEF, let you manipulate data models in various format (XSD, MOF, etc.), generates mappings between data elements, and or compare the effectiveness of various data mediation algorithms.</p>
-        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-      </div>
-
-      <!-- Example row of columns -->
-      <div class="row">
-	   <div class="span4">
-          <h2>Repositories</h2>
-          <p>The Mediation Portal comes with three main repository, which can be used to store data models, mappings between data models, or comparison of mappings</p>
-          <p><a class="btn" href="repositories.jsp">Try now &raquo;</a></p>
-        </div>
-        <div class="span4">
-          <h2>Mediator Service</h2>
-           <p>Given two data models, the mediator service will help you find which element of both models are equivalent. The mediator service will help you try out various existing mediation algorithms provided.</p>
-          <p><a class="btn" href="mediator.jsp">Try now &raquo;</a></p>
-        </div>
-        <div class="span4">
-          <h2>Comparator Service</h2>
-           <p>Obtaining statistics about the effectiveness of a given mediation algorithm is also possible through the use of the comparator service. Assuming, you already knows what is the proper mapping between two data models, the comparator service will provide you with statistics (precision, recall, f-measure) describing the effectiveness of a given mediation algorithm.</p>
-          <p><a class="btn" href="#">Try now &raquo;</a></p>
-       </div>
-      </div>
-
+        <ul class="nav nav-tabs">
+    <li class="active">
+    <a href="#models">Models</a>
+    </li>
+    <li><a href="#">...</a></li>
+    <li><a href="#">...</a></li>
+    </ul>
+	
+	
+	<div class="tab-content">
+		<div class="tab-pane active" id="home">...</div>
+<div class="tab-pane" id="profile">...</div>
+<div class="tab-pane" id="messages">...</div>
+<div class="tab-pane" id="settings">...</div>
+</div>
+	
       <hr>
 
       <footer>
