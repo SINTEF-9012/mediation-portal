@@ -40,15 +40,15 @@ import net.modelbased.mediation.library.algorithm.Commons._
 class TestSyntacticMatch extends SpecificationWithJUnit with SampleXsdMediations {
 
   val xsd = Utility.trim(XML.loadFile("src/test/resources/schemas/article.xsd"))
-  val source = new Model("source", xsd.toString)
-  val target = new Model("target", Utility.trim(XML.loadFile("src/test/resources/schemas/document.xsd")).toString)
+  val source = new Model("source", "sample data model describing scientific articles", "text/xsd", xsd.toString)
+  val target = new Model("target","sample data model describing documents", "text/xsd", Utility.trim(XML.loadFile("src/test/resources/schemas/document.xsd")).toString)
 
   
   "A Syntactic mediation" should {
 
     "return a mapping for all features and all types" in {
       val m = syntacticMediation(new Mapping(), source, target)
-      //println(m)
+      println(m)
       val expected = (xsd \\ "complexType").size + (xsd \\ "element").size + 1 // +1 for the schema itself (considered as en element)
       m.size must_== expected
     }

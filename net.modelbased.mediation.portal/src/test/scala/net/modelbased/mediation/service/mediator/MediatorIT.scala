@@ -68,12 +68,22 @@ class MediatorIT extends SpecificationWithJUnit with HttpSpraySupport {
   val targetXsd = XML.load("src/test/resources/schemas/article.xsd")
 
   "The Mediator" should {
+     
+     
+     "return the list of available algorithms" in {
+      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+    	  val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
+      }
+      val futureUrl = conduit.pipeline(Get(Urls.MEDIATOR ++ "/algorithms", None))
+      Await.result(futureUrl, intToDurationInt(5) seconds) must not beEmpty
+     }
+     
 
     "populate the mapping repository" in {
       // Push the source model
       println("Pushing the source model")
       val formatter = new SimpleDateFormat("yyMMddHHmmssSS")
-      val source = new Model(modelName + formatter.format(new java.util.Date()), sourceXsd.toString())
+      val source = new Model(modelName + formatter.format(new java.util.Date()), "A sample data model describing documents", "text/xsd", sourceXsd.toString())
       val conduit = new HttpConduit(httpClient, "localhost", 8080) {
         val pipeline = { simpleRequest[Model] ~> sendReceive ~> unmarshal[String] }
       }
@@ -84,7 +94,7 @@ class MediatorIT extends SpecificationWithJUnit with HttpSpraySupport {
           // We push the target model
           println("OK, URL = " + url)
           println("Pushing the target model")
-          val target = new Model(modelName + formatter.format(new java.util.Date()), targetXsd.toString())
+          val target = new Model(modelName + formatter.format(new java.util.Date()),  "A sample data model describing article", "text/xsd", targetXsd.toString())
           val conduit = new HttpConduit(httpClient, "localhost", 8080) {
             val pipeline = { simpleRequest[Model] ~> sendReceive ~> unmarshal[String] }
           }

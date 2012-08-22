@@ -36,8 +36,8 @@ import net.modelbased.mediation.library.algorithm.Commons._
 class TestRandomMatch extends SpecificationWithJUnit with SampleXsdMediations {
 
   val xsd = Utility.trim(XML.loadFile("src/test/resources/schemas/article.xsd"))
-  val source = new Model("source", xsd.toString)
-  val target = new Model("target", Utility.trim(XML.loadFile("src/test/resources/schemas/document.xsd")).toString)	
+  val source = new Model("source", "sample data model describing scientific articles", "text/xsd", xsd.toString)
+  val target = new Model("target", "sample data model describing documents", "text/xsd", Utility.trim(XML.loadFile("src/test/resources/schemas/document.xsd")).toString)	
  
  
   "A RandomMatch" should {

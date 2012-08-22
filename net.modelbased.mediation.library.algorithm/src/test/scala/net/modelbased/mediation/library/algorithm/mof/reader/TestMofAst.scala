@@ -127,6 +127,20 @@ class TestMofAst extends SpecificationWithJUnit with SampleMofAst {
          weekDays.parent must beSome.which { n => n == data }
       }
 
+      "support adding and deleting elements" in {
+         val newClass = new ClassNode(None, "TheNewClass") 
+         data.addElement(newClass)
+         data.elements must contain(newClass)
+         data.deleteElement(newClass)
+         data.elements must not contain(newClass)
+      }
+
+      "have newly added class node as elements" in {
+         val newClass = new ClassNode(None, "TheNewClass")
+         data.addChild(newClass)
+         data.elements must contain(newClass)
+      }
+
       "be the ancestor of its indirect elements" in {
          weekDays.isAncestorOf(saturday) must beTrue
          weekDays.isAncestorOf(sunday) must beTrue
@@ -157,6 +171,21 @@ class TestMofAst extends SpecificationWithJUnit with SampleMofAst {
          saturday.parent must beSome.which { n => n == weekDays }
          sunday.parent must beSome.which { n => n == weekDays }
       }
+      
+      
+      "support adding/deleting literals" in {
+         val newLiteral = new LiteralNode(None, "Manchedi")
+         weekDays.addLiteral(newLiteral)
+         weekDays.literals must contain(newLiteral)
+         weekDays.deleteLiteral(newLiteral)
+         weekDays.literals must not contain(newLiteral)
+      }
+      
+      "be the parent of newly added literals" in {
+         val newLiteral = new LiteralNode(None, "Manchedi")
+         weekDays.addLiteral(newLiteral)
+         weekDays.children must contain(newLiteral)
+      }
 
    }
 
@@ -186,6 +215,20 @@ class TestMofAst extends SpecificationWithJUnit with SampleMofAst {
 
       "be the parent of its features" in {
          previous.parent must beSome.which { n => n == element }
+      }
+      
+      "support adding/deleting features" in {
+         val theFeature = new FeatureNode(None, "aNewFeature", new Reference("string"), 1, Some(1), false, false, None)
+         element.addFeature(theFeature)
+         element.features must contain(theFeature)
+         element.deleteFeature(theFeature)
+         element.features must not contain(theFeature)
+      }
+      
+      "be the parent of the newly added feature" in {
+         val theFeature = new FeatureNode(None, "aNewFeature", new Reference("string"), 1, Some(1), false, false, None)
+         element.addFeature(theFeature)
+         element.children must contain(theFeature)
       }
 
       "have a isAbstract property" in {

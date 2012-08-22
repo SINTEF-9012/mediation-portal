@@ -52,7 +52,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
          val oracleFile = home + "enumeration-expected.xsd"
          val input = Utility.trim(XML.loadString(Source.fromFile(inputFile).mkString))
          val expected = Utility.trim(XML.loadString(Source.fromFile(oracleFile).mkString))
-         val result = clean(new Model("input", input.toString))
+         val result = clean(new Model("input", "sample test model", "text/xsd", input.toString))
          val actual = Utility.trim(XML.loadString(result.content))
          actual must beEqualToIgnoringSpace(expected)   
       }
@@ -63,7 +63,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
          val oracleFile = home + "sequence-expected.xsd"
          val input = Utility.trim(XML.loadString(Source.fromFile(inputFile).mkString))
          val expected = Utility.trim(XML.loadString(Source.fromFile(oracleFile).mkString))
-         val result = clean(new Model("input", input.toString))
+         val result = clean(new Model("input", "sample test model", "text/xsd", input.toString))
          val actual = Utility.trim(XML.loadString(result.content))
          actual must beEqualToIgnoringSpace(expected)
       }
@@ -73,7 +73,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
          val oracleFile = home + "choice-expected.xsd"
          val input = Utility.trim(XML.loadString(Source.fromFile(inputFile).mkString))
          val expected = Utility.trim(XML.loadString(Source.fromFile(oracleFile).mkString))
-         val result = clean(new Model("input", input.toString))
+         val result = clean(new Model("input", "sample test model", "text/xsd", input.toString))
          val actual = Utility.trim(XML.loadString(result.content))
          actual must beEqualToIgnoringSpace(expected)
       }
@@ -83,7 +83,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
          val oracleFile = home + "all-expected.xsd"
          val input = Utility.trim(XML.loadString(Source.fromFile(inputFile).mkString))
          val expected = Utility.trim(XML.loadString(Source.fromFile(oracleFile).mkString))
-         val result = clean(new Model("input", input.toString))
+         val result = clean(new Model("input", "sample test model", "text/xsd", input.toString))
          val actual = Utility.trim(XML.loadString(result.content))
          actual must beEqualToIgnoringSpace(expected)
       }
@@ -93,7 +93,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
          val oracleFile = home + "extension-expected.xsd"
          val input = Utility.trim(XML.loadString(Source.fromFile(inputFile).mkString))
          val expected = Utility.trim(XML.loadString(Source.fromFile(oracleFile).mkString))
-         val result = clean(new Model("input", input.toString))
+         val result = clean(new Model("input", "sample test model", "text/xsd", input.toString))
          val actual = Utility.trim(XML.loadString(result.content))
          actual must beEqualToIgnoringSpace(expected)
       }
@@ -103,7 +103,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
          val oracleFile = home + "nested-expected.xsd"
          val input = Utility.trim(XML.loadString(Source.fromFile(inputFile).mkString))
          val expected = Utility.trim(XML.loadString(Source.fromFile(oracleFile).mkString))
-         val result = clean(new Model("input", input.toString))
+         val result = clean(new Model("input", "sample test model", "text/xsd", input.toString))
          val actual = Utility.trim(XML.loadString(result.content))
          actual must beEqualToIgnoringSpace(expected)
       }
@@ -113,7 +113,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
          val oracleFile = home + "nested-expected.xsd"
          val input = Utility.trim(XML.loadString(Source.fromFile(inputFile).mkString))
          val expected = Utility.trim(XML.loadString(Source.fromFile(oracleFile).mkString))
-         val result = clean(new Model("input", input.toString))
+         val result = clean(new Model("input", "sample test model", "text/xsd", input.toString))
          val actual = Utility.trim(XML.loadString(result.content))
          actual must beEqualToIgnoringSpace(expected)
 
@@ -129,7 +129,7 @@ class TestXsdCleaner extends SpecificationWithJUnit {
                       </simpleType>
                       <element name="foo" type="Currency"/>
                    </schema>
-          val result = clean(new Model("input", Utility.trim(input).toString))
+          val result = clean(new Model("input", "sample test model", "text/xsd", Utility.trim(input).toString))
           val actual = Utility.trim(XML.loadString(result.content))
           actual must beEqualToIgnoringSpace(input) 
       }

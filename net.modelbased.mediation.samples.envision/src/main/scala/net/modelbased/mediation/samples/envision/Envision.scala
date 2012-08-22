@@ -46,7 +46,7 @@ class ModelAggregation extends Function[List[Model], Model] {
           acc ++ nodes
       }
     } </xs:schema>
-    new Model("aggregation", schema.toString())
+    new Model("aggregation", "Aggregated model from " + models.map{ x => x.name }.mkString(", "), "text/xsd", schema.toString())
   }
  
 }	

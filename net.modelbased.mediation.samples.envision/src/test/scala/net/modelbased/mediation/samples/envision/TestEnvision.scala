@@ -41,9 +41,9 @@ import net.modelbased.mediation.service.repository.model.data.Model
 class TestEnvision extends SpecificationWithJUnit {
 
   val envision: Envision = new Envision()
-  val source1: Model = new Model("SOS", Source.fromFile("src/test/resources/source-SOS-SINTEF.xsd").mkString)
-  val source2: Model = new Model("WFS", Source.fromFile("src/test/resources/source-WFS-SINTEF.xsd").mkString)
-  val target: Model = new Model("WPS", Source.fromFile("src/test/resources/target-WPS-SINTEF.xsd").mkString)
+  val source1: Model = new Model("SOS", "SOS data model", "text/xsd", Source.fromFile("src/test/resources/source-SOS-SINTEF.xsd").mkString)
+  val source2: Model = new Model("WFS", "WFS data model", "text/xsd", Source.fromFile("src/test/resources/source-WFS-SINTEF.xsd").mkString)
+  val target: Model = new Model("WPS", "WPS data model", "text/xsd", Source.fromFile("src/test/resources/target-WPS-SINTEF.xsd").mkString)
 
   "The ENVISION framework" should {
 

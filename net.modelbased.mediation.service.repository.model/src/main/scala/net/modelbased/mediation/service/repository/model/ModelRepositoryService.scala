@@ -31,57 +31,69 @@ import cc.spray.directives.PathElement
 
 trait ModelRepositoryService extends SensAppService {
 
-  override implicit lazy val partnerName = "model-repository"
+   override implicit lazy val partnerName = "model-repository"
 
-  val service = {
-    path("mediation" / "repositories" / "models") {
-      get { context =>
-        val uris = (_registry retrieve (List())) map { e => URLHandler.build("/mediation/repositories/models/" + e.name) }
-        context complete uris
-      } ~
-        post {
-          content(as[Model]) { model =>
-            context =>
-              if (_registry exists ("name", model.name)) {
-                context fail (StatusCodes.Conflict, "A Model identified as [" + model.name + "] already exists!")
-              } else {
-                _registry push model
-                context complete (StatusCodes.Created, URLHandler.build("/mediation/repositories/models/" + model.name))
-              }
-          }
-        } ~ cors("GET", "POST")
-    } ~
-      path("mediation" / "repositories" / "models" / PathElement) { name =>
-        get { context =>
-          ifExists(context, name, { context complete (_registry pull ("name", name)).get })
-        } ~
-          delete { context =>
-            ifExists(context, name, {
-              val model = _registry pull ("name", name)
-              _registry drop model.get
-              context complete "true"
-            })
-          } ~
-          put {
-            content(as[String]) { data =>
-              context =>
-                ifExists(context, name, {
-                  val model = (_registry pull ("name", name)).get
-                  model.content = data
-                  _registry push model
-                  context complete model
-                })
+   val service = {
+      path("mediation" / "repositories" / "models") {
+         get {
+            parameter("flatten" ? false) {
+               flatten =>
+                  context =>
+                     val contents = _registry.retrieve(List())
+                     if (flatten) {
+                        contents
+                     }
+                     else {
+                        val uris = contents.map { e => URLHandler.build("/mediation/repositories/models/" + e.name) }
+                        context complete uris
+
+                     }
             }
-          } ~ cors("GET", "DELETE", "PUT")
-      }
-  }
+         } ~
+            post {
+               content(as[Model]) { model =>
+                  context =>
+                     if (_registry exists ("name", model.name)) {
+                        context fail (StatusCodes.Conflict, "A Model identified as [" + model.name + "] already exists!")
+                     }
+                     else {
+                        _registry push model
+                        context complete (StatusCodes.Created, URLHandler.build("/mediation/repositories/models/" + model.name))
+                     }
+               }
+            } ~ cors("GET", "POST")
+      } ~
+         path("mediation" / "repositories" / "models" / PathElement) { name =>
+            get { context =>
+               ifExists(context, name, { context complete (_registry pull ("name", name)).get })
+            } ~
+               delete { context =>
+                  ifExists(context, name, {
+                     val model = _registry pull ("name", name)
+                     _registry drop model.get
+                     context complete "true"
+                  })
+               } ~
+               put {
+                  content(as[String]) { data =>
+                     context =>
+                        ifExists(context, name, {
+                           val model = (_registry pull ("name", name)).get
+                           model.content = data
+                           _registry push model
+                           context complete model
+                        })
+                  }
+               } ~ cors("GET", "DELETE", "PUT")
+         }
+   }
 
-  private[this] val _registry = new ModelRegistry()
+   private[this] val _registry = new ModelRegistry()
 
-  private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
-    if (_registry exists ("name", id))
-      lambda
-    else
-      context fail (StatusCodes.NotFound, "Unknown model [" + id + "]")
-  }
+   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
+      if (_registry exists ("name", id))
+         lambda
+      else
+         context fail (StatusCodes.NotFound, "Unknown model [" + id + "]")
+   }
 }

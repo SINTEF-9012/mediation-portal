@@ -70,7 +70,7 @@ class XsdToMof extends ModelProcessor {
       val packageName = if (prefix == null) input.name else prefix
       val content = "package %s { %s %s }".format(packageName, typeDefinition, schemaClass)
 
-      return new Model(input.name + " (as MOF)", content)
+      return new Model(input.name + " (as MOF)", input.description, "text/mof", content)
 
    }
 

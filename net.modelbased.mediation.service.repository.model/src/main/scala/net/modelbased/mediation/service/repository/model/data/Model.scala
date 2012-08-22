@@ -29,13 +29,13 @@ import net.modelbased.sensapp.library.datastore._
 /**
  * Model artifacts to be stored in the mediation portal
  */
-case class Model(val name: String, var content: String)
+case class Model(val name: String, val description: String, val kind: String, var content: String)
 
 /**
  * Spray support for JSON serialization
  */
 object ModelJsonProtocol extends DefaultJsonProtocol {
-  implicit val modelFormat = jsonFormat(Model, "name", "content")
+  implicit val modelFormat = jsonFormat(Model, "name", "description", "kind", "content")
 }
 
 

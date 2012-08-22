@@ -47,7 +47,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
          val xsd = <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="pouet" xmlns:tns="pouet" xmlns:xs="http://www.w3.org/2001/XMLSchema">
                       <element name="foo" type="xs:string"/>
                    </schema>
-         val model = new Model("test", xsd.toString)
+         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
          val result = convert(model)
          //println(result.content)
          mof.readPackage(result.content) must beRight.like {
@@ -68,7 +68,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
      
       "properly handle simple elements at the root level" in {
          val xsd = <schema><element name="foo" type="string"/></schema>
-         val model = new Model("test", xsd.toString)
+         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
          val result = convert(model)
          //println(result.content)
          mof.readPackage(result.content) must beRight.like {
@@ -93,7 +93,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
                </complexType>
                <element name="foo" type="Foo"/>
             </schema>
-         val model = new Model("test", xsd.toString)
+         val model = new Model("test","sample test model", "text/xsd",  xsd.toString)
          val result = convert(model)
          //println(result.content)
          mof.readPackage(result.content) must beRight.like {
@@ -128,7 +128,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
                </complexType>
                <element name="foo" type="Foo"/>
             </schema>
-         val model = new Model("test", xsd.toString)
+         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
          val result = convert(model)
          //println(result.content)
          mof.readPackage(result.content) must beRight.like {
@@ -170,7 +170,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
                </complexType>
                <element name="foo" type="Foo"/>
             </schema>
-         val model = new Model("test", xsd.toString)
+         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
          val result = convert(model)
          //println(result.content)
          mof.readPackage(result.content) must beRight.like {
@@ -208,7 +208,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
                       </complexType>
                       <element name="foo" type="Foo"/>
                    </schema>
-         val model = new Model("test", xsd.toString)
+         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
          val result = convert(model)
          mof.readPackage(result.content) must beRight.like {
             case p: Package =>
@@ -240,7 +240,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
                       </complexType>
                       <element name="foo" type="Foo"/>
                    </schema>
-         val model = new Model("test", xsd.toString)
+         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
          val result = convert(model)
          mof.readPackage(result.content) must beRight.like {
             case p: Package =>
@@ -281,7 +281,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
                    </complexType>
                    <element name="foo" type="Foo"/>
                 </schema>
-      val model = new Model("test", xsd.toString)
+      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
       val result = convert(model)
       mof.readPackage(result.content) must beRight.like {
          case p: Package =>
@@ -317,7 +317,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
             </complexType>
             <element name="foo" type="Foo"/>
          </schema>
-      val model = new Model("test", xsd.toString)
+      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
       val result = convert(model)
       //println(result.content)
       mof.readPackage(result.content) must beRight.like {
@@ -352,7 +352,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
             </complexType>
             <element name="foo" type="Foo"/>
          </schema>
-      val model = new Model("test", xsd.toString)
+      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
       val result = convert(model)
       //println(result.content)
       mof.readPackage(result.content) must beRight.like {
@@ -394,7 +394,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
             </complexType>
             <element name="foo" type="Foo"/>
          </schema>
-      val model = new Model("test", xsd.toString)
+      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
       val result = convert(model)
       //println(result.content)
       mof.readPackage(result.content) must beRight.like {
@@ -434,7 +434,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
                    </simpleType>
                    <element name="foo" type="Currency"/>
                 </schema>
-      val model = new Model("test", xsd.toString)
+      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
       val result = convert(model)
       //println(result.content)
       mof.readPackage(result.content) must beRight.like {

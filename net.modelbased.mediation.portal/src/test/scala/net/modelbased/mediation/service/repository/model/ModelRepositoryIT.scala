@@ -81,7 +81,7 @@ class ModelRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
      */
     "Store a new model properly" in {
       val formatter = new SimpleDateFormat("yyMMddHHmmss")
-      val model = new Model(modelName + formatter.format(new java.util.Date()), xsd.toString())
+      val model = new Model(modelName + formatter.format(new java.util.Date()),  "A sample data model describing documents", "text/xsd", xsd.toString())
       val conduit = new HttpConduit(httpClient, "localhost", 8080) {
         val pipeline = { simpleRequest[Model] ~> sendReceive ~> unmarshal[String] }
       }

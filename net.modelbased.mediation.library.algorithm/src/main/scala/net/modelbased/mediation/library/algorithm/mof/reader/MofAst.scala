@@ -268,12 +268,41 @@ class Node(initialParent: Option[Node] = None, val isScope: Boolean, val symbol:
  *
  * @since 0.0.1
  */
-class PackageNode(thePackage: Option[Node] = None, val name: String, val elements: Seq[Node] = Seq.empty) extends Node(thePackage, true, Some(name)) {
+class PackageNode(thePackage: Option[Node] = None, val name: String, initialElements: Seq[Node] = Seq.empty) extends Node(thePackage, true, Some(name)) {
+   initialElements.foreach { e => e.parent = Some(this) }
 
-   elements.foreach { e => e.parent = Some(this) }
+   /**
+    * @return the list of elements defined for this package node
+    */
+   def elements: Seq[Node] =
+      children.filter { c =>
+         c.isInstanceOf[ClassNode] ||
+            c.isInstanceOf[EnumerationNode] ||
+            c.isInstanceOf[PrimitiveTypeNode] ||
+            c.isInstanceOf[PackageNode]
+      }
+
+   /**
+    * Add a given element in the package node
+    *
+    * @param newElement the new element to add in this package node
+    */
+   def addElement(newElement: Node) =
+      this.addChild(newElement)
+
+   /**
+    * Delete a given element from the elements of this package
+    *
+    * @param the element to delete from this package
+    */
+   def deleteElement(element: Node) =
+      deleteChild(element)
 
    var modelElement: Option[Package] = None
 
+   /**
+    * @inheritdoc
+    */
    override def accept[I, O](visitor: AstVisitor[I, O], input: I): O = {
       visitor.visitPackageNode(this, input)
    }
@@ -288,10 +317,37 @@ class PackageNode(thePackage: Option[Node] = None, val name: String, val element
  */
 class EnumerationNode(var thePackage: Option[Node] = None,
                       val name: String,
-                      val literals: Seq[LiteralNode] = Seq.empty) extends Node(thePackage, true, Some(name)) {
-   literals.foreach { l => l.parent = Some(this) }
+                      initialLiterals: Seq[LiteralNode] = Seq.empty) extends Node(thePackage, true, Some(name)) {
+   initialLiterals.foreach { l => l.parent = Some(this) }
 
    var modelElement: Option[Enumeration] = None
+
+   /**
+    * @return the list of literal nodes defined for this enumerations node
+    */
+
+   def literals: Seq[LiteralNode] = {
+      children.filter { c => c.isInstanceOf[LiteralNode] }.map { x => x.asInstanceOf[LiteralNode] }
+   }
+
+   /**
+    * Add a new literal node to this enumeration. This new literal will also
+    * appears in the children of the node
+    *
+    * @param newLiteral the new literalNode to add to this enumeration
+    */
+   def addLiteral(newLiteral: LiteralNode) = {
+      addChild(newLiteral)
+   }
+
+   /**
+    * Delete a given literalNode from this enumeration
+    *
+    * @param literal the literal node to delete from this enumeration
+    */
+   def deleteLiteral(literal: LiteralNode) = {
+      deleteChild(literal)
+   }
 
    override def accept[I, O](visitor: AstVisitor[I, O], input: I): O = {
       visitor.visitEnumerationNode(this, input)
@@ -326,11 +382,34 @@ class LiteralNode(var theEnumeration: Option[Node] = None, val name: String) ext
 class ClassNode(var thePackage: Option[Node] = None,
                 val name: String,
                 val isAbstract: Boolean = false,
-                val features: Seq[FeatureNode],
+                initialFeatures: Seq[FeatureNode] = Seq.empty,
                 val superClasses: Seq[Reference] = Seq.empty) extends Node(thePackage, true, Some(name)) {
-   features.foreach { f => f.parent = Some(this) }
+   initialFeatures.foreach { f => f.parent = Some(this) }
 
    var modelElement: Option[Class] = None
+
+   /**
+    * @return all the featureNodes attached to this class node
+    */
+   def features: Seq[FeatureNode] =
+      children.filter { c => c.isInstanceOf[FeatureNode] }.map { c => c.asInstanceOf[FeatureNode] }
+
+   /**
+    * Add a new featureNode to this class node
+    *
+    * @param newFeature the new featureNode to add to this class node
+    */
+   def addFeature(newFeature: FeatureNode) =
+      addChild(newFeature)
+      
+   
+   /**
+    * Delete a given feature node from the feature of this class node
+    * 
+    * @param feature the feature node to delete
+    */
+   def deleteFeature(feature: FeatureNode) =
+      deleteChild(feature)
 
    override def accept[I, O](visitor: AstVisitor[I, O], input: I): O = {
       visitor.visitClassNode(this, input)

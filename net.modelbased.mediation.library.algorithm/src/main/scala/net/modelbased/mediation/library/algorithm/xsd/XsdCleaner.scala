@@ -47,7 +47,7 @@ class XsdCleaner extends ModelProcessor {
       counter = 0
       val schema = Utility.trim(XML.loadString(model.content))
       val (_, contents) = process(schema)
-      new Model(model.name, contents.toString())
+      new Model(model.name, model.description, model.kind, contents.toString())
    }
 
    private[this] def process(node: NodeSeq): (NodeSeq, NodeSeq) =
