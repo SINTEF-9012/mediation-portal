@@ -7,27 +7,24 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <!-- Le styles -->
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
+    <!-- Le style -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet"/>
+    <style>
       body {
-      padding-top: 60px;
-      padding-bottom: 40px;
+         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
+      .centered { vertical-align:middle; text-align:center; }
     </style>
-    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet"/>
+    <link href="bootstrap/css/DT_bootstrap.css" rel="stylesheet"/>
+    <link href="DataTables-1.9.1/media/css/demo_page.css" rel="stylesheet"/>
 
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="bootstrap/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="bootstrap/img/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="bootstrap/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
+
   </head>
 
   <body>
@@ -43,11 +40,11 @@
           <a class="brand" href="#">Mediation Portal</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active"><a href="index.jsp"><i class="icon-home icon-white"></i> Home</a></li>
+              <li><a href="index.jsp"><i class="icon-home icon-white"></i> Home</a></li>
               <li><a href="repositories.jsp"><i class="icon-book icon-white"></i> Repositories</a></li>
-              <li><a href="mediator.jsp"><i class="icon-random icon-white"></i> Mediator</a></li>
+              <li class="active"><a href="mediator.jsp"><i class="icon-random icon-white"></i> Mediator</a></li>
               <li><a href="comparator.jsp"><i class="icon-signal icon-white"></i> Comparator</a></li>
-              <li><a href="about.jsp"><i class="icon-star icon-white"></i> About</a></li>
+              <li><a href="about.jsp"><i class="icon-user icon-white"></i> About</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -64,20 +61,18 @@
       <!-- View for the model repository -->
       <div class="container-fluid">
 	<div class="row-fluid">
-	  <div class="span4">
+	  <div class="span3">
 	    <!--Sidebar content-->
 	    <form class="well">
 	      <h3>Mediation Request</h3>
-	      <!-- <div class="alert alert-info">
-		   <button class="close" data-dismiss="alert">×</button>
-		   <strong>Info!</strong> Specify the models and algorithms you need in your mediation</div> -->
+	      <p class="help-block"><strong>Note:</strong> Use the form below to specify the mediation you need to initiate.</p>
 	      <fieldset>
 		<div class="controlup">
 		  <label class="control-label">Source Model:</label>
 		  <div class="controls docs-input-sizes">
 		    <select class="span10" >
-		      <option>Model 1</option>
-		      <option>Model 2</option>
+		      <option>samples-article</option>
+		      <option>samples-document</option>
 		      <option>Model 3</option>
 		      <option>Model 4</option>
 		      <option>Model 5</option>
@@ -88,8 +83,8 @@
 		  <label class="control-label">Target Model:</label>
 		  <div class="controls docs-input-sizes">
 		    <select class="span10">
-		      <option>Model 1</option>
-		      <option>Model 2</option>
+		      <option>samples-document</option>
+		      <option>samples-article</option>
 		      <option>Model 3</option>
 		      <option>Model 4</option>
 		      <option>Model 5</option>
@@ -112,37 +107,244 @@
 	      </fieldset>
 	    </form>
 	  </div>
-	  <div class="span8">
+	  <div class="span9">
 	    <h3>Resulting Matches</h3>
-	    <table class="table table-striped">  
+	    <p class="help-block"><strong>Note:</strong> Below are the resulting matches detected by the mediation framework.</p>
+	    <table class="table table-striped" id="results">  
 	      <thead>  
 		<tr>  
 		  <th>Source Element</th>  
 		  <th>Target Element</th>  
 	 	  <th>Similarity</th>
-	 	  <th>Confirmed</th>  
+	 	  <th>Valid?</th>  
 		</tr>  
 	      </thead>  
 	      <tbody>  
 		<tr>  
-		  <td>OTA XSD</td>  
-		  <td>Rammohan </td>  
-		  <td>10.56</td>  
-		  <td>No</td>
+		  <td>Author</td>  
+		  <td>Author</td>  
+		  <td>100.00</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
 		</tr>  
 		<tr>  
-		  <td>002</td>  
-		  <td>Smita</td>  
+		  <td>Author/firstName</td>  
+		  <td>Author/family_name</td>  
+		  <td>78.67</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Author/surname</td>  
+		  <td>Author/givenname</td>  
+		  <td>87.50</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Author/email</td>  
+		  <td>Author/givenname</td>  
+		  <td>43.75</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
 		  <td>56.45</td>  
-		  <td>No</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
 		</tr>  
 		<tr>  
-		  <td>003</td>  
-		  <td>Rabindranath</td>  
-		  <td>97.45</td>  
-		  <td>Yes</td>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
 		</tr>  
-	      </tbody>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+		<tr>  
+		  <td>Paragraph/body</td>  
+		  <td>Element/body</td>  
+		  <td>56.45</td>  
+		  <td>
+		    <div class="btn-group" data-toggle="buttons-radio">
+		      <button class="btn btn-mini"><i class="icon-question-sign"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-up"></i></button>
+		      <button class="btn btn-mini"><i class="icon-thumbs-down"></i></button>
+		    </div>
+		  </td>
+		</tr>  
+	      </tbody>
+	      <tfoot>  
+		<tr>  
+		  <th>Source Element</th>  
+		  <th>Target Element</th>  
+	 	  <th>Similarity</th>
+	 	  <th>Valid?</th>
+		</tr>  
+	      </tfoot>  
 	    </table>
 	  </div>
 	</div>	
@@ -159,7 +361,10 @@
     <!-- Le javascript
 	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
+
+    <script src="javascripts/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="./DataTables-1.9.1/media/js/jquery.dataTables.js"></script>
+
     <script src="bootstrap/js/bootstrap-transition.js"></script>
     <script src="bootstrap/js/bootstrap-alert.js"></script>
     <script src="bootstrap/js/bootstrap-modal.js"></script>
@@ -172,13 +377,9 @@
     <script src="bootstrap/js/bootstrap-collapse.js"></script>
     <script src="bootstrap/js/bootstrap-carousel.js"></script>
     <script src="bootstrap/js/bootstrap-typeahead.js"></script>
-    <script scr="javascripts/jquery-1.7.2.min.js"></script>
+    <script src="bootstrap/js/DT_bootstrap.js"></script>
 
-    <script>
-      $(function () {
-      $('#myTab a:last').tab('show');
-      })
-    </script>
+    <script type="text/javascript" src="javascripts/mediator.js"></script>
 
   </body>
 </html>

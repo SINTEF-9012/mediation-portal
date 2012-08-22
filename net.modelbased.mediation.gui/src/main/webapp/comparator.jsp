@@ -49,7 +49,7 @@
               <li><a href="repositories.jsp"><i class="icon-book icon-white"></i> Repositories</a></li>
               <li><a href="mediator.jsp"><i class="icon-random icon-white"></i> Mediator</a></li>
               <li><a href="comparator.jsp"><i class="icon-signal icon-white"></i> Comparator</a></li>
-              <li><a href="about.jsp"><i class="icon-star icon-white"></i> About</a></li>
+              <li><a href="about.jsp"><i class="icon-user icon-white"></i> About</a></li>
           </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -67,62 +67,43 @@
       <div class="tab-pane active" id="models">
 	<div class="container-fluid">
 	  <div class="row-fluid">
-	    <div class="span4">
+	    <div class="span3">
 	      <!--Sidebar content-->
 	      <form class="well">
 		<h2>Comparison Request</h2>
+		<p class="help-block"><strong>Note:</strong> Use the form below to specify what mappings have to be evaluated against what oracle.</p>
 		<fieldset>
 		<div class="controlup">
 		  <label class="control-label">Oracle Mapping:</label>
 		  <div class="controls docs-input-sizes">
-		    <select class="span10" >
-		      <option>Mapping 1</option>
-		      <option>Mapping 2</option>
-		      <option>Mapping 3</option>
-		      <option>Mapping 4</option>
-		      <option>Mapping 5</option>
+		    <select class="span12" >
+		      <option>550e8400-e29b-41d4-a716-446655440000</option>
+		      <option>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</option>
+		      <option>89ed71ce-5a66-4c10-a781-899f59614e25</option>
+		      <option>523abe18-cb2c-406c-9893-6f61ccf9190a</option>
+		      <option>7159ca3a-1d75-4d97-8908-e665e1b7d0f1</option>
+		      <option>69fea696-eb56-4c23-8aee-5848ac41fc6a</option>
+		      <option>ec50c6db-1e3e-420f-b416-9d2da5b5642a</option>
+		      <option>29ffebd6-c51f-4981-8a5d-0f91b6e99b33</option>
+		      <option>fab3ade3-34ce-4f5d-beed-7e009a69056a</option>
 		    </select>
 		  </div>
 		</div>
 		<div class="control-group">
-		  <table class="table table-striped">  
-		  <thead>  
-		    <tr>  
-		      <th>Mapping ID</th>  
-		      <th>Size</th>  
-	 	      <th>Selected</th>
-		    </tr>  
-		  </thead>  
-		  <tbody>  
-		    <tr>  
-		      <td>Mapping #1 </td>  
-		      <td>2500</td>  
-		      <td>
-			<label class="checkbox inline">
-			  <input type="checkbox" id="inlineCheckbox1" value="option1">
-			</label>
-		      </td>  
-		    </tr>  
-		    <tr>  
-		      <td>002</td>  
-		      <td>SMapping #2</td>  
-		      <td>
-			<label class="checkbox inline">
-			  <input type="checkbox" id="inlineCheckbox1" value="option1">
-			</label>
-		      </td>  
-		    </tr>  
-		    <tr>  
-		      <td>003</td>  
-		      <td>Mapping #3</td>  
-		      <td>
-			<label class="checkbox inline">
-			  <input type="checkbox" id="inlineCheckbox1" value="option1">
-			</label>
-		      </td>  
-		    </tr>  
-		  </tbody>  
-		</table>
+		  <label class="control-label">Subject Mappings:</label>
+		  <div class="controls docs-input-sizes">
+		    <select multiple="multiple" class="span12" size="10">>
+		      <option>550e8400-e29b-41d4-a716-446655440000</option>
+		      <option>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</option>
+		      <option>89ed71ce-5a66-4c10-a781-899f59614e25</option>
+		      <option>523abe18-cb2c-406c-9893-6f61ccf9190a</option>
+		      <option>7159ca3a-1d75-4d97-8908-e665e1b7d0f1</option>
+		      <option>69fea696-eb56-4c23-8aee-5848ac41fc6a</option>
+		      <option>ec50c6db-1e3e-420f-b416-9d2da5b5642a</option>
+		      <option>29ffebd6-c51f-4981-8a5d-0f91b6e99b33</option>
+		      <option>fab3ade3-34ce-4f5d-beed-7e009a69056a</option>
+		    </select>
+		  </div>
 		</div>
 		<div class="form-actions">
 		  <button type="submit" class="btn btn-primary">Launch Evaluation</button>
@@ -130,7 +111,7 @@
 		</fieldset>
 	      </form>
 	    </div>
-	    <div class="span8">
+	    <div class="span9">
 	      <div id="chart-container"></div>
 	    </div>
 	  </div>
@@ -153,8 +134,6 @@
 
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
-    <!--    <script src="Highcharts-2.2.5/js/highcharts.js"></script>
-	    <script src="Highcharts-2.2.5/js/modules/exporting.js"></script> -->
     <script src="javascripts/charts.js"></script>
     
     <script src="bootstrap/js/bootstrap-transition.js"></script>

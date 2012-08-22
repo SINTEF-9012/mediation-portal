@@ -6,7 +6,7 @@ chart = new Highcharts.Chart({
         inverted: false
     },
     title: {
-        text: 'Comparison Results'
+        text: 'Comparison with Oracle #550e8400-e29b-41d4-a716-446655440000'
     },
     subtitle: {
         style: {
@@ -16,7 +16,7 @@ chart = new Highcharts.Chart({
         }
     },
     legend: {
-        layout: 'horizontal',
+        layout: 'vertical',
         borderWidth: 1,
         backgroundColor: '#FFFFFF'
     },
@@ -53,13 +53,13 @@ chart = new Highcharts.Chart({
         }
     },
     series: [{
-        name: 'Mapping #1',
+        name: 'Mapping #f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
         data: [0.23, 0.67, 0.78, 0.45]
     }, {
-        name: 'Mapping #2',
+        name: 'Mapping #89ed71ce-5a66-4c10-a781-899f59614e25',
         data: [0.47, 0.74, 0.46, 0.84]
     }, {
-        name: 'Mapping #3',
+        name: 'Mapping #523abe18-cb2c-406c-9893-6f61ccf9190a',
         data: [0.43, 0.27, 0.98, 0.65]
     }]
 });
