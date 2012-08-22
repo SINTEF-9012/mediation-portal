@@ -25,6 +25,7 @@ package net.modelbased.mediation.service.repository.model
 import net.modelbased.sensapp.library.system.{ Service => SensAppService, URLHandler }
 import net.modelbased.mediation.service.repository.model.data._
 import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol._
+import net.modelbased.mediation.service.repository.model.data.Conversions._
 import cc.spray.http._
 import cc.spray._
 import cc.spray.directives.PathElement
@@ -41,7 +42,7 @@ trait ModelRepositoryService extends SensAppService {
                   context =>
                      val contents = _registry.retrieve(List())
                      if (flatten) {
-                        contents
+                        contents.map{ m => toModelInfo(m) }
                      }
                      else {
                         val uris = contents.map { e => URLHandler.build("/mediation/repositories/models/" + e.name) }

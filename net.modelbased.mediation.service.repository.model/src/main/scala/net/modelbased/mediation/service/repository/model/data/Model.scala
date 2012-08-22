@@ -31,10 +31,26 @@ import net.modelbased.sensapp.library.datastore._
  */
 case class Model(val name: String, val description: String, val kind: String, var content: String)
 
+
+/**
+ * A class that contains all the info except the contents
+ */
+case class ModelInfo(val name: String, val description: String, val kind: String)
+
+object Conversions {
+   
+   implicit def toModelInfo(model: Model): ModelInfo = {
+      new ModelInfo(model.name, model.description, model.kind)
+   }
+   
+}
+
+
 /**
  * Spray support for JSON serialization
  */
 object ModelJsonProtocol extends DefaultJsonProtocol {
+  implicit val modelInfoFormat = jsonFormat(ModelInfo, "name", "description", "kind")
   implicit val modelFormat = jsonFormat(Model, "name", "description", "kind", "content")
 }
 
