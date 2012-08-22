@@ -41,11 +41,17 @@ trait MediatorService extends SensAppService {
         content(as[Request]) { request =>
           context =>
             runner.process(request) match {
-              case Left(errorMsg) => context.complete(errorMsg)
+              case Left(errorMsg) => context.complete(errorMsg) 
               case Right(mapping) => context.complete(StatusCodes.Created, runner.Urls.MAPPING_REPOSITORY + "/" + mapping.uid )
             }
         }
-      }
+      } ~ cors("POST")
+    } ~ 
+    path( "mediator" / "algorithms" ) { // Return the list of existing algorithms
+       get {
+          context => 
+             context.complete(StatusCodes.OK, runner.algorithms)
+       } ~ cors("GET")
     }
   }
 

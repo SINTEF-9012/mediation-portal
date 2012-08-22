@@ -68,6 +68,13 @@ class Runner(partners: PartnerHandler) extends HttpSpraySupport {
   private[this] val mediations: Map[String, Mediation] = Map(
     "xsd-random" -> new RandomXsdMediation(), 
     "xsd-syntactic" -> new SyntacticXsdMediation()) 
+    
+    
+  /**
+   * @return the list of mediation algorithm supported by the mediator service
+   */
+  def algorithms: List[String] =
+     mediations.keySet.toList
 
   /**
    * Query the model repository to retrieve a model from the given model id. This
