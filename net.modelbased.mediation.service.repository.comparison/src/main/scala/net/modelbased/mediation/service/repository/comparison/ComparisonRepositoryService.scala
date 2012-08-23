@@ -41,86 +41,96 @@ import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluatio
  */
 trait ComparisonRepositoryService extends SensAppService {
 
-  val REPOSITORY_URL = "/mediation/repositories/comparisons"
+   val REPOSITORY_URL = "/mediation/repositories/comparisons"
 
-  override lazy implicit val partnerName = "comparison-repository"
+   override lazy implicit val partnerName = "comparison-repository"
 
-  private[this] val _registry = new EvaluationRegistry()
+   private[this] val _registry = new EvaluationRegistry()
 
-  private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
-    if (_registry exists ("oracle", id))
-      lambda
-    else
-      context fail (StatusCodes.NotFound, "Unknown comparison [" + id + "]")
-  }
+   private def ifExists(context: RequestContext, id: String, lambda: => Unit) = {
+      if (_registry exists ("oracle", id))
+         lambda
+      else
+         context fail (StatusCodes.NotFound, "Unknown comparison [" + id + "]")
+   }
 
-  val service = {
-    path("mediation" / "repositories" / "comparisons") {
-      get { context =>
-        val urls = _registry.allOracles.map { o => URLHandler.build(REPOSITORY_URL + "/" + o) }
-        context.complete(urls)
-      } ~
-        post {
-          content(as[List[Evaluation]]) { evaluations =>
-            context =>
-              evaluations.foreach { e => _registry.add(e) }
-              val urls = _registry.allOracles.map { o => URLHandler.build(REPOSITORY_URL + "/" + o) }
-              context.complete(urls)
-          }
-        } ~ cors("GET", "POST")
-    } ~
-      path("mediation" / "repositories" / "comparisons" / PathElement) { oracle =>
-        get { context =>
-            val evaluations = _registry.findByOracle(oracle)
-            context.complete(evaluations) 
-        } ~
-          put {
-            content(as[List[Evaluation]]) { evaluations =>
-              context =>
-                val (discarded, toAdd) = evaluations.partition { e => e.oracle == oracle }
-                toAdd.foreach { e => _registry.add(e) }
-                val message = "%d added/updated (%d discard because of irrelevant oracle)".format(toAdd.size, discarded.size)
-                context.complete(message)
+   val service = {
+      path("mediation" / "repositories" / "comparisons") {
+         get {
+            parameter("flatten" ? false) {
+               flatten =>
+                  context =>
+                     val contents = _registry.retrieve(List())
+                     if (flatten) {
+                        context.complete(StatusCodes.OK, contents)
+                     }
+                     else {
+                        val urls = _registry.allOracles.map { o => URLHandler.build(REPOSITORY_URL + "/" + o) }
+                        context.complete(StatusCodes.OK, urls)
+                     }
             }
-          } ~ cors("GET", "PUT")
+         } ~
+            post {
+               content(as[List[Evaluation]]) { evaluations =>
+                  context =>
+                     evaluations.foreach { e => _registry.add(e) }
+                     val urls = _registry.allOracles.map { o => URLHandler.build(REPOSITORY_URL + "/" + o) }
+                     context.complete(urls)
+               }
+            } ~ cors("GET", "POST")
       } ~
-      path("mediation" / "repositories" / "comparisons" / PathElement / PathElement) { (oracle, mapping) =>
-        get { context =>
-         _registry.findByOracleAndMapping(oracle, mapping) match {
-           case None => 
-             val message = "No evaluation of '%s' against '%s'.".format(mapping, oracle)
-             context.complete(StatusCodes.NotFound, message)
-           case Some(e) =>
-             context.complete(e)
+         path("mediation" / "repositories" / "comparisons" / PathElement) { oracle =>
+            get { context =>
+               val evaluations = _registry.findByOracle(oracle)
+               context.complete(evaluations)
+            } ~
+               put {
+                  content(as[List[Evaluation]]) { evaluations =>
+                     context =>
+                        val (discarded, toAdd) = evaluations.partition { e => e.oracle == oracle }
+                        toAdd.foreach { e => _registry.add(e) }
+                        val message = "%d added/updated (%d discard because of irrelevant oracle)".format(toAdd.size, discarded.size)
+                        context.complete(message)
+                  }
+               } ~ cors("GET", "PUT")
+         } ~
+         path("mediation" / "repositories" / "comparisons" / PathElement / PathElement) { (oracle, mapping) =>
+            get { context =>
+               _registry.findByOracleAndMapping(oracle, mapping) match {
+                  case None =>
+                     val message = "No evaluation of '%s' against '%s'.".format(mapping, oracle)
+                     context.complete(StatusCodes.NotFound, message)
+                  case Some(e) =>
+                     context.complete(e)
+               }
+            } ~ put {
+               content(as[Evaluation]) { evaluation =>
+                  context =>
+                     _registry.findByOracleAndMapping(oracle, mapping) match {
+                        case None =>
+                           _registry.add(evaluation)
+                           val message = "1 evaluation added."
+                           context.complete(StatusCodes.OK, message)
+                        case Some(e) =>
+                           _registry.add(e)
+                           val message = "1 evaluation replaced."
+                           context.complete(StatusCodes.OK, message)
+                     }
+
+               }
+            } ~ cors("GET", "PUT")
+         } ~
+         path("mediation" / "repositories" / "comparisons" / PathElement / PathElement / "stats") { (oracle, mapping) =>
+            get { context =>
+               _registry.findByOracleAndMapping(oracle, mapping) match {
+                  case None =>
+                     val message = "No evaluation of '%s' against '%s'.".format(mapping, oracle)
+                     context.complete(StatusCodes.NotFound, message)
+                  case Some(e) =>
+                     context.complete(e.toStatistics)
+               }
+            } ~ cors("GET", "PUT")
          }
-        } ~ put {
-          content(as[Evaluation]) { evaluation =>
-            context =>
-              _registry.findByOracleAndMapping(oracle, mapping) match {
-                case None => 
-                  _registry.add(evaluation)
-                  val message = "1 evaluation added."
-                  context.complete(StatusCodes.OK, message)
-                case Some(e) =>
-                  _registry.add(e)
-                  val message = "1 evaluation replaced."
-                  context.complete(StatusCodes.OK, message)
-              }
-           
-          }
-        } ~ cors("GET", "PUT")
-      } ~
-      path("mediation" / "repositories" / "comparisons" / PathElement / PathElement / "stats") { (oracle, mapping) =>
-        get { context =>
-          _registry.findByOracleAndMapping(oracle, mapping) match {
-           case None => 
-             val message = "No evaluation of '%s' against '%s'.".format(mapping, oracle)
-             context.complete(StatusCodes.NotFound, message)
-           case Some(e) =>
-             context.complete(e.toStatistics)  
-         }
-        } ~ cors("GET", "PUT")
-      }
-  }
+   }
 
 }
