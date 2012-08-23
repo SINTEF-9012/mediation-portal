@@ -1,38 +1,5 @@
 
-var BACKEND_LIST = "SINTEF-MEDIATION-BACKENDS";
 
-
-var defaultBackEnds = [
-    { 
-	"isActive": true, 
-	"name": "LOCALHOST", 
-	"url": "http://localhost:8080/sensapp" 
-    },
-    { 
-	"isActive": false, 
-	"name": "SINTEF-DEMO", 
-	"url": "http://54.247.114.191/sensapp" 
-    }
-];
-
-
-/**
- * @return the back ends stored in the local storage if any, or the
- * default values otherwise
- */
-function getAllBackEnds() {
-    var result;
-    if (localStorage) {
-	if (localStorage[BACKEND_LIST]) {
-	    result = JSON.parse(localStorage[BACKEND_LIST]);
-
-	} else {
-	    localStorage[BACKEND_LIST] = JSON.stringify(defaultBackEnds);
-	    result = defaultBackEnds
-	}
-    }
-    return result;
-}
 
 
 /**
@@ -54,27 +21,10 @@ function storeBackEnds(backEnds) {
 }
 
 
-/**
- * @return the back end that is currently active 
- */
-function getActiveBackEnd() {
-    var backEnds = getAllBackEnds();
-    var selected = null;
-    for(var i = 0 ; i<backEnds.length ; i++) {
-	if (backEnds[i].isActive) {
-	    selected = backEnds[i];
-	}
-    }    
-    return selected;
-}
 
 
-/**
- * @return the URL of the model repository that is active
- */
-function getModelRepositoryUrl() {
-    return getActiveBackEnd().url + "/mediation/repositories/models" 
-}
+
+
 
 
 /**
