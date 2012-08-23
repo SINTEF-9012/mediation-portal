@@ -9,8 +9,14 @@
 
     <!-- Le style -->
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet"/>
+    <style>
+      body {
+         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet"/>
     <link href="bootstrap/css/DT_bootstrap.css" rel="stylesheet"/>
+    <link href="DataTables-1.9.1/media/css/demo_page.css" rel="stylesheet"/>
 
     <!-- Le fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="bootstrap/img/apple-touch-icon-144-precomposed.png">
@@ -32,11 +38,12 @@
           <a class="brand" href="#">Mediation Portal</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active"><a href="index.jsp"><i class="icon-home icon-white"></i> Home</a></li>
-              <li><a href="repositories.jsp"><i class="icon-book icon-white"></i> Repositories</a></li>
+              <li><a href="index.jsp"><i class="icon-home icon-white"></i> Home</a></li>
+              <li class="active"><a href="repositories.jsp"><i class="icon-book icon-white"></i> Repositories</a></li>
               <li><a href="mediator.jsp"><i class="icon-random icon-white"></i> Mediator</a></li>
               <li><a href="comparator.jsp"><i class="icon-signal icon-white"></i> Comparator</a></li>
-              <li><a href="about.jsp"><i class="icon-star icon-white"></i> About</a></li>
+              <li><a href="settings.jsp"><i class="icon-wrench icon-white"></i> Settings</a></li>
+              <li><a href="about.jsp"><i class="icon-user icon-white"></i> About</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -44,7 +51,7 @@
     </div>
 
     <div class="container">
-      <br>
+      
       <div class="page-header">
 	<h1>Repositories <small>&mdash; Searching through the portal data</small></h1>
       </div>
@@ -61,36 +68,42 @@
         <div class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
           <div class="tab-pane active" id="tab1">
 	    <div class="container-fluid">
-	      <div class="row-fluid">
-		<div class="span4">
+	      <div class="row">
+		<div class="span3">
 		  <!--Sidebar content-->
-		  <form class="well">
+		  <form class="well" onSubmit="importModel()">
 		    <h3>Import Model</h3>
-		    <p>Use the form below to import a model in the repository</p>
+		    <p class="help-block"><strong>Note:</strong> Use the form below to import a model in the repository</p>
 		    
 		    <div class="control-group">
 		      <label class="control-label">Model ID:</label>
 		      <div class="controls docs-input-sizes">
-			<input class="input-large" type="text" placeholder="input-medium">
+			<input class="input-large" id="model-name" type="text" placeholder="a unique ID for the new model">
 		      </div>
 		    </div>
 		    <div class="control-group">
-		      <label class="control-label" for="fileInput">Data Model:</label>
+		      <label class="control-label">Description</label>
 		      <div class="controls">
-			<input class="input-file" id="fileInput" type="file">
+			<textarea class="input-large" id="model-description" rows="3" placeholder="a short description"></textarea>
+		      </div>
+		    </div>
+		    <div class="control-group">
+		      <label class="control-label" for="model-content">Source File:</label>
+		      <div class="controls">
+			<input class="input-file" id="model-content" type="file">
 		      </div>
 		    </div>
 		    <div class="control-group">
 		      <label class="control-label">Content Type:</label>
 		      <div class="controls">
 			<label class="radio">
-			  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1"> XSD (XML schema)
+			  <input type="radio" name="optionsRadios" id="model-type" value="text/xsd"> XSD (XML schema)
 			</label>
 			<label class="radio">
-			  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"> ECore (EMF MoF metamodel)
+			  <input type="radio" name="optionsRadios" id="model-type" value="text/ecore" checked="true"> ECore (EMF MoF metamodel)
 			</label>
 			<label class="radio">
-			  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"> MoF textual (SINTEF syntax)
+			  <input type="radio" name="optionsRadios" id="model-type" value="text/mof"> MoF textual (SINTEF syntax)
 			</label>
 		      </div>
 		    </div>
@@ -101,41 +114,11 @@
 		</div>
 		<div class="span8">
 		    <div>
-		    <h3>Existing Models</h3>
+		      <h3>Existing Models</h3>
+		      <p class="help-block"><strong>Note:</strong> Below is the list of data models currently stored in the model repository.</p>
 		    </div>
 		    <div>
-		      <table class="table table-striped" id="models-table" cellpadding="0">  
-			<thead>  
-			  <tr>  
-			    <th>Model ID</th>  
-			    <th>Content</th>  
-			    <th>Type</th>  
-			  </tr>  
-			</thead>  
-			<tbody>  
-			  <tr>  
-			    <td>OTA XSD</td>  
-			    <td>Rammohan </td>  
-			    <td>Reddy</td>  
-			  </tr>  
-			  <tr>  
-			    <td>002</td>  
-			    <td>Smita</td>  
-			    <td>Pallod</td>  
-			  </tr>  
-			  <tr>  
-			    <td>003</td>  
-			    <td>Rabindranath</td>  
-			    <td>Sen</td>  
-			  </tr>  
-			</tbody> 
-			<tfoot>
-			  <tr>  
-			    <th>Model ID</th>  
-			    <th>Content</th>  
-			    <th>Type</th>  
-			  </tr> 
-			</tfoot>
+		      <table class="table table-striped" id="models-table">  
 		      </table>
 		  </div>
 		    </div>
@@ -145,7 +128,7 @@
 	  
 	  <!-- MAPPINGS REPOSITORY VIEW -->
           <div class="tab-pane" id="tab2">
-	    <table class="table table-striped" id="mappings-table">
+	    <table class="table" id="mappings-table">
 	      <thead>
 		<th>Mapping ID</th>
 		<th>Source</th>
@@ -226,7 +209,6 @@
       </div> <!-- /tabbable -->
       </div>
 
-      <hr>
       
       <footer>
         <p>&copy; SINTEF IKT 2012</p>
@@ -255,32 +237,7 @@
     <script src="bootstrap/js/bootstrap-typeahead.js"></script>
     <script src="bootstrap/js/DT_bootstrap.js"></script>
     
-    <script type="text/javascript">
-      $(document).ready(function() {
-      $('#models-table').dataTable( {
-      "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-	  "sPaginationType": "bootstrap",
-	  "oLanguage": {
-	  "sLengthMenu": "_MENU_ records per page"
-	  }
-	  } );
-	  $('#mappings-table').dataTable( {
-	  "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-	      "sPaginationType": "bootstrap",
-	      "oLanguage": {
-	      "sLengthMenu": "_MENU_ records per page"
-	      }
-	      } );
-	      $('#comparisons-table').dataTable( {
-	      "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-		  "sPaginationType": "bootstrap",
-		  "oLanguage": {
-		  "sLengthMenu": "_MENU_ records per page"
-		  }
-		  } );
-		  
-		  } );
-    </script>
+    <script type="text/javascript" src="javascripts/repositories.js"></script>
 
   </body>
 </html>
