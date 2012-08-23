@@ -70,34 +70,21 @@
 		<div class="controlup">
 		  <label class="control-label">Source Model:</label>
 		  <div class="controls docs-input-sizes">
-		    <select class="span10" >
-		      <option>samples-article</option>
-		      <option>samples-document</option>
-		      <option>Model 3</option>
-		      <option>Model 4</option>
-		      <option>Model 5</option>
+		    <select class="span10" id="model-source">
 		    </select>
 		  </div>
 		</div>
 		<div class="controlup">
 		  <label class="control-label">Target Model:</label>
 		  <div class="controls docs-input-sizes">
-		    <select class="span10">
-		      <option>samples-document</option>
-		      <option>samples-article</option>
-		      <option>Model 3</option>
-		      <option>Model 4</option>
-		      <option>Model 5</option>
+		    <select class="span10" id="model-target">
 		    </select>
 		  </div>
 		</div>
 		<div class="controlup">
 		  <label class="control-label">Algorithm:</label>
 		  <div class="controls docs-input-sizes">
-		    <select class="span10">
-		      <option>Syntactic Match</option>
-		      <option>Random Match</option>
-		      <option>Similarity Flooding</option>
+		    <select class="span10" id="algo-select">
 		    </select>
 		  </div>
 		</div>
@@ -379,6 +366,7 @@
     <script src="bootstrap/js/bootstrap-typeahead.js"></script>
     <script src="bootstrap/js/DT_bootstrap.js"></script>
 
+    <script type="text/javascript" src="javascripts/common.js"></script>
     <script type="text/javascript" src="javascripts/mediator.js"></script>
 
   </body>

@@ -17,3 +17,6 @@ project/plugins/project/
 .DS_Store
 net.modelbased.mediation.service.repository.model/.cache
 .cache
+*~
+\#*
+.\#*
