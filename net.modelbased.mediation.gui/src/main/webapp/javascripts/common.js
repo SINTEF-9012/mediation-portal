@@ -1,5 +1,6 @@
 
 var MODEL_REPOSITORY_URL = "http://localhost:8080/sensapp/mediation/repositories/models";
+var MEDIATOR_REPOSITORY_URL = "http://localhost:8080/sensapp/mediator"
 
 
 /**
@@ -21,4 +22,14 @@ function fetchModels(onSuccess) {
 }
 
 
-
+function fetchAlgorithms(onSuccess) {
+    $.ajax({
+	url: MEDIATOR_REPOSITORY_URL + "/algorithms",
+	type: "get",
+	dataType: "json",
+	success: onSuccess,
+	failure: function () {
+	    alert("Unable to reach the model repository!");
+	}
+    });
+}
