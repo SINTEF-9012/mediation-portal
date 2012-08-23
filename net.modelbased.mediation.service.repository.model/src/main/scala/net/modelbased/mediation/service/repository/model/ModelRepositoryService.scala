@@ -42,12 +42,11 @@ trait ModelRepositoryService extends SensAppService {
                   context =>
                      val contents = _registry.retrieve(List())
                      if (flatten) {
-                        contents.map{ m => toModelInfo(m) }
+                        context.complete(StatusCodes.OK, contents.map{ m => toModelInfo(m) })
                      }
                      else {
                         val uris = contents.map { e => URLHandler.build("/mediation/repositories/models/" + e.name) }
                         context complete uris
-
                      }
             }
          } ~
