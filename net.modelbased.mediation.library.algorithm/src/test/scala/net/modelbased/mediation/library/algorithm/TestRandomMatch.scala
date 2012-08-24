@@ -43,7 +43,7 @@ class TestRandomMatch extends SpecificationWithJUnit with SampleXsdMediations {
   "A RandomMatch" should {
     
     "return some mapping" in {
-      val m = randomMediation(new Mapping(), source, target)
+      val m = randomMediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
       //println(m)
       val expected = (xsd \\ "complexType").size + (xsd \\ "element").size + 1 // +1 for the schema itself (considered as en element)
       m.size must_== expected

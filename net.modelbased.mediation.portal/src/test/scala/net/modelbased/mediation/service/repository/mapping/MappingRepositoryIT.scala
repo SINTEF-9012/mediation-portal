@@ -76,7 +76,7 @@ class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
        */
       "store properly new mappings" in {
          val formatter = new SimpleDateFormat("yyMMddHHmmss")
-         val mapping = new Mapping()
+         val mapping = new Mapping(sourceId="foo", targetId="bar")
          mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
          val conduit = new HttpConduit(httpClient, "localhost", 8080) {
             val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
@@ -102,7 +102,7 @@ class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
        */
       "provide conversion in XML for each mapping" in {
          val formatter = new SimpleDateFormat("yyMMddHHmmss")
-         val mapping = new Mapping()
+         val mapping = new Mapping(sourceId="foo", targetId="bar")
          mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
          val conduit = new HttpConduit(httpClient, "localhost", 8080) {
             val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }

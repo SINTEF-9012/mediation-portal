@@ -28,7 +28,7 @@ import net.modelbased.mediation.service.repository.model.data._
 
 
 trait Computation {
-  protected[this] var _out: Mapping = new Mapping()
+  protected[this] var _out: Mapping = new Mapping(sourceId="foo", targetId="bar")
   def out = _out
   def out_=(m: Mapping) { this._out = m } 
 }

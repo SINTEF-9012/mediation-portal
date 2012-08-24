@@ -33,7 +33,7 @@ import org.specs2.mutable._
  * @since 0.0.1
  */
 class TestMapping extends SpecificationWithJUnit {
-	val t1, t2, t3 = new Mapping()
+	val t1, t2, t3 = new Mapping(sourceId="foo-source", targetId="bar-target")
 	val e1 = new Entry("x", "y", 0.25, "test")
 	val e2 = new Entry("x", "v", 0.75, "test")
 	t2.addAll(List(e1, e2))
@@ -41,6 +41,14 @@ class TestMapping extends SpecificationWithJUnit {
   
     
    "A sample mapping" should {
+	   
+	   "provides the ID of the source model" in {
+	      t1.sourceId must not beNull
+	   }
+	   
+	   "provide the ID of the target model" in {
+	      t1.targetId must not beNull
+	   }
 	   
 	   "support conversions to XML" in {
 	      val expectation = <mediation><mapping source="x" targetIdentifier="y"/><mapping source="x" targetIdentifier="v"/></mediation>

@@ -51,7 +51,7 @@ class SyntacticMatch extends Mediation {
     * @inheritdoc
     */
    override def execute(context: Mapping, source: Model, target: Model) = {
-      out = new Mapping()
+      out = new Mapping(sourceId=source.name, targetId=target.name)
 
       val mofSource = reader.readPackage(source.content)
       mofSource match {
@@ -103,7 +103,7 @@ class SyntacticXsdMediation extends Mediation {
       //println(sourceAsMof.content)
       val targetAsMof = toMof(target)
       //println(targetAsMof.content)
-      out = syntacticMatch(new Mapping(), sourceAsMof, targetAsMof)
+      out = syntacticMatch(new Mapping(sourceId=source.name, targetId=target.name), sourceAsMof, targetAsMof)
    }
 
 }

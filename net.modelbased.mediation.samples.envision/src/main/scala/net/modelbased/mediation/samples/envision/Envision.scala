@@ -81,7 +81,7 @@ class Envision extends Function2[List[Model], Model, Mapping] {
     println(target.content)
     val source = aggregation(sources)
     printf(source.content)
-    eMediation(new Mapping(), source, target)
+    eMediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
   }
 
 }

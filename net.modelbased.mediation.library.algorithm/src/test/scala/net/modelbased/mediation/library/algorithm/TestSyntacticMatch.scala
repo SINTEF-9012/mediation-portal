@@ -47,7 +47,7 @@ class TestSyntacticMatch extends SpecificationWithJUnit with SampleXsdMediations
   "A Syntactic mediation" should {
 
     "return a mapping for all features and all types" in {
-      val m = syntacticMediation(new Mapping(), source, target)
+      val m = syntacticMediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
       println(m)
       val expected = (xsd \\ "complexType").size + (xsd \\ "element").size + 1 // +1 for the schema itself (considered as en element)
       m.size must_== expected

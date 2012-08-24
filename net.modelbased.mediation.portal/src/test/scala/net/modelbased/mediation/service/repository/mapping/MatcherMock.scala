@@ -48,7 +48,7 @@ object MatcherMock {
    */
   def mapping: Mapping = {
     val generator = new Random()
-    (source.zip(generator.shuffle(target))).foldLeft(new Mapping()) {
+    (source.zip(generator.shuffle(target))).foldLeft(new Mapping(sourceId="foo", targetId="bar")) {
       (acc, v) =>
         acc.add(new Entry(v._1, v._2, generator.nextDouble(), "mapping-mock"))
         acc

@@ -44,7 +44,7 @@ function selectBackEnd(radio) {
 	    backEnds[i].isActive = false;
 	}
     }
-    $("#current-backend").innerHtml = selected.name;
+    $("#current-backend").text(selected.name);
     $("#update-local-storage").show();
     setTimeout(
 	function() {
@@ -52,7 +52,6 @@ function selectBackEnd(radio) {
 	}, 
 	3000
     );
-    alert(JSON.stringify(backEnds));
     storeBackEnds(backEnds);   
     $("#back-ends").dataTable().fnClearTable();
     $("#back-ends").dataTable().fnAddData(backEnds);

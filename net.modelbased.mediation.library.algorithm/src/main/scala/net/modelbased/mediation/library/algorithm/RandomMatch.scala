@@ -54,7 +54,7 @@ class RandomMatch extends Mediation {
     *
     */
    override def execute(in: Mapping, source: Model, target: Model): Unit = {
-      out = new Mapping()
+      out = new Mapping(sourceId=source.name, targetId=target.name)
 
       val mofSource = reader.readPackage(source.content)
       mofSource match {
@@ -93,7 +93,6 @@ class RandomMatch extends Mediation {
             }
       }
    }
-
 }
 
 
@@ -115,7 +114,7 @@ class RandomXsdMediation extends Mediation {
       //println(sourceAsMof.content)
       val targetAsMof = toMof(target)
       //println(targetAsMof.content)
-      out = syntacticMatch(new Mapping(), sourceAsMof, targetAsMof)
+      out = syntacticMatch(new Mapping(sourceId=source.name, targetId=target.name), sourceAsMof, targetAsMof)
    }
 
 }

@@ -31,5 +31,5 @@ package net.modelbased.mediation.service.repository.mapping.data
  * 
  * @since 0.0.1
  */
-sealed case class MappingData(val uid: String, var capacity: Int, var status: String, val entries: List[Entry])
+sealed case class MappingData(val uid: String, val sourceUid: String, val targetUid: String, var capacity: Int, var status: String, val entries: List[Entry])
  

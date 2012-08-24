@@ -134,7 +134,7 @@ class Runner(partners: PartnerHandler) extends HttpSpraySupport {
               case None => Left("Unknown algorithm '%s' (existing algorithms are %s)".format(request.algo, mediations.keys.mkString(", ")))
               case Some(mediation) =>
                 println("OK, running mediation ...");
-                val result = mediation(new Mapping(), source, target)
+                val result = mediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
                 println("mapping: " + result.toString)
                 println("OK, publishing mapping ...");
                 publishMapping(result)
