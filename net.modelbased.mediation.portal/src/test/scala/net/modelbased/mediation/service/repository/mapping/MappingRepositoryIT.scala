@@ -60,7 +60,7 @@ class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
        * mapping, by sending a GET a the repository URL, and checking that we retrieve
        * a list (potentially empty)
        */
-      "returns a list of existing mappings" in {
+      "return a list of existing mappings" in {
          val conduit = new HttpConduit(httpClient, "localhost", 8080) {
             val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
          }
@@ -71,12 +71,26 @@ class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
       }
 
       /**
+       * Here we test whether the repository support the retrieval of the list mapping
+       * information
+       */
+      "return a flatten list of mapping info when the flatten parameter is true" in {
+         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+            val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[MappingInfo]] } 
+         }
+         val futureUrl = conduit.pipeline(Get(MAPPING_REPOSITORY_URL + "?flatten=true"))
+         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
+            case l: List[MappingInfo] => ok
+         }
+      }
+
+      /**
        * Here we POST a new mapping at repository URL. We ensure that the URL we get
        * as an answer points effectively towards the mapping that we pushed
        */
       "store properly new mappings" in {
          val formatter = new SimpleDateFormat("yyMMddHHmmss")
-         val mapping = new Mapping(sourceId="foo", targetId="bar")
+         val mapping = new Mapping(sourceId = "foo", targetId = "bar")
          mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
          val conduit = new HttpConduit(httpClient, "localhost", 8080) {
             val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
@@ -102,7 +116,7 @@ class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
        */
       "provide conversion in XML for each mapping" in {
          val formatter = new SimpleDateFormat("yyMMddHHmmss")
-         val mapping = new Mapping(sourceId="foo", targetId="bar")
+         val mapping = new Mapping(sourceId = "foo", targetId = "bar")
          mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
          val conduit = new HttpConduit(httpClient, "localhost", 8080) {
             val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }

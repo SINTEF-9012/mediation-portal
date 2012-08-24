@@ -27,6 +27,7 @@ import cc.spray.json._
 object MappingJsonProtocol extends DefaultJsonProtocol {
   implicit val entryFormat = jsonFormat(Entry, "source", "target", "degree", "origin", "isValidated")
   implicit val mappingDataFormat = jsonFormat(MappingData, "uid", "sourceId", "targetID", "capacity", "status", "content")
+  implicit val mappingInfoFormat = jsonFormat(MappingInfo, "uid", "sourceId", "targetID", "capacity", "status")
 }
   
   

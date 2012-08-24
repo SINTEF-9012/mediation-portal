@@ -222,6 +222,12 @@ object Conversions {
     */
    implicit def fromMapping(m: Mapping): MappingData =
       new MappingData(m.uid, m.sourceId, m.targetId, m.capacity, m.status.toString(), m.entries)
+   
+   /**
+    * Convert a mapping object into a mapping Info
+    */ 
+   implicit def toMappingInfo(m: Mapping): MappingInfo =
+      new MappingInfo(m.uid, m.sourceId, m.targetId, m.capacity, m.status.toString())
 
 }
 
