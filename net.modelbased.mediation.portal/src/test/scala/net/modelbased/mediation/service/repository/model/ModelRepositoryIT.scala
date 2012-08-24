@@ -73,7 +73,22 @@ class ModelRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
         case l: List[String] => ok
       }
     }
+    
+    /**
+     * Here we just send GET to the repository URL and ensure that we receive
+     * a list of Model (potentially empty)
+     */
+    "Returns the flatten list of models" in {
+      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+        val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[ModelInfo]] }
+      }
+      val futureUrl = conduit.pipeline(Get(MODEL_REPOSITORY_URL + "?flatten=true"))
+      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
+        case l: List[ModelInfo] => ok
+      }
+    }
 
+    
     /**
      * Here, we create a model and PUSH it at the repository URL. We then check
      * that the URL we get as result, make sense, i.e., that the model we pushed

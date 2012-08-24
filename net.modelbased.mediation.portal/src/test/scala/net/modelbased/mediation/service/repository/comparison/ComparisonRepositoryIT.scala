@@ -78,6 +78,20 @@ class ComparisonRepositoryIT extends SpecificationWithJUnit with HttpSpraySuppor
         case l: List[String] => ok
       }
     }
+    
+    /**
+     * Here we just send GET to the repository URL and ensure that we receive
+     * a list of URL (potentially empty)
+     */
+    "Returns the list of stored comparison" in {
+      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+        val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[Evaluation]] }
+      }
+      val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY_URL + "?flatten=true"))
+      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
+        case l: List[Evaluation] => ok
+      }
+    }
 
     /**
      * We create a new dummy comparison and we PUSH it to the repository URL. We
