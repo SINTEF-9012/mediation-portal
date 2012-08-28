@@ -20,18 +20,25 @@
  * Public License along with Mediation Portal. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.service.merger
+package net.modelbased.mediation.service.aggregator
+
+import cc.spray.json._
 
 /**
- * @author ${user.name}
+ * Represent a request to the aggreagator service. Each request contains the
+ * name to give to the resulting model, as wel as a list of couple (model, packageName)
+ * reflecting in the packages where models must be placed.
+ *
+ * @author Franck Chauvel - SINTEF ICT
  */
-object App {
-  
-  def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
-  
-  def main(args : Array[String]) {
-    println( "Hello World!" )
-    println("concat arguments = " + foo(args))
-  }
+sealed case class Request(val resultId: String, val parts: List[Part])
 
+sealed case class Part(val modelId: String, val packageName: String)
+
+/**
+ * The associated serialization JSON protocol
+ */
+object RequestJsonProtocol extends DefaultJsonProtocol {
+   implicit val PartFormat = jsonFormat(Part, "modelId", "packageNam")
+   implicit val requestFormat = jsonFormat(Request, "resultId", "parts")
 }
