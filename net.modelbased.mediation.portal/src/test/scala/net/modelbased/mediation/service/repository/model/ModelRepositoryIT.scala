@@ -21,20 +21,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 import org.specs2.mutable._
-import scala.xml._
-import scala.io.Source
-import net.modelbased.sensapp.library.system._
-import akka.dispatch._
-import akka.util.duration._
-import cc.spray.client._
-import cc.spray.json._
-import cc.spray.typeconversion.SprayJsonSupport._
-import cc.spray.typeconversion.DefaultUnmarshallers._
-import cc.spray.json.DefaultJsonProtocol._
-import net.modelbased.mediation.service.repository.model._
-import net.modelbased.mediation.service.repository.model.data._
-import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol._
-import java.text.SimpleDateFormat
+
+import net.modelbased.mediation.service.repository.model.data.Model
+
+import net.modelbased.mediation.client.portal.Portal
+import net.modelbased.mediation.client.repository.model.ModelRepository
 
 /**
  * Simple integration test for the model repository. We merely push one model and
@@ -46,78 +37,66 @@ import java.text.SimpleDateFormat
  *
  * @since 0.0.1
  */
-class ModelRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
+class ModelRepositoryIT extends SpecificationWithJUnit {
 
-  val httpClientName = "test-model-repository"
+   val portal = new Portal("localhost", 8080) with ModelRepository
 
-  val MODEL_REPOSITORY_URL = "/mediation/repositories/models"
+   var modelA: Model = _
+   var modelB: Model = _
+   
+   
+   /**
+    * Prepare and clean the model repository. We basically push two models that
+    * are then removed from the repository once the test is run. 
+    */
+   class Repository extends BeforeAfter {
+      
+      override def before = {
+         modelA = new Model("test-modelA", "a simple test model", "text/mof", "package testA { class A { featureA: String } }")
+         portal.storeModel(modelA)
+         modelB = new Model("test-modelB", "another simple test model", "text/mof", "package testB { class B { featureA: String } }")
+         portal.storeModel(modelB)
+      }
+      
+      override def after = {
+         portal.deleteModel(modelA)
+         portal.deleteModel(modelB)
+      }
+      
+   }
 
-  val modelName = "test-model-"
-    
-  val xsd = XML.load("src/test/resources/schemas/document.xsd")
+   
+   "The Model Repository" should {
 
-  
-  
-  "The Model Repository" should {
+      
+      "support flattening information about models" in new Repository {
+         val infos = portal.fetchAllModelInfo()
+         infos.size must beEqualTo(2)
+      }
+ 
+      
+      "support adding and deleting models from the repository" in new Repository {
+         val urls = portal.fetchAllModelUrls() 
+         urls.size must beEqualTo(2)
+         
+         // We add a new model in the repository
+         val modelC = new Model("test-modelC", "a thrid simple test model", "text/mof", "package testC { class C { featureC: String } }")
+         portal.storeModel(modelC)
+        
+         val urls2 = portal.fetchAllModelUrls() 
+         urls2.size must beEqualTo(3)
+        
+         val modelCbis = portal.fetchModelById("test-modelC-bis")
+         modelCbis must beEqualTo(modelC) 
+         
+         // we delete the model from the repository
+         portal.deleteModel(modelC)
 
-    /**
-     * Here we just send GET to the repository URL and ensure that we receive
-     * a list of URL (potentially empty)
-     */
-    "Returns the list of stored models" in {
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
+         val urls3 = portal.fetchAllModelUrls() 
+         urls3.size must beEqualTo(2)
+         
       }
-      val futureUrl = conduit.pipeline(Get(MODEL_REPOSITORY_URL))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case l: List[String] => ok
-      }
-    }
-    
-    /**
-     * Here we just send GET to the repository URL and ensure that we receive
-     * a list of Model (potentially empty)
-     */
-    "Returns the flatten list of models" in {
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[ModelInfo]] }
-      }
-      val futureUrl = conduit.pipeline(Get(MODEL_REPOSITORY_URL + "?flatten=true"))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case l: List[ModelInfo] => ok
-      }
-    }
 
-    
-    /**
-     * Here, we create a model and PUSH it at the repository URL. We then check
-     * that the URL we get as result, make sense, i.e., that the model we pushed
-     * is indeed available there
-     */
-    "Store a new model properly" in {
-      val formatter = new SimpleDateFormat("yyMMddHHmmss")
-      val model = new Model(modelName + formatter.format(new java.util.Date()),  "A sample data model describing documents", "text/xsd", xsd.toString())
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest[Model] ~> sendReceive ~> unmarshal[String] }
-      }
-      val futureUrl = conduit.pipeline(Post(MODEL_REPOSITORY_URL, model))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case url: String => {
-          //println("THE URL:" + url)
-          val conduit2 = new HttpConduit(httpClient, "localhost", 8080) {
-            val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[Model] }
-          }
-          val futureModel = conduit2.pipeline(Get(url))
-          Await.result(futureModel, intToDurationInt(5) seconds) must beLike {
-            case m: Model =>
-              m must_== model
-          }
-        }
-      }
-    }
-    
-    
-    
-  }
+   }
 
 }

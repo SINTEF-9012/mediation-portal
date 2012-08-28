@@ -23,22 +23,12 @@
 package net.modelbased.mediation.service.repository.mapping
 
 import org.specs2.mutable._
-import scala.xml._
-import scala.io.Source
-import net.modelbased.sensapp.library.system._
-import akka.dispatch._
-import akka.util.duration._
-import cc.spray.client._
-import cc.spray.json._
-import cc.spray.typeconversion.SprayJsonSupport._
-import cc.spray.typeconversion.DefaultUnmarshallers._
-import cc.spray.json.DefaultJsonProtocol._
-import net.modelbased.mediation.service.repository.mapping._
-import net.modelbased.mediation.service.repository.mapping.data._
-import net.modelbased.mediation.service.repository.mapping.data.Conversions._
-import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol._
 
-import java.text.SimpleDateFormat
+import net.modelbased.mediation.client.portal.Portal
+import net.modelbased.mediation.client.repository.mapping.MappingRepository
+
+import net.modelbased.mediation.service.repository.mapping.data.Mapping
+import net.modelbased.mediation.service.repository.mapping.data.Entry
 
 /**
  * Simple Integration test for the Mapping Repository service.
@@ -47,96 +37,69 @@ import java.text.SimpleDateFormat
  *
  * @since 0.0.1
  */
-class MappingRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
+class MappingRepositoryIT extends SpecificationWithJUnit {
 
-   val httpClientName = "test-mapping-repository"
+   val portal = new Portal("localhost", 8080) with MappingRepository
 
-   val MAPPING_REPOSITORY_URL = "/mediation/repositories/mappings"
+   var mappingA: Mapping = _
+
+   var mappingB: Mapping = _
+
+   /**
+    * Prepare and clean the repository
+    */
+   class Repository extends BeforeAfter {
+
+      override def before = {
+         mappingA = new Mapping(sourceId = "foo", targetId = "bar")
+         mappingA.add(new Entry("source.foo", "target.bar", 0.34, "testing mapping repository"))
+         portal.storeMapping(mappingA)
+         mappingB = new Mapping(sourceId = "foo2", targetId = "bar2")
+         mappingB.add(new Entry("source.foo2", "target.bar2", 0.56, "testing mapping repository"))
+         portal.storeMapping(mappingB)
+      }
+
+      override def after = {
+         portal.deleteMapping(mappingA)
+         portal.deleteMapping(mappingB)
+      }
+
+   }
 
    "The mapping repository " should {
-
-      /**
-       * Here we test that the mapping repository returns the list of existing
-       * mapping, by sending a GET a the repository URL, and checking that we retrieve
-       * a list (potentially empty)
-       */
-      "return a list of existing mappings" in {
-         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-            val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
-         }
-         val futureUrl = conduit.pipeline(Get(MAPPING_REPOSITORY_URL))
-         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-            case l: List[String] => ok
-         }
+      
+      
+       "support flattening information about mappings" in new Repository {
+         val infos = portal.fetchAllMappingInfo()
+         infos.size must beEqualTo(2)
       }
+      
+      "support adding and deleting mapping from the repository" in new Repository {
+         val urls = portal.fetchAllMappingUrls() 
+         urls.size must beEqualTo(2)
+         
+         // We add a new model in the repository
+         val mappingC = new Mapping(sourceId = "foo3", targetId = "bar3")
+         mappingC.add(new Entry("source.foo3", "target.bar3", 0.98, "testing mapping repository"))
+         portal.storeMapping(mappingC)
+        
+         val urls2 = portal.fetchAllMappingUrls() 
+         urls2.size must beEqualTo(3)
+        
+         val mappingCbis = portal.fetchMappingById(mappingC.uid)
+         mappingCbis.size must beEqualTo(1) 
+         
+         // we delete the model from the repository
+         portal.deleteMapping(mappingC)
 
-      /**
-       * Here we test whether the repository support the retrieval of the list mapping
-       * information
-       */
-      "return a flatten list of mapping info when the flatten parameter is true" in {
-         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-            val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[MappingInfo]] } 
-         }
-         val futureUrl = conduit.pipeline(Get(MAPPING_REPOSITORY_URL + "?flatten=true"))
-         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-            case l: List[MappingInfo] => ok
-         }
+         val urls3 = portal.fetchAllMappingUrls() 
+         urls3.size must beEqualTo(2)
       }
-
-      /**
-       * Here we POST a new mapping at repository URL. We ensure that the URL we get
-       * as an answer points effectively towards the mapping that we pushed
-       */
-      "store properly new mappings" in {
-         val formatter = new SimpleDateFormat("yyMMddHHmmss")
-         val mapping = new Mapping(sourceId = "foo", targetId = "bar")
-         mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
-         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-            val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
-         }
-         val futureUrl = conduit.pipeline(Post(MAPPING_REPOSITORY_URL, mapping))
-         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-            case url: String => {
-               println("THE URL:" + url)
-               val conduit2 = new HttpConduit(httpClient, "localhost", 8080) {
-                  val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[MappingData] }
-               }
-               val futureModel = conduit2.pipeline(Get(url))
-               Await.result(futureModel, intToDurationInt(5) seconds) must beLike {
-                  case m: MappingData =>
-                     m must_== fromMapping(mapping)
-               }
-            }
-         }
-      }
-
-      /**
-       * Provide an XML version of existing mapping at the URL ~/asXML
-       */
-      "provide conversion in XML for each mapping" in {
-         val formatter = new SimpleDateFormat("yyMMddHHmmss")
-         val mapping = new Mapping(sourceId = "foo", targetId = "bar")
-         mapping.add(new Entry("source.foo", "target.bar", 0.34, httpClientName))
-         val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-            val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
-         }
-         val futureUrl = conduit.pipeline(Post(MAPPING_REPOSITORY_URL, mapping))
-         Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-            case url: String => {
-               println("THE URL:" + url)
-               val conduit2 = new HttpConduit(httpClient, "localhost", 8080) {
-                  val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[String] }
-               }
-               val futureModel = conduit2.pipeline(Get(url + "/asXML"))
-               Await.result(futureModel, intToDurationInt(5) seconds) must beLike {
-                  case s: String =>
-                     XML.loadString(s) must beLike {
-                        case n: Node => ok
-                     }
-               }
-            }
-         }
+      
+      
+      "support export of mapping as an XML document" in new Repository {
+         val node = portal.exportMappingToXml(mappingA)
+         node must not beNull
       }
 
    }

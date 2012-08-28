@@ -20,7 +20,7 @@
  * Public License along with Mediation Portal. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.service.repository.mapping
+package net.modelbased.mediation.service.comparator
 
 import scala.util.Random
 

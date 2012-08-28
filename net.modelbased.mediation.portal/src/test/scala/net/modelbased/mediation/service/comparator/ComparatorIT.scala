@@ -23,25 +23,13 @@
 package net.modelbased.mediation.service.comparator
 
 import org.specs2.mutable._
-import scala.xml._
-import scala.io.Source
-import net.modelbased.sensapp.library.system._
-import akka.dispatch._
-import akka.util.duration._
-import cc.spray.client._
-import cc.spray.json._
-import cc.spray.typeconversion.SprayJsonSupport._
-import cc.spray.typeconversion.DefaultUnmarshallers._
-import cc.spray.json.DefaultJsonProtocol._
-import net.modelbased.mediation.service.comparator._
-import net.modelbased.mediation.service.comparator.RequestJsonProtocol._
-import net.modelbased.mediation.service.repository.mapping._
-import net.modelbased.mediation.service.repository.mapping.data._
-import net.modelbased.mediation.service.repository.mapping.data.Conversions._
-import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol._
-import net.modelbased.mediation.service.repository.comparison._
-import net.modelbased.mediation.service.repository.comparison.data._
-import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluationProtocol._
+
+import net.modelbased.mediation.service.repository.mapping.data.Mapping
+
+import net.modelbased.mediation.client.portal.Portal
+import net.modelbased.mediation.client.repository.mapping.MappingRepository
+import net.modelbased.mediation.client.repository.comparison.ComparisonRepository
+import net.modelbased.mediation.client.comparator.Comparator
 
 /**
  * Simple integration test for the Comparator service. We ensure that given a set
@@ -52,77 +40,52 @@ import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluatio
  *
  * @since 0.0.1
  */
-class ComparatorIT extends SpecificationWithJUnit with HttpSpraySupport {
+class ComparatorIT extends SpecificationWithJUnit {
 
-  val httpClientName = "test-comparator"
+   val portal = new Portal("localhost", 8080) with MappingRepository with ComparisonRepository with Comparator
 
-  val MAPPING_REPOSITORY_URL = "/mediation/repositories/mappings"
+   var mappings: List[Mapping] = _
+   var oracle: Mapping = _
 
-  val COMPARISON_REPOSITORY_URL = "/mediation/repositories/comparisons"
+   "The comparator service" should {
 
-  val COMPARATOR_URL = "/comparator"
-
-    
-  "The comparator service" should {
-
-    /*
-     * We create some fake mappings and push them into the mapping repository
-     */
-    "Push the proper evaluation in to the comparison repository" in {
-      // Create an oracle and 10 mapping to compare with
-      println("Creating fake mappings ...")
-      val oracle = MatcherMock.mapping
-      val toCompare = for (i <- 1 to 10) yield MatcherMock.mapping
-
-      // Push all these mapping into the mapping repository
-      forall(oracle :: toCompare.toList){ mapping =>
-        println("OK, pushing mapping '" + mapping.uid + "' ...")
-        val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-          val pipeline = { simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String] }
-        }
-        val futureUrl = conduit.pipeline(Post(MAPPING_REPOSITORY_URL, mapping))
-        Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-          case s: String => ok
-        }
+      "push the proper evaluation in to the comparison repository" in new Repository {
+         // Trigger the comparison of the the oracle against the other mappings
+         val listUrl = portal.compare(oracle.uid, mappings.toList.map { x => x.uid }, "Comparator integration test")
+         val comparisonUrls = portal.fetchUrlsOfComparisonsWithOracle(oracle.uid)
+         forall(comparisonUrls) { url =>
+         	val comparison = portal.fetchComparisonAt(url)
+         	comparison must not beNull
+         }
       }
 
-      // Trigger the comparison of the the oracle against the other mappings
-      println("OK, Trigerring the comparison ... ")
-      val request = new Request(oracle.uid, toCompare.toList.map { x => x.uid }, "Comparator integration test")
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest[Request] ~> sendReceive ~> unmarshal[String] }
-      }
-      val futureUrl = conduit.pipeline(Post(COMPARATOR_URL, request))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case url: String => {
-          // We check whether there all the comparison is available
-          println("The URL is " + url)
-          println("OK, Fetching comparison from the repository ...")
-          val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-            val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[Evaluation]] }
-          }
-          val futureUrl = conduit.pipeline(Get(url))
-          Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-            case e: List[Evaluation] => e.size must_== toCompare.size
-          }
+   }
 
-          // We try to fetch all comparisons
-          forall(toCompare)({ mapping =>
-            println("OK, fetching evaluation of mapping '" + mapping.uid + "' ...")
-            val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-              val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[Evaluation] }
-            }
-            val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY_URL + "/" + oracle.uid + "/" + mapping.uid))
-            Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-              case c: Evaluation => ok
-            }
-          })
+   /**
+    * Prepare the mapping repository: add an oracle aand 10 mappings related to this oracle.
+    */
+   class Repository extends BeforeAfter {
 
-        }
+      /**
+       * Push an oracle and a set of mappings in the mapping repository
+       */
+      override def before = {
+         oracle = MatcherMock.mapping
+         mappings = (for (i <- 1 to 10) yield MatcherMock.mapping).toList
+         (oracle :: mappings).foreach {
+            mapping => portal.storeMapping(mapping)
+         }
       }
 
-    }
+      /**
+       * Delete the mappings that were pushed in the repository
+       */
+      override def after = {
+         portal.deleteMapping(oracle)
+         mappings.foreach { mapping => portal.deleteMapping(mapping) }
+         portal.deleteComparisonsWithOracle(oracle.uid)
+      }
 
-  }
+   }
 
 }

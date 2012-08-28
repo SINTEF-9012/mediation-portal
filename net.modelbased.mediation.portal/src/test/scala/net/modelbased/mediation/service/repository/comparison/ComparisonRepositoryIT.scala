@@ -21,25 +21,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 import org.specs2.mutable._
-import scala.xml._
-import scala.io.Source
-import net.modelbased.sensapp.library.system._
-import akka.dispatch._
-import akka.util.duration._
-import cc.spray.client._
-import cc.spray.json._
-import cc.spray.typeconversion.SprayJsonSupport._
-import cc.spray.typeconversion.DefaultUnmarshallers._
-import cc.spray.json.DefaultJsonProtocol._
-import net.modelbased.mediation.service.repository.model._
-import net.modelbased.mediation.service.repository.model.data._
-import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol._
-import net.modelbased.mediation.service.repository.mapping._
-import net.modelbased.mediation.service.repository.mapping.data._
-import net.modelbased.mediation.service.repository.mapping.data.Conversions._
-import net.modelbased.mediation.service.repository.comparison._
-import net.modelbased.mediation.service.repository.comparison.data._
-import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluationProtocol._
+
+import net.modelbased.mediation.client.portal.Portal
+import net.modelbased.mediation.client.repository.comparison.ComparisonRepository
+
+import net.modelbased.mediation.service.repository.comparison.data.Evaluation
+import net.modelbased.mediation.service.repository.comparison.data.Statistics
+
+import net.modelbased.mediation.service.comparator.MatcherMock
 
 /**
  * Simple integration test for the model repository. We merely push one model and
@@ -51,84 +40,65 @@ import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluatio
  *
  * @since 0.0.1
  */
-class ComparisonRepositoryIT extends SpecificationWithJUnit with HttpSpraySupport {
+class ComparisonRepositoryIT extends SpecificationWithJUnit {
 
-  val httpClientName = "test-model-repository"
+   val portal = new Portal("localhost", 8080) with ComparisonRepository
 
-  val MAPPING_REPOSITORY_URL = "/mediation/repositories/mappings"
+   var comparisonA: Evaluation = _
+   var comparisonB: Evaluation = _
 
-  val COMPARISON_REPOSITORY_URL = "/mediation/repositories/comparisons"
+   /**
+    * Prepare and clean the comparison repository
+    */
+   class Repository extends BeforeAfter {
 
-  val modelName = "test-model-"
-
-  val xsd = XML.load("src/test/resources/schemas/document.xsd")
-
-  "The Comparison Repository" should {
-
-    /**
-     * Here we just send GET to the repository URL and ensure that we receive
-     * a list of URL (potentially empty)
-     */
-    "Returns the list of stored comparison" in {
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
+      override def before = {
+         comparisonA = MatcherMock.mapping.evaluateAgainst(MatcherMock.mapping)
+         comparisonB = MatcherMock.mapping.evaluateAgainst(MatcherMock.mapping)
+         portal.storeComparisons(List(comparisonA, comparisonB))
       }
-      val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY_URL))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case l: List[String] => ok
-      }
-    }
-    
-    /**
-     * Here we just send GET to the repository URL and ensure that we receive
-     * a list of URL (potentially empty)
-     */
-    "Returns the list of stored comparison" in {
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[Evaluation]] }
-      }
-      val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY_URL + "?flatten=true"))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case l: List[Evaluation] => ok
-      }
-    }
 
-    /**
-     * We create a new dummy comparison and we PUSH it to the repository URL. We
-     * then ensure that a comparison is indeed available at the given URL
-     */
-    "Store a new comparison" in {
-      val oracle = MatcherMock.mapping
-      val toEvaluate = MatcherMock.mapping
-      val evaluation = toEvaluate.evaluateAgainst(oracle)
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
-        val pipeline = { simpleRequest[List[Evaluation]] ~> sendReceive ~> unmarshal[List[String]] }
+      override def after = {
+         portal.deleteComparison(comparisonA)
+         portal.deleteComparison(comparisonB)
       }
-      val futureUrl = conduit.pipeline(Post(COMPARISON_REPOSITORY_URL, List(evaluation)))
-      Await.result(futureUrl, intToDurationInt(5) seconds) must beLike {
-        case urls: List[String] => {
-          urls.find(x => x.contains(oracle.uid)) match {
-            case None => ko
-            case Some(url) => {
-              println("THE URL:" + url)
-              if (url != "/sensapp" + COMPARISON_REPOSITORY_URL + "/" + oracle.uid) {
-                ko
-              } else {
-                val conduit2 = new HttpConduit(httpClient, "localhost", 8080) {
-                  val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[Evaluation]] }
-                }
-                val futureModel = conduit2.pipeline(Get(url))
-                Await.result(futureModel, intToDurationInt(5) seconds) must beLike {
-                  case loe: List[Evaluation] =>
-                    loe must contain(evaluation)
-                }
-              }
-            }
-          }
-        }
-      }
-    }
 
-  }
+   }
+
+   "The Comparison Repository" should {
+
+      "support the extraction of the comparison at once" in {
+         val infos = portal.fetchAllComparisons()
+         infos.size must beEqualTo(2)
+      }
+
+      "support the addition and deletion of comparisons" in {
+         val urls = portal.fetchAllOracleUrls()
+         urls.size must beEqualTo(2)
+
+         // We add a new model in the repository
+         val comparisonC = MatcherMock.mapping.evaluateAgainst(MatcherMock.mapping)
+         portal.storeComparisons(List(comparisonC))
+
+         val urls2 = portal.fetchAllOracleUrls()
+         urls2.size must beEqualTo(3)
+
+         val comparisonCbis = portal.fetchComparisonById(comparisonC.oracle, comparisonC.mapping)
+         comparisonCbis must beEqualTo(comparisonC)
+
+         // we delete the model from the repository
+         portal.deleteComparison(comparisonC)
+
+         val urls3 = portal.fetchAllOracleUrls()
+         urls3.size must beEqualTo(2)
+      }
+
+      "support the calculation of statistics" in {
+         val stats = portal.fetchStatisticsById(comparisonA.oracle, comparisonA.mapping)
+         stats must not beNull
+      }
+
+   }
+
 
 }
