@@ -22,11 +22,6 @@
  */
 package net.modelbased.mediation.client.repository.mapping
 
-
-
-
-
-
 import scala.xml._
 import scala.io.Source
 import net.modelbased.sensapp.library.system._
@@ -38,7 +33,6 @@ import cc.spray.typeconversion.SprayJsonSupport._
 import cc.spray.typeconversion.DefaultUnmarshallers._
 import cc.spray.json.DefaultJsonProtocol._
 
-
 import net.modelbased.mediation.client.portal.Portal
 
 import net.modelbased.mediation.service.repository.mapping._
@@ -46,37 +40,48 @@ import net.modelbased.mediation.service.repository.mapping.data._
 import net.modelbased.mediation.service.repository.mapping.data.Conversions._
 import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol._
 
-
 /**
  * Client API for the mapping repository
  *
  * @author Franck Chauvel - SINTEF ICT
- * 
+ *
  * @since 0.0.1
  *
  */
 trait MappingRepository extends Portal {
 
-   
    val MAPPING_REPOSITORY = "/mediation/repositories/mappings"
- 
-      
-  /**
-   * Publish a mapping in the repository
-   *
-   * @param mapping the mapping that must be published in the repository
-   *
-   * @return a string representing the status of the publication
-   */
-  def storeMapping(mapping: Mapping): String = {
-    val conduit = new HttpConduit(httpClient, host, port) {
-      val pipeline = simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String]
-    }
-    val result = conduit.pipeline(Post(MAPPING_REPOSITORY, mapping)) 
-    Await.result(result, 5 seconds)
-  }
-   
-   
-   
-   
+
+   /**
+    * Publish a mapping in the repository
+    *
+    * @param mapping the mapping that must be published in the repository
+    *
+    * @return a string representing the status of the publication
+    */
+   def storeMapping(mapping: Mapping): String = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String]
+      }
+      val result = conduit.pipeline(Post(MAPPING_REPOSITORY, mapping))
+      Await.result(result, 5 seconds)
+   }
+
+   /**
+    * Fetch a given mapping, form its URI.
+    *
+    * @param mappingUid the identifier of the mapping to fetch
+    *
+    * @return the corresponding mapping object
+    */
+   def fetchMappingById(mappingUid: String): Mapping = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[MappingData]
+      }
+      var r = conduit.pipeline(Get(MAPPING_REPOSITORY + "/" + mappingUid, None))
+      Await.result(r, 5 seconds) match {
+         case m: MappingData => m
+      }
+   }
+
 }
