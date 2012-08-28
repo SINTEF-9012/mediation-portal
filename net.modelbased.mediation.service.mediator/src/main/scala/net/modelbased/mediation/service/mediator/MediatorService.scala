@@ -31,29 +31,34 @@ import RequestJsonProtocol._
 
 trait MediatorService extends SensAppService {
 
-  override lazy val partnerName = "mediator"
+   override lazy val partnerName = "mediator"
 
-  private[this] val runner = new Runner(partners)
+   private[this] val runner = new Runner(partners)
 
-  val service = {
-    path("mediator") {
-      post {
-        content(as[Request]) { request =>
-          context =>
-            runner.process(request) match {
-              case Left(errorMsg) => context.complete(errorMsg) 
-              case Right(mapping) => context.complete(StatusCodes.Created, runner.Urls.MAPPING_REPOSITORY + "/" + mapping.uid )
+   val service = {
+      path("mediator") {
+         post {
+            content(as[Request]) { request =>
+               context =>
+                  try {
+                     val result = runner.process(request)
+                     context.complete(StatusCodes.OK, result)
+                  
+                  } catch {
+                     case e: Exception =>
+                     context.complete(StatusCodes.InternalServerError, e.getMessage())      
+                  
+                  }
             }
-        }
-      } ~ cors("POST")
-    } ~ 
-    path( "mediator" / "algorithms" ) { // Return the list of existing algorithms
-       get {
-          context => 
-             context.complete(StatusCodes.OK, runner.algorithms)
-       } ~ cors("GET")
-    }
-  }
+         } ~ cors("POST")
+      } ~
+         path("mediator" / "algorithms") { // Return the list of existing algorithms
+            get {
+               context =>
+                  context.complete(StatusCodes.OK, runner.algorithms)
+            } ~ cors("GET")
+         }
+   }
 
 }
 

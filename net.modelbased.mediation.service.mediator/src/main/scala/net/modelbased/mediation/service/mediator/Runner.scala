@@ -38,6 +38,10 @@ import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProto
 import net.modelbased.mediation.service.repository.model.data._
 import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol._
 
+import net.modelbased.mediation.client.portal.Portal
+import net.modelbased.mediation.client.repository.model.ModelRepository
+import net.modelbased.mediation.client.repository.mapping.MappingRepository
+
 /**
  * Implementation of the Mediator service as template method pattern
  *
@@ -48,101 +52,60 @@ import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol.
  */
 class Runner(partners: PartnerHandler) extends HttpSpraySupport {
 
-  /**
-   * Define the URL used in this settings
-   */
-  object Urls {
-    val MAPPING_REPOSITORY = "/mediation/repositories/mappings"
+   val modelRepository = {
+      val (host, port) = partners("model-repository").get
+      new Portal(host, port) with ModelRepository
+   }
 
-    val MODEL_REPOSITORY = "/mediation/repositories/models"
-  }
+   val mappingRepository = {
+      val (host, port) = partners("mapping-repository").get
+      new Portal(host, port) with MappingRepository
+   }
 
-  val httpClientName = "mediator"
+   val httpClientName = "mediator"
 
-  /**
-   * Bind each mediation algorithm to a specific name. This is definitely quick
-   * and dirty
-   *
-   * @todo refactor
-   */
-  private[this] val mediations: Map[String, Mediation] = Map(
-    "xsd-random" -> new RandomXsdMediation(), 
-    "xsd-syntactic" -> new SyntacticXsdMediation()) 
-    
-    
-  /**
-   * @return the list of mediation algorithm supported by the mediator service
-   */
-  def algorithms: List[String] =
-     mediations.keySet.toList
+   /**
+    * Bind each mediation algorithm to a specific name. This is definitely quick
+    * and dirty
+    *
+    * @todo refactor
+    */
+   private[this] val mediations: Map[String, Mediation] = Map(
+      "xsd-random" -> new RandomXsdMediation(),
+      "xsd-syntactic" -> new SyntacticXsdMediation())
 
-  /**
-   * Query the model repository to retrieve a model from the given model id. This
-   * is a synchronous method that will timeout after 5 second, the model repository
-   * does not respond.
-   *
-   * @param modelId the ID of the needed model
-   *
-   * @return the model whose id match the given one, or none if there is no model
-   * with such an ID.
-   */
-  private[this] def fetch(modelId: String): Option[Model] = {
-    val repository = partners("model-repository").get
-    val conduit = new HttpConduit(httpClient, repository._1, repository._2) {
-      val pipeline = simpleRequest ~> sendReceive ~> unmarshal[Model]
-    }
-    val result = conduit.pipeline(Get(Urls.MODEL_REPOSITORY + "/" + modelId, None))
-    try {
-      Some(Await.result(result, 5 seconds))
+   /**
+    * @return the list of mediation algorithm supported by the mediator service
+    */
+   def algorithms: List[String] =
+      mediations.keySet.toList
 
-    } catch {
-      case e: Exception => None
+   /**
+    * Process a mediation request: it fetches both the source and target models,
+    * create an initial mapping, and run the given mediation algorithm
+    */
+   def process(request: Request): String = {
+      println("Fetching source ...")
+      val source = modelRepository.fetchModelById(request.source)
+      val target = modelRepository.fetchModelById(request.target)
+      mediations.get(request.algo) match {
+         case Some(mediation) =>
+            val mapping = mediation(new Mapping(sourceId = source.name, targetId = target.name), source, target)
+            mappingRepository.storeMapping(mapping)
+         case _ =>
+            throw new UnknownAlgorithmException(request.algo, mediations.keySet.toList)
+      }
+   } 
 
-    }
-  }
+}
 
-  /**
-   * Publish a mapping in the repository
-   *
-   * @param mapping the mapping that must be published
-   *
-   * @return a string representing the status of the publication
-   */
-  private[this] def publishMapping(mapping: Mapping): String = {
-    val repository = partners("mapping-repository").get
-    val conduit = new HttpConduit(httpClient, repository._1, repository._2) {
-      val pipeline = simpleRequest[MappingData] ~> sendReceive ~> unmarshal[String]
-    }
-    val result = conduit.pipeline(Post(Urls.MAPPING_REPOSITORY, mapping)) 
-    Await.result(result, 5 seconds)
-  }
+/**
+ * Exception thrown when the given algorithm does not exist in the mediations table
+ *
+ * @author Franck Chauvel - SINTEF ICT
+ *
+ * @since 0.0.1
+ */
+case class UnknownAlgorithmException(val algorithm: String, val candidates: List[String]) extends Exception("Unknown algorithm '%s' (existing algorithms are %s)".format(algorithm, candidates.mkString(", "))) {
 
-  /**
-   * Process a mediation request: it fetches both the source and target models,
-   * create an initial mapping, and run the given mediation algorithm
-   */
-  def process(request: Request): Either[String, Mapping] = {
-    println("Fetching source ...")
-    fetch(request.source) match {
-      case None => Left("Unable to retrieve the source model '%s' from the repository.".format(request.source))
-      case Some(source) =>
-        println("OK, fetching target ...")
-        fetch(request.target) match {
-          case None => Left("Unable to retrieve the target model '%s' from the repository.".format(request.target))
-          case Some(target) =>
-            mediations.get(request.algo) match {
-              case None => Left("Unknown algorithm '%s' (existing algorithms are %s)".format(request.algo, mediations.keys.mkString(", ")))
-              case Some(mediation) =>
-                println("OK, running mediation ...");
-                val result = mediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
-                println("mapping: " + result.toString)
-                println("OK, publishing mapping ...");
-                publishMapping(result)
-                println("OK, Medition Complete!");
-                Right(result)
-            }
-        }
-    }
-  }
-
-} 
+}
