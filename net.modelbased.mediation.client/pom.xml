@@ -23,6 +23,7 @@
 		<module>../net.modelbased.mediation.client.mediator</module>
 		<module>../net.modelbased.mediation.client.comparator</module>
 		<module>../net.modelbased.mediation.client.aggregator</module>
+		<module>../net.modelbased.mediation.client.importer</module>
 	</modules>
 
 	<dependencies>

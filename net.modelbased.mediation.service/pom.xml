@@ -15,12 +15,11 @@
 	<modules>
 		<module>../net.modelbased.mediation.service.repository.model</module>
 		<module>../net.modelbased.mediation.service.repository.mapping</module>
+		<module>../net.modelbased.mediation.service.repository.comparison</module>
 		<module>../net.modelbased.mediation.service.mediator</module>
 		<module>../net.modelbased.mediation.service.comparator</module>
-		<module>
-    	../net.modelbased.mediation.service.repository.comparison
-    </module>
 		<module>../net.modelbased.mediation.service.aggregator</module>
+		<module>../net.modelbased.mediation.service.importer</module>
 	</modules>
 
 	<dependencies>
@@ -32,4 +31,5 @@
 	</dependencies>
 
 	<description>A set of REST services to build and evaluate complex data mediation services</description>
+	
 </project>
