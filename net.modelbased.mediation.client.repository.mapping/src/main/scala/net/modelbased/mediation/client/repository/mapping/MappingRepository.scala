@@ -53,6 +53,33 @@ trait MappingRepository extends Portal {
    val MAPPING_REPOSITORY = "/mediation/repositories/mappings"
 
    /**
+    * Retrieve the url of all the models stored in the repository
+    *
+    * @return the list of url of all models stored in the repository
+    */
+   def fetchAllMappingUrls(): List[String] = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
+      }
+      val futureUrl = conduit.pipeline(Get(MAPPING_REPOSITORY, None))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
+   
+    /**
+    * Retrieve all the information about the models stored in the repository
+    * 
+    * @return a list of ModelInfo object describing the content of the repository
+    */
+   def fetchAllMappingInfo(): List[MappingInfo] = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[MappingInfo]] }
+      }
+      val futureUrl = conduit.pipeline(Get(MAPPING_REPOSITORY + "?flatten=true"))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+   
+   /**
     * Publish a mapping in the repository
     *
     * @param mapping the mapping that must be published in the repository
@@ -68,7 +95,7 @@ trait MappingRepository extends Portal {
    }
 
    /**
-    * Fetch a given mapping, form its URI.
+    * Fetch a given mapping, from its ID.
     *
     * @param mappingUid the identifier of the mapping to fetch
     *
@@ -82,6 +109,54 @@ trait MappingRepository extends Portal {
       Await.result(r, 5 seconds) match {
          case m: MappingData => m
       }
+   }
+
+   /**
+    * Fetch a given mapping, from its URL. (mapping URL are typically produced
+    * by the mediator service)
+    *
+    * @param url the URL where the mapping is located
+    *
+    * @return the corresponding mapping object
+    */
+   def fetchMappingAt(url: String): Mapping = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[MappingData]
+      }
+      var r = conduit.pipeline(Get(url, None))
+      Await.result(r, 5 seconds) match {
+         case m: MappingData => m
+      }
+   }
+
+   /**
+    * Export a given mapping into an XML document
+    *
+    * @param mapping the mapping that has to be exported to XML
+    *
+    * @return the corresponding XML string
+    */
+   def exportMappingToXml(mappingId: String): String = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[String]
+      }
+      var r = conduit.pipeline(Get(MAPPING_REPOSITORY + "/" + mappingId + "/asXML", None))
+      Await.result(r, 5 seconds) 
+   }
+   
+   
+   /**
+    * Delete a a given mapping from the repository
+    *
+    * @param mapping the mapping that must be deleted from the repository
+    *
+    */
+   def deleteMapping(mapping: Mapping) = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal
+      }
+      var r = conduit.pipeline(Delete(MAPPING_REPOSITORY + "/" + mapping.uid, None))
+      Await.result(r, 5 seconds)
    }
 
 }

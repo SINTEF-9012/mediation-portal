@@ -53,7 +53,7 @@ class MappingRepositoryIT extends SpecificationWithJUnit {
       override def before = {
          mappingA = new Mapping(sourceId = "foo", targetId = "bar")
          mappingA.add(new Entry("source.foo", "target.bar", 0.34, "testing mapping repository"))
-         portal.storeMapping(mappingA)
+         portal.storeMapping(mappingA) 
          mappingB = new Mapping(sourceId = "foo2", targetId = "bar2")
          mappingB.add(new Entry("source.foo2", "target.bar2", 0.56, "testing mapping repository"))
          portal.storeMapping(mappingB)
@@ -98,7 +98,7 @@ class MappingRepositoryIT extends SpecificationWithJUnit {
       
       
       "support export of mapping as an XML document" in new Repository {
-         val node = portal.exportMappingToXml(mappingA)
+         val node = portal.exportMappingToXml(mappingA.uid)
          node must not beNull
       }
 

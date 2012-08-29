@@ -33,18 +33,17 @@ import cc.spray.typeconversion.SprayJsonSupport._
 import cc.spray.typeconversion.DefaultUnmarshallers._
 import cc.spray.json.DefaultJsonProtocol._
 
-
 import net.modelbased.mediation.client.portal.Portal
 
 import net.modelbased.mediation.service.repository.model._
 import net.modelbased.mediation.service.repository.model.data._
 import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol._
 
-
 /**
  * Client API for the model repository
  *
  * @author Franck Chauvel - SINTEF ICT
+ *
  * @since 0.0.1
  *
  */
@@ -52,7 +51,33 @@ trait ModelRepository extends Portal {
 
    val MODEL_REPOSITORY = "/mediation/repositories/models"
 
+   /**
+    * Retrieve the url of all the models stored in the repository
+    *
+    * @return the list of url of all models stored in the repository
+    */
+   def fetchAllModelUrls(): List[String] = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
+      }
+      val futureUrl = conduit.pipeline(Get(MODEL_REPOSITORY, None))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
    
+   /**
+    * Retrieve all the information about the models stored in the repository
+    * 
+    * @return a list of ModelInfo object describing the content of the repository
+    */
+   def fetchAllModelInfo(): List[ModelInfo] = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[ModelInfo]] }
+      }
+      val futureUrl = conduit.pipeline(Get(MODEL_REPOSITORY + "?flatten=true"))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
    /**
     * Store a new model in the model repository
     *
@@ -61,7 +86,7 @@ trait ModelRepository extends Portal {
     * @return the URL of the model in the repository
     */
    def storeModel(model: Model): String = {
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+      val conduit = new HttpConduit(httpClient, host, port) {
          val pipeline = { simpleRequest[Model] ~> sendReceive ~> unmarshal[String] }
       }
       val futureUrl = conduit.pipeline(Post(MODEL_REPOSITORY, model))
@@ -76,11 +101,39 @@ trait ModelRepository extends Portal {
     * @return the resulting Model object
     */
    def fetchModelAt(url: String): Model = {
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+      val conduit = new HttpConduit(httpClient, host, port) {
          val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[Model] }
       }
-      val futureUrl = conduit.pipeline(Post(url, None))
+      val futureUrl = conduit.pipeline(Get(url, None))
       Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
+   /**
+    * Retrieve a model from the model repository. The ID of the model is given as
+    * input.
+    *
+    * @param modelID the ID of the model to retreive
+    *
+    * @return the related model element
+    */
+   def fetchModelById(modelId: String): Model = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[Model]
+      }
+      val result = conduit.pipeline(Get(MODEL_REPOSITORY + "/" + modelId, None))
+      Await.result(result, 5 seconds)
+   }
+
+   /**
+    * Delete a given model from the repository
+    *
+    */
+   def deleteModel(model: Model) = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[String]
+      }
+      val result = conduit.pipeline(Delete(MODEL_REPOSITORY + "/" + model.name, None))
+      Await.result(result, 5 seconds)
    }
 
 }

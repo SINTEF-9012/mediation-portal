@@ -56,11 +56,87 @@ trait ComparisonRepository extends Portal {
     *
     * @return the list of existing comparisons
     */
-   def fetchComparisonList(): List[String] = {
+   def fetchAllOracleUrls(): List[String] = {
       val conduit = new HttpConduit(httpClient, host, port) {
          val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[String]] }
       }
       val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
+   /**
+    * Fetch the comparison stored at the given URL
+    *
+    * @param url the URL where the comparison is stored
+    *
+    * @return the list of existing comparisons
+    */
+   def fetchComparisonAt(url: String): Evaluation = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[Evaluation] }
+      }
+      val futureUrl = conduit.pipeline(Get(url))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
+   /**
+    * Retrieve all the comparison stored in the repository
+    */
+   def fetchAllComparisons(): List[Evaluation] = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[Evaluation]] }
+      }
+      val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY + "?flatten=true"))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
+   /**
+    * Fetch the urls of all comparison with the given oracle ID.
+    *
+    * @param oracleId the ID of the oracle mapping
+    *
+    * @return a list of string containing all the URL of the different comparison
+    */
+   def fetchComparisonsWithOracle(oracleId: String): List[Evaluation] = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[List[Evaluation]] }
+      }
+      val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY + "/" + oracleId))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+   
+   
+   /**
+    * Fetch a specific comparison in the repository
+    *
+    * @param oracleId the ID of the oracle mapping
+    * 
+    * @param mappingID the ID of the mapping compared to the oracle
+    * 
+    * @return the related evaluation object
+    */
+   def fetchComparisonById(oracleId: String, mappingId: String): Evaluation = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[Evaluation] }
+      }
+      val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY + "/" + oracleId + "/" + mappingId))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+   
+    /**
+    * Fetch the statistics of a given comparison in the repository
+    *
+    * @param oracleId the ID of the oracle mapping
+    * 
+    * @param mappingID the ID of the mapping compared to the oracle
+    * 
+    * @return the related statistics object
+    */
+   def fetchStatisticsById(oracleId: String, mappingId: String): Statistics = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal[Statistics] }
+      }
+      val futureUrl = conduit.pipeline(Get(COMPARISON_REPOSITORY + "/" + oracleId + "/" + mappingId + "/stats"))
       Await.result(futureUrl, intToDurationInt(5) seconds)
    }
 
@@ -71,12 +147,39 @@ trait ComparisonRepository extends Portal {
     *
     * @return the REST response as a string
     */
-   def storeEvaluations(evaluations: List[Evaluation]): List[String] = {
+   def storeComparisons(evaluations: List[Evaluation]): List[String] = {
       val conduit = new HttpConduit(httpClient, host, port) {
          val pipeline = simpleRequest[List[Evaluation]] ~> sendReceive ~> unmarshal[List[String]]
       }
       var r = conduit.pipeline(Post(COMPARISON_REPOSITORY, evaluations))
       Await.result(r, 5 seconds)
+   }
+
+   /**
+    * Delete a given comparison from the repository
+    *
+    * @param comparison the comparison to delete
+    */
+   def deleteComparison(comparison: Evaluation) = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal }
+      }
+      val futureUrl = conduit.pipeline(Delete(COMPARISON_REPOSITORY + "/" + comparison.oracle + "/" + comparison.mapping))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+   }
+
+   /**
+    * Delete all the comparisons with a given oracle ID.
+    * 
+    * @param oracleId the ID of the oracle whose comparison with have to be deleted
+    */
+   def deleteComparisonsWithOracle(oracleId: String) = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = { simpleRequest ~> sendReceive ~> unmarshal }
+      }
+      val futureUrl = conduit.pipeline(Delete(COMPARISON_REPOSITORY + "/" + oracleId))
+      Await.result(futureUrl, intToDurationInt(5) seconds)
+
    }
 
 }

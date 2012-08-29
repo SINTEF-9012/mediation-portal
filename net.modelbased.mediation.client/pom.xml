@@ -6,7 +6,8 @@
 	<name>Mediation Client API</name>
 	<description>A client API that eases the integration of the mediation services within existing applications</description>
 	<inceptionYear>2012</inceptionYear>
-
+	<packaging>pom</packaging>
+	
 	<parent>
 		<artifactId>net.modelbased.mediation</artifactId>
 		<groupId>net.modelbased</groupId>
@@ -14,32 +15,17 @@
 		<relativePath>../net.modelbased.mediation</relativePath>
 	</parent>
 
+	<modules>
+		<module>../net.modelbased.mediation.client.portal</module>
+		<module>../net.modelbased.mediation.client.repository.model</module>
+		<module>../net.modelbased.mediation.client.repository.mapping</module>
+		<module>../net.modelbased.mediation.client.repository.comparison</module>
+		<module>../net.modelbased.mediation.client.mediator</module>
+		<module>../net.modelbased.mediation.client.comparator</module>
+		<module>../net.modelbased.mediation.client.aggregator</module>
+	</modules>
+
 	<dependencies>
-		<dependency>
-			<groupId>net.modelbased.mediation.service</groupId>
-			<artifactId>net.modelbased.mediation.service.repository.mapping</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.modelbased.mediation.service</groupId>
-			<artifactId>net.modelbased.mediation.service.repository.comparison</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.modelbased.mediation.service</groupId>
-			<artifactId>net.modelbased.mediation.service.mediator</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.modelbased.mediation.service</groupId>
-			<artifactId>net.modelbased.mediation.service.comparator</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>net.modelbased.mediation.service</groupId>
-			<artifactId>net.modelbased.mediation.service.aggregator</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>net.modelbased.sensapp.library</groupId>
 			<artifactId>net.modelbased.sensapp.library.system</artifactId>

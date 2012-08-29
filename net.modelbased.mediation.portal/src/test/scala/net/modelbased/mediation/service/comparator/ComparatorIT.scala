@@ -52,11 +52,8 @@ class ComparatorIT extends SpecificationWithJUnit {
       "push the proper evaluation in to the comparison repository" in new Repository {
          // Trigger the comparison of the the oracle against the other mappings
          val listUrl = portal.compare(oracle.uid, mappings.toList.map { x => x.uid }, "Comparator integration test")
-         val comparisonUrls = portal.fetchUrlsOfComparisonsWithOracle(oracle.uid)
-         forall(comparisonUrls) { url =>
-         	val comparison = portal.fetchComparisonAt(url)
-         	comparison must not beNull
-         }
+         val comparisons = portal.fetchComparisonsWithOracle(oracle.uid)
+         comparisons.size must beEqualTo(10)
       }
 
    }

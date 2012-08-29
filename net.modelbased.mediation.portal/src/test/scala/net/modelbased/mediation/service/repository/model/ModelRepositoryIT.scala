@@ -86,7 +86,7 @@ class ModelRepositoryIT extends SpecificationWithJUnit {
          val urls2 = portal.fetchAllModelUrls() 
          urls2.size must beEqualTo(3)
         
-         val modelCbis = portal.fetchModelById("test-modelC-bis")
+         val modelCbis = portal.fetchModelById("test-modelC")
          modelCbis must beEqualTo(modelC) 
          
          // we delete the model from the repository

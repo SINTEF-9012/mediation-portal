@@ -83,7 +83,7 @@ class Runner(val partners: PartnerHandler) extends HttpSpraySupport {
             mapping.evaluateAgainst(oracle) :: acc
       }
       
-      comparisonRepository.storeEvaluations(evaluations)
+      comparisonRepository.storeComparisons(evaluations)
 
       return COMPARISON_REPOSITORY_URL + "/" + request.oracle
    }

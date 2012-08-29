@@ -34,13 +34,6 @@ import cc.spray.typeconversion.SprayJsonSupport._
 import cc.spray.typeconversion.DefaultUnmarshallers._
 import cc.spray.json.DefaultJsonProtocol._
 
-import net.modelbased.mediation.service.mediator._
-import net.modelbased.mediation.service.mediator.RequestJsonProtocol._
-
-import net.modelbased.mediation.service.repository.model._
-import net.modelbased.mediation.service.repository.model.data._
-import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol._
-
 
 /**
  * Facade of the mediation portal client API. This cis a general class where
@@ -50,8 +43,8 @@ import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol.
  *  
  *  @since 0.0.1
  */
-class Portal extends HttpSpraySupport {
+class Portal(val host: String, val port: Int) extends HttpSpraySupport {
 
-   val httpClientName = "mediation-portal-scala-client"
+   val httpClientName = "mediation-portal-scala-client" 
 
 }

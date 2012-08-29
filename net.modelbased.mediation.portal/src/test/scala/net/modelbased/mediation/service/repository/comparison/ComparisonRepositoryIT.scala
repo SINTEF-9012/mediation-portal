@@ -67,12 +67,12 @@ class ComparisonRepositoryIT extends SpecificationWithJUnit {
 
    "The Comparison Repository" should {
 
-      "support the extraction of the comparison at once" in {
+      "support the extraction of the comparison at once" in new Repository {
          val infos = portal.fetchAllComparisons()
          infos.size must beEqualTo(2)
       }
 
-      "support the addition and deletion of comparisons" in {
+      "support the addition and deletion of comparisons" in new Repository {
          val urls = portal.fetchAllOracleUrls()
          urls.size must beEqualTo(2)
 
@@ -93,7 +93,7 @@ class ComparisonRepositoryIT extends SpecificationWithJUnit {
          urls3.size must beEqualTo(2)
       }
 
-      "support the calculation of statistics" in {
+      "support the calculation of statistics" in new Repository {
          val stats = portal.fetchStatisticsById(comparisonA.oracle, comparisonA.mapping)
          stats must not beNull
       }

@@ -24,6 +24,7 @@ package net.modelbased.mediation.service.aggreator
 
 import org.specs2.mutable._
 
+import net.modelbased.mediation.library.algorithm.mof.Package
 import net.modelbased.mediation.library.algorithm.mof.reader.MofReader
 
 import net.modelbased.mediation.service.repository.model.data.Model

@@ -92,6 +92,11 @@ trait ComparisonRepositoryService extends SensAppService {
                         val message = "%d added/updated (%d discard because of irrelevant oracle)".format(toAdd.size, discarded.size)
                         context.complete(message)
                   }
+               } ~ delete {
+                  context =>
+                     val evaluations = _registry.findByOracle(oracle)
+                     evaluations.foreach { evaluation => _registry.remove(evaluation) }
+                     context.complete(StatusCodes.OK, "%d comparison deleted.".format(evaluations.size))
                } ~ cors("GET", "PUT")
          } ~
          path("mediation" / "repositories" / "comparisons" / PathElement / PathElement) { (oracle, mapping) =>
@@ -118,6 +123,15 @@ trait ComparisonRepositoryService extends SensAppService {
                      }
 
                }
+            } ~ delete {
+               context =>
+                  _registry.findByOracleAndMapping(oracle, mapping) match {
+                     case Some(evaluation) =>
+                        _registry.remove(evaluation)
+                        context.complete(StatusCodes.OK, "1 evaluation deleted!")
+                     case None =>
+                        context.complete(StatusCodes.BadRequest, "Unknown comparison (oracle=%s, mapping=%s)".format(oracle, mapping))
+                  }
             } ~ cors("GET", "PUT")
          } ~
          path("mediation" / "repositories" / "comparisons" / PathElement / PathElement / "stats") { (oracle, mapping) =>

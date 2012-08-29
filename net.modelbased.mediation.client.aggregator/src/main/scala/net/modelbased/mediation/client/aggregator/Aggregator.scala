@@ -61,12 +61,11 @@ trait Aggregator extends Portal {
     */
    def aggregate(result: String, parts: List[(String, String)]): String = {
       val request = new aggregator.Request(result, parts.map { case (m, p) => new aggregator.Part(m, p) })
-      val conduit = new HttpConduit(httpClient, "localhost", 8080) {
+      val conduit = new HttpConduit(httpClient, host, port) {
          val pipeline = { simpleRequest[aggregator.Request] ~> sendReceive ~> unmarshal[String] }
       }
       val futureUrl = conduit.pipeline(Post(AGGREGATOR_URL, request))
       Await.result(futureUrl, intToDurationInt(5) seconds) 
-
    }
 
 }

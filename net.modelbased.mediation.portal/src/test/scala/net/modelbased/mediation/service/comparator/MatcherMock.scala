@@ -38,6 +38,7 @@ import net.modelbased.mediation.service.repository.mapping.data.Conversions._
 object MatcherMock {
 
   private[this] val source = List("foo", "bar", "baz", "quz")
+  
   private[this] val target = source.foldLeft(List[String]()) {
     (acc, v) =>
       (v :+ v.last) :: acc
