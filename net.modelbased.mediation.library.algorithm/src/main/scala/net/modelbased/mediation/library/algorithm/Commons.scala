@@ -56,11 +56,11 @@ object Commons {
   
   val filter = new Filter(0.)
   
-  val xsdSyntacticMatch : Mediation = new SyntacticXsdMediation
+  val syntacticMatch : Mediation = new SyntacticMatch
   
   val semanticMatch : Mediation = null
   
-  val xsdRandomMatch : Mediation = new RandomXsdMediation
+  val randomMatch : Mediation = new RandomMatch
   
   val aggregateByMax : MappingAggregator = null
 

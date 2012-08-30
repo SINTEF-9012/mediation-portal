@@ -53,8 +53,8 @@ class SampleMediation extends Mediation {
    * two results by selecting the most relevant entries. 
    */
   override def execute(in: Mapping, source: Model, target: Model) = {
-    val m1 = xsdSyntacticMatch(in, source, target)
-    val m2 = xsdRandomMatch(in, source, target)
+    val m1 = syntacticMatch(in, source, target)
+    val m2 = randomMatch(in, source, target)
     val result = aggregateByMax(Set(m1, m2))
   }
 

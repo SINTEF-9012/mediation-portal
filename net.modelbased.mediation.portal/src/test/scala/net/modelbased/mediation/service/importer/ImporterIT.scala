@@ -25,16 +25,29 @@ package net.modelbased.mediation.service.importer
 
 import org.specs2.mutable._
 
+import scala.xml._
+
 import net.modelbased.mediation.client.portal.Portal
 import net.modelbased.mediation.client.repository.model.ModelRepository
 import net.modelbased.mediation.client.importer.Importer 
 
+import net.modelbased.mediation.service.repository.model.data.Model
 
 
-class ImporterIT extends SpecificationWithJUnit {
+trait ImporterIT extends SpecificationWithJUnit {
 
    val portal = new Portal("localhost", 8080) with ModelRepository with Importer
 
+   
+   trait Repository extends After {
+  
+      var theModel: Model = _
+         
+      override def after = {
+          portal.deleteModel(theModel)
+      }
+   
+   }
 
    "The importer" should {
 
@@ -43,6 +56,25 @@ class ImporterIT extends SpecificationWithJUnit {
     	  formats must not beNull ;
     	  formats must not beEmpty
       }
+      
+      "support importing textual MOF models" in new Repository {
+         val modelId = "test-importer-model"
+         val content = "package importer { class Test { feature1: String [0..1] } }"
+         val url = portal.importModel(modelId, "a simple textual model", Format.TEXT, content)
+         theModel = portal.fetchModelAt(url)
+         theModel must not beNull ;
+         theModel.content must beEqualTo(content)         
+      }
+      
+      "support importing XSD models" in new Repository {
+         val modelId = "test-importer-model"
+         val content = Utility.trim(XML.loadFile("src/test/resources/schemas/article.xsd")) 
+         val url = portal.importModel(modelId, "a simple textual model", Format.XSD, content.toString())
+         theModel = portal.fetchModelAt(url)
+         theModel must not beNull ;
+         theModel.content must beEqualTo(content)         
+      }
+      
      
    }
 

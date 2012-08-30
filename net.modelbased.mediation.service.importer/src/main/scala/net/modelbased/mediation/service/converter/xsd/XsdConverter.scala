@@ -1,10 +1,10 @@
 /**
  * This file is part of Mediation Portal [ http://mosser.github.com/mediation-portal ]
  *
- * Copyright (C) 2010-  SINTEF ICT
+ * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.library.algorithm
+ * Module: net.modelbased.mediation.service.importer
  *
  * Mediation Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,39 +20,34 @@
  * Public License along with Mediation Portal. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.library.algorithm.xsd
+package net.modelbased.mediation.service.converter.xsd
 
-import scala.xml
 import scala.xml._
 
-import net.modelbased.mediation.service.repository.model.data._
-import net.modelbased.mediation.library.algorithm._
-
-import net.modelbased.mediation.library.algorithm.mof.reader
+import net.modelbased.mediation.service.converter.Converter
 
 /**
- * Convert a model whose content is an XSD file (i.e., an XML schema) into
- * an equivalent model whose content is the MOF internal representation. This
- * transformation includes the pre-processing (cleansing) of the given input
- * XSD content.
+ * Convert an XSD model (an XML schema) into the internal MoF representation
+ * used by the framework.
  *
  * @author Franck Chauvel - SINTEF ICT
  *
  * @since 0.0.1
+ *
  */
-class XsdToMof extends ModelProcessor {
+class XsdConverter extends Converter {
+
+   private val clean = new XsdCleaner()
 
    val XSD_URI = "http://www.w3.org/2001/XMLSchema"
-
-   val clean = new XsdCleaner()
 
    var targetNamespace: String = _
    var prefix: String = _
 
-   override def apply(input: Model): Model = {
-      val cleanXsd = clean(input)
+   override def apply(input: String): String = {
+      val cleaned = clean(input)
 
-      val xsd = Utility.trim(XML.loadString(cleanXsd.content))
+      val xsd = Utility.trim(XML.loadString(cleaned))
       //println(xsd.toString)
 
       targetNamespace = xsd.attribute("targetNamespace").map { x => x.text }.getOrElse(null)
@@ -67,13 +62,11 @@ class XsdToMof extends ModelProcessor {
 
       val schemaClass = createSchemaClass(xsd)
 
-      val packageName = if (prefix == null) input.name else prefix
-      val content = "package %s { %s %s }".format(packageName, typeDefinition, schemaClass)
-
-      return new Model(input.name + " (as MOF)", input.description, "text/mof", content)
-
+      val packageName = if (prefix == null) "root" else prefix
+      "package %s { %s %s }".format(packageName, typeDefinition, schemaClass)
    }
 
+   
    private[this] def createSchemaClass(xsd: Node): String = {
       val definitions = (xsd \ "element").foldLeft("") { (acc, e) => acc + toFeature(e) }
       "class Schema { %s }".format(definitions)
@@ -88,7 +81,7 @@ class XsdToMof extends ModelProcessor {
    private[this] def toType(node: Node): String = {
       node match {
          case Elem(_, "simpleType", _, _, stc) =>
-           val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
+            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
             stc match {
                case Elem(_, "restriction", _, _, rc @ Elem(_, "enumeration", _, _) *) =>
                   toEnumeration(name, rc)

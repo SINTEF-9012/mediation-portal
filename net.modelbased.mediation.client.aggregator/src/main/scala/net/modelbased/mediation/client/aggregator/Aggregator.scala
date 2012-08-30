@@ -45,8 +45,6 @@ import net.modelbased.mediation.service.aggregator.RequestJsonProtocol._
  */
 trait Aggregator extends Portal {
  
-   self: ModelRepository => // Dependencies on ModelRepository
-
    val AGGREGATOR_URL = "/aggregator"
 
    /**

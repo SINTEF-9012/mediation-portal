@@ -71,8 +71,8 @@ class Runner(partners: PartnerHandler) extends HttpSpraySupport {
     * @todo refactor
     */
    private[this] val mediations: Map[String, Mediation] = Map(
-      "xsd-random" -> new RandomXsdMediation(),
-      "xsd-syntactic" -> new SyntacticXsdMediation())
+      "random" -> new RandomMatch(),
+      "syntactic" -> new SyntacticMatch())
 
    /**
     * @return the list of mediation algorithm supported by the mediator service

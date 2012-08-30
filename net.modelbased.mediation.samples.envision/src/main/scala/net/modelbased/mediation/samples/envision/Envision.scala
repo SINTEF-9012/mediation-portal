@@ -22,66 +22,59 @@
  */
 package net.modelbased.mediation.samples.envision
 
-import scala.xml.{ XML, Node, NodeSeq }
+import scala.xml.{ XML, Node, NodeSeq, Utility }
 
-import net.modelbased.mediation.library.algorithm._
-import net.modelbased.mediation.service.repository.mapping.data.Mapping
-import net.modelbased.mediation.service.repository.model.data.Model
+import net.modelbased.mediation.client.portal.Portal
+import net.modelbased.mediation.client.importer.Importer
+import net.modelbased.mediation.client.aggregator.Aggregator
+import net.modelbased.mediation.client.mediator.Mediator
+import net.modelbased.mediation.service.importer.Format
 
 /**
- * An helper that that generate a aggreagtion of a list of models.
+ * ENVISION illustrate how to write access (importer, aggregator and mediator)
+ * so as to trigger the mediation
  *
  * @author Franck Chauvel - SINTEF ICT
  *
  * @since 0.0.1
  */
-class ModelAggregation extends Function[List[Model], Model] {
+object EnvisionSample extends App {
 
-  override def apply(models: List[Model]): Model = {
-    val schema = <xs:schema> {
-      models.foldLeft(NodeSeq.Empty) {
-        (acc, v) =>
-          val xsd = XML.loadString(v.content) 
-          val nodes = xsd.child
-          acc ++ nodes
-      }
-    } </xs:schema>
-    new Model("aggregation", "Aggregated model from " + models.map{ x => x.name }.mkString(", "), "text/xsd", schema.toString())
-  }
- 
-}	
+   // Instantiate the portal
+   val portal = new Portal("localhost", 8080) with Importer with Aggregator with Mediator
 
-/**
- * Define an ENVISION-specific mediation
- *
- * @author Franck Chauvel - SINTEF ICT
- *
- * @since 0.0.1
- */
-class EnvisionMediation extends Mediation {
+   // Import the first source model
+   val source1Id = "ENVISION-SOS-source"
+   val xsd1 = Utility.trim(XML.loadFile("src/main/resources/source-SOS-SINTEF.xsd")).toString
+   portal.importModel(source1Id,
+      "ENVISION - Description of the source SOS service",
+      Format.XSD,
+      xsd1)
 
-  import net.modelbased.mediation.library.algorithm.Commons._
-
-  
-  override def execute(in: Mapping, source: Model, target: Model) = {
-    out = xsdSyntacticMatch(in, source, target)
-  }
-
-}
-
-/**
- * Define a the Envision wrapper that provides the features needed in ENVISION
- */
-class Envision extends Function2[List[Model], Model, Mapping] {
-
-  val aggregation = new ModelAggregation
-  val eMediation = new EnvisionMediation
-
-  override def apply(sources: List[Model], target: Model): Mapping = {
-    println(target.content)
-    val source = aggregation(sources)
-    printf(source.content)
-    eMediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
-  }
-
+   // Import the second source model
+   val source2Id = "ENVISION-WFS-source"
+   val xsd2 = Utility.trim(XML.loadFile("src/main/resources/source-WFS-SINTEF.xsd")).toString
+   portal.importModel(source2Id,
+      "ENVISION - Description of the source WFS service",
+      Format.XSD,
+      xsd2)
+      
+   // Aggregate the two models
+   val aggregationId = "ENVISION-aggregated-source"
+   portal.aggregate(aggregationId, List((source1Id, "sos"), (source2Id, "wfs")))
+         
+   
+   // Import the target model
+   // Import the second source model
+   val targetId = "ENVISION-WPS-target"
+   val xsd3 = Utility.trim(XML.loadFile("src/main/resources/target-WPS-SINTEF.xsd")).toString
+   portal.importModel(targetId,
+      "ENVISION - Description of the target WPS service",
+      Format.XSD,
+      xsd3)
+    
+   // We trigger the mediation
+   portal.mediate(aggregationId, targetId, "syntactic")
+    
+   
 }

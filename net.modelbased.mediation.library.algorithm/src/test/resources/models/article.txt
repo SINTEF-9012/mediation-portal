@@ -1,0 +1,33 @@
+#
+# Sample model representing textual document using a composite pattern
+# Franck Chauvel
+#
+
+package article {
+
+	class Article {
+		title: String 
+		abstract: Paragraph
+		parts: Part [1..*]
+		authors: Author [1..*]
+	}
+	
+	class Part {
+		label: String
+	}
+	
+	class Section extends Part {
+		title: String
+	}
+	
+	class Paragraph extends Part {
+		body: String
+	}
+	
+	class Author {
+		firstname: String
+		lastname: String
+		email: String
+	}
+	
+}

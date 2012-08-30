@@ -1,0 +1,30 @@
+#
+# Sample data model representing document  
+# Franck Chauvel
+#
+
+package document {
+
+	class Document {
+		title: String
+		subtitle: String
+		version: String
+		content: Element [1..*]
+		authors: Author [1..*]
+	}
+	
+	
+	class Element {
+		id: String
+		title: String [0..1]
+		text: String [0..1]
+		children: Element [0..*]
+	}
+	
+	
+	class Author {
+		family_name: String
+		name: String 
+	}
+
+}

@@ -1,9 +1,0 @@
-<xsd:schema targetNamespace="http://www.sintef.no/WFS" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-	<xsd:element name="FeatureCollection">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="feature" type="xsd:anyType"/>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
-</xsd:schema>

@@ -64,7 +64,7 @@ trait Importer extends Portal {
     * @param content the content of the model as a string
     */
    def importModel(modelId: String, description: String, format: Format.FormatValue, content: String) = {
-      val request = new Request(modelId, description, format.label, content)
+      val request = new Request(modelId, description, format.label, content) 
       val conduit = new HttpConduit(httpClient, host, port) {
          val pipeline = { simpleRequest[Request] ~> sendReceive ~> unmarshal[String] }
       }

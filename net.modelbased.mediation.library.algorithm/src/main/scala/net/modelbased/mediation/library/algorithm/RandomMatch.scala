@@ -27,7 +27,6 @@ import net.modelbased.mediation.library.algorithm.mof.reader.MofReader
 import scala.util.Random
 import net.modelbased.mediation.service.repository.mapping.data._
 import net.modelbased.mediation.service.repository.model.data._
-import net.modelbased.mediation.library.algorithm.xsd.XsdToMof
 
 /**
  * Implement a random match algorithm, which given two Mof models, outputs a random
@@ -93,28 +92,4 @@ class RandomMatch extends Mediation {
             }
       }
    }
-}
-
-
-
-/**
- * A simple random mediation between XSD files
- * 
- * @author Franck Chauvel - SINTEF ICT
- * 
- * @since 0.0.1
- */
-class RandomXsdMediation extends Mediation {
-
-   val toMof = new XsdToMof()
-   val syntacticMatch = new SyntacticMatch()
-
-   override def execute(in: Mapping, source: Model, target: Model): Unit = {
-      val sourceAsMof = toMof(source)
-      //println(sourceAsMof.content)
-      val targetAsMof = toMof(target)
-      //println(targetAsMof.content)
-      out = syntacticMatch(new Mapping(sourceId=source.name, targetId=target.name), sourceAsMof, targetAsMof)
-   }
-
 }

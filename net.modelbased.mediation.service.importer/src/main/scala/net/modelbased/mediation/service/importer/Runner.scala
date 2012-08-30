@@ -37,6 +37,10 @@ import net.modelbased.mediation.client.repository.model.ModelRepository
 
 import net.modelbased.mediation.service.repository.model.data.Model
 
+import net.modelbased.mediation.service.converter.Converter
+import net.modelbased.mediation.service.converter.NoConverter
+import net.modelbased.mediation.service.converter.xsd.XsdConverter
+
 /**
  * Implementation of the importer service
  *
@@ -47,6 +51,11 @@ import net.modelbased.mediation.service.repository.model.data.Model
 class Runner(partners: PartnerHandler) extends HttpSpraySupport {
 
    val httpClientName = "importer"
+
+   private[this] val convertions = Map[Format.FormatValue, Converter](
+      Format.XSD -> new XsdConverter(),
+      Format.ECORE -> new NoConverter(),
+      Format.TEXT -> new NoConverter());
 
    val modelRepository = {
       val (host, port) = partners("model-repository").get
@@ -60,33 +69,14 @@ class Runner(partners: PartnerHandler) extends HttpSpraySupport {
     * @param request the request to process
     */
    def process(request: Request): String = {
-      Format.withName(request.format) match {
-         case Format.XSD   => importXsd(request)
-         case Format.TEXT  => importText(request)
-         case Format.ECORE => importEcore(request)
-         case _            => throw new IllegalArgumentException()
+      convertions.get(Format.withName(request.format)) match {
+         case Some(convertion) =>
+            val content = convertion(request.content)
+            val model = new Model(request.modelId, "text/mof", request.description, request.content)
+            modelRepository.storeModel(model)
+         case None =>
+            "Unsupported format: %s".format(request.format) 
       }
    }
-
-   /**
-    * Directly push the content of the model into the repository
-    */
-   private[this] def importText(request: Request): String = {
-      val model = new Model(request.modelId, "text/mof", request.description, request.content)
-      return modelRepository.storeModel(model)
-   }
-
-   /**
-    * Import an XSD file in the repository
-    */
-   private[this] def importXsd(request: Request): String = {
-      ""
-   }
-
-   /**
-    * Import an ECore file in the repository
-    */
-   private[this] def importEcore(request: Request): String = {
-      throw new UnsupportedOperationException()
-   }
+   
 }

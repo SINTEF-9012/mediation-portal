@@ -54,9 +54,9 @@ class MediatorIT extends SpecificationWithJUnit {
   
   var mapping: Mapping = _
   
-  val sourceXsd = XML.load("src/test/resources/schemas/document.xsd")
+  val sourceMof = scala.io.Source.fromFile("src/test/resources/mof/article.txt").mkString
 
-  val targetXsd = XML.load("src/test/resources/schemas/article.xsd")
+  val targetMof = scala.io.Source.fromFile("src/test/resources/mof/document.txt").mkString
 
   
   /**
@@ -67,9 +67,9 @@ class MediatorIT extends SpecificationWithJUnit {
   class Repository extends BeforeAfter {
      
      override def before = {
-        source = new Model("test-document", "A sample data model describing documents", "text/xsd", sourceXsd.toString())
+        source = new Model("test-document", "A sample data model describing documents", "text/mof", sourceMof)
         portal.storeModel(source)
-        target = new Model("test-article", "A sample data model describing article", "text/xsd", targetXsd.toString())
+        target = new Model("test-article", "A sample data model describing article", "text/mof", targetMof)
         portal.storeModel(target)
      }
      
@@ -93,7 +93,7 @@ class MediatorIT extends SpecificationWithJUnit {
      
 
     "populate the mapping repository" in new Repository {
-    	val url = portal.mediate(source.name, target.name, "xsd-syntactic")
+    	val url = portal.mediate(source.name, target.name, "syntactic")
         mapping = portal.fetchMappingAt(url)   
         mapping must not beNull ;
         mapping.entries must not beEmpty

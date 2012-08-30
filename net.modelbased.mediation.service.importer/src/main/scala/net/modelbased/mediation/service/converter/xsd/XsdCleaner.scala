@@ -1,10 +1,10 @@
 /**
  * This file is part of Mediation Portal [ http://mosser.github.com/mediation-portal ]
  *
- * Copyright (C) 2010-  SINTEF ICT
+ * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.library.algorithm
+ * Module: net.modelbased.mediation.service.importer
  *
  * Mediation Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,34 +20,33 @@
  * Public License along with Mediation Portal. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.library.algorithm.xsd
+package net.modelbased.mediation.service.converter.xsd
 
 import scala.xml._
-import scala.xml.transform._
 
-import net.modelbased.mediation.library.algorithm.ModelProcessor
-import net.modelbased.mediation.service.repository.model.data.Model
+import net.modelbased.mediation.service.converter.Converter
+
 
 /**
  * This transformation accepts as input an schema and produces another XML
  * schemas where all the type have been extracted and are described separately.
  *
- *
  * @author Franck Chauvel - SINTEF ICT
+ * 
  * @since 0.0.1
  *
  */
-class XsdCleaner extends ModelProcessor {
+class XsdCleaner extends Converter {
 
    private[this] val typeSuffix = "Type"
    private[this] val anonymousType = "AnonymousType"
    private[this] var counter = 0
 
-   override def apply(model: Model): Model = {
+   override def apply(input: String): String = {
       counter = 0
-      val schema = Utility.trim(XML.loadString(model.content))
+      val schema = Utility.trim(XML.loadString(input))
       val (_, contents) = process(schema)
-      new Model(model.name, model.description, model.kind, contents.toString())
+      contents.toString()
    }
 
    private[this] def process(node: NodeSeq): (NodeSeq, NodeSeq) =

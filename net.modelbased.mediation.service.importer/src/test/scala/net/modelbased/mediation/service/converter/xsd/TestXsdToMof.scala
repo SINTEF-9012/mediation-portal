@@ -1,10 +1,10 @@
 /**
  * This file is part of Mediation Portal [ http://mosser.github.com/mediation-portal ]
  *
- * Copyright (C) 2010-  SINTEF ICT
+ * Copyright (C) 2012-  SINTEF ICT
  * Contact: Franck Chauvel <franck.chauvel@sintef.no>
  *
- * Module: net.modelbased.mediation.library.algorithm
+ * Module: net.modelbased.mediation.service.importer
  *
  * Mediation Portal is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,13 +20,14 @@
  * Public License along with Mediation Portal. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.library.algorithm.xsd
+package net.modelbased.mediation.service.converter.xsd
 
 import org.specs2.mutable.SpecificationWithJUnit
 
 import net.modelbased.mediation.service.repository.model.data._
 import net.modelbased.mediation.library.algorithm.mof._
 import net.modelbased.mediation.library.algorithm.mof.reader.MofReader
+
 
 /**
  * Specification of the expected behaviour of the XsdToMof converter
@@ -39,7 +40,7 @@ class TestXsdToMof extends SpecificationWithJUnit {
    isolated
 
    val mof = new MofReader
-   val convert = new XsdToMof
+   val convert = new XsdConverter
 
    "Converting XSD to MOF" should {
 
@@ -47,10 +48,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
          val xsd = <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="pouet" xmlns:tns="pouet" xmlns:xs="http://www.w3.org/2001/XMLSchema">
                       <element name="foo" type="xs:string"/>
                    </schema>
-         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-         val result = convert(model)
+         val result = convert(xsd.toString)
          //println(result.content)
-         mof.readPackage(result.content) must beRight.like {
+         mof.readPackage(result) must beRight.like {
             case p: Package =>
                p.name must beEqualTo("tns")
                p.elements.size must beEqualTo(1)
@@ -68,10 +68,8 @@ class TestXsdToMof extends SpecificationWithJUnit {
      
       "properly handle simple elements at the root level" in {
          val xsd = <schema><element name="foo" type="string"/></schema>
-         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-         val result = convert(model)
-         //println(result.content)
-         mof.readPackage(result.content) must beRight.like {
+         val result = convert(xsd.toString)
+         mof.readPackage(result) must beRight.like {
             case p: Package =>
                p.elements.size must beEqualTo(1)
                p.elementNamed("Schema") must beSome.like {
@@ -93,10 +91,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
                </complexType>
                <element name="foo" type="Foo"/>
             </schema>
-         val model = new Model("test","sample test model", "text/xsd",  xsd.toString)
-         val result = convert(model)
+         val result = convert(xsd.toString)
          //println(result.content)
-         mof.readPackage(result.content) must beRight.like {
+         mof.readPackage(result) must beRight.like {
             case p: Package =>
                p.elements.size must beEqualTo(2)
                p.elementNamed("Foo") must beSome.like {
@@ -128,10 +125,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
                </complexType>
                <element name="foo" type="Foo"/>
             </schema>
-         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-         val result = convert(model)
+         val result = convert(xsd.toString)
          //println(result.content)
-         mof.readPackage(result.content) must beRight.like {
+         mof.readPackage(result) must beRight.like {
             case p: Package =>
                p.elements.size must beEqualTo(2)
                p.elementNamed("Foo") must beSome.like {
@@ -170,10 +166,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
                </complexType>
                <element name="foo" type="Foo"/>
             </schema>
-         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-         val result = convert(model)
+         val result = convert(xsd.toString)
          //println(result.content)
-         mof.readPackage(result.content) must beRight.like {
+         mof.readPackage(result) must beRight.like {
             case p: Package =>
                p.elements.size must beEqualTo(3)
                p.elementNamed("Bar") must beSome.like {
@@ -208,9 +203,8 @@ class TestXsdToMof extends SpecificationWithJUnit {
                       </complexType>
                       <element name="foo" type="Foo"/>
                    </schema>
-         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-         val result = convert(model)
-         mof.readPackage(result.content) must beRight.like {
+         val result = convert(xsd.toString)
+         mof.readPackage(result) must beRight.like {
             case p: Package =>
                p.elements.size must beEqualTo(4)
                p.elementNamed("Schema") must beSome
@@ -240,9 +234,8 @@ class TestXsdToMof extends SpecificationWithJUnit {
                       </complexType>
                       <element name="foo" type="Foo"/>
                    </schema>
-         val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-         val result = convert(model)
-         mof.readPackage(result.content) must beRight.like {
+         val result = convert(xsd.toString)
+         mof.readPackage(result) must beRight.like {
             case p: Package =>
                p.elements.size must beEqualTo(4)
                p.elementNamed("Schema") must beSome
@@ -281,9 +274,8 @@ class TestXsdToMof extends SpecificationWithJUnit {
                    </complexType>
                    <element name="foo" type="Foo"/>
                 </schema>
-      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-      val result = convert(model)
-      mof.readPackage(result.content) must beRight.like {
+      val result = convert(xsd.toString)
+      mof.readPackage(result) must beRight.like {
          case p: Package =>
             p.elements.size must beEqualTo(5)
             p.elementNamed("Schema") must beSome
@@ -317,10 +309,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
             </complexType>
             <element name="foo" type="Foo"/>
          </schema>
-      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-      val result = convert(model)
+      val result = convert(xsd.toString)
       //println(result.content)
-      mof.readPackage(result.content) must beRight.like {
+      mof.readPackage(result) must beRight.like {
          case p: Package =>
             p.elements.size must beEqualTo(2)
             p.elementNamed("Foo") must beSome.like {
@@ -352,10 +343,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
             </complexType>
             <element name="foo" type="Foo"/>
          </schema>
-      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-      val result = convert(model)
+      val result = convert(xsd.toString)
       //println(result.content)
-      mof.readPackage(result.content) must beRight.like {
+      mof.readPackage(result) must beRight.like {
          case p: Package =>
             p.elements.size must beEqualTo(2)
             p.elementNamed("Foo") must beSome.like {
@@ -394,10 +384,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
             </complexType>
             <element name="foo" type="Foo"/>
          </schema>
-      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-      val result = convert(model)
+      val result = convert(xsd.toString)
       //println(result.content)
-      mof.readPackage(result.content) must beRight.like {
+      mof.readPackage(result) must beRight.like {
          case p: Package =>
             p.elements.size must beEqualTo(3)
             p.elementNamed("Bar") must beSome.like {
@@ -434,10 +423,9 @@ class TestXsdToMof extends SpecificationWithJUnit {
                    </simpleType>
                    <element name="foo" type="Currency"/>
                 </schema>
-      val model = new Model("test", "sample test model", "text/xsd", xsd.toString)
-      val result = convert(model)
+      val result = convert(xsd.toString)
       //println(result.content)
-      mof.readPackage(result.content) must beRight.like {
+      mof.readPackage(result) must beRight.like {
          case p: Package =>
             p.elements.size must beEqualTo(2)
             p.elementNamed("Schema") must beSome.like {
