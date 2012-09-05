@@ -98,10 +98,34 @@ class MappingRepositoryIT extends SpecificationWithJUnit {
       
       
       "support export of mapping as an XML document" in new Repository {
-         val node = portal.exportMappingToXml(mappingA.uid)
+         val node = portal.exportMappingToXml(mappingA.uid) 
          node must not beNull
       }
+      
+      "support approval of single mapping entries" in new Repository {
+         val entryOld = portal.fetchEntry(mappingA.uid, "source.foo", "target.bar")
+         entryOld.isValidated must beNone
+         portal.approve(mappingA.uid, "source.foo", "target.bar")
+         val entryNew = portal.fetchEntry(mappingA.uid, "source.foo", "target.bar")
+         entryNew.isValidated must beSome.which{ x => x == true }
+      }
+      
+      "support disapproval of single mapping entries" in new Repository {
+         val entryOld = portal.fetchEntry(mappingA.uid, "source.foo", "target.bar")
+         entryOld.isValidated must beNone
+         portal.disapprove(mappingA.uid, "source.foo", "target.bar")
+         val entryNew = portal.fetchEntry(mappingA.uid, "source.foo", "target.bar")
+         entryNew.isValidated must beSome.which{ x => x == false }
+      }
 
+      "support unknownizing of single mapping entries" in new Repository {
+         val entryOld = portal.fetchEntry(mappingA.uid, "source.foo", "target.bar")
+         entryOld.isValidated must beNone
+         portal.setAsUndecided(mappingA.uid, "source.foo", "target.bar")
+         val entryNew = portal.fetchEntry(mappingA.uid, "source.foo", "target.bar")
+         entryNew.isValidated must beNone
+      }
+      
    }
 
 }

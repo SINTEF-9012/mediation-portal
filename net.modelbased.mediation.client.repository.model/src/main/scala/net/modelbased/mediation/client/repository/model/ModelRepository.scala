@@ -49,7 +49,7 @@ import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol.
  */
 trait ModelRepository extends Portal {
 
-   val MODEL_REPOSITORY = "/mediation/repositories/models"
+   val MODEL_REPOSITORY = "/sensapp/mediation/repositories/models"
 
    /**
     * Retrieve the url of all the models stored in the repository

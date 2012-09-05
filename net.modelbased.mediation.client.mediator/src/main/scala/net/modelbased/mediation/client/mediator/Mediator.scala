@@ -47,7 +47,7 @@ import net.modelbased.mediation.service.mediator.RequestJsonProtocol._
  */
 trait Mediator extends Portal {
 
-   val MEDIATOR_URL = "/mediator"
+   val MEDIATOR_URL = "/sensapp/mediator"
 
    /**
     * Fetch the name of all mediation algorithm available in the mediator service

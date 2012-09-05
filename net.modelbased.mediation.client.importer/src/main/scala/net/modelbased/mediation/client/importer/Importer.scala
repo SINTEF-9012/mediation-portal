@@ -49,7 +49,7 @@ import net.modelbased.mediation.service.importer.RequestJsonProtocol._
  */
 trait Importer extends Portal {
 
-   val IMPORTER_URL = "/importer"
+   val IMPORTER_URL = "/sensapp/importer"
 
    /**
     * Import a model in the repository, taking care of the needed conversion if
@@ -68,7 +68,7 @@ trait Importer extends Portal {
       val conduit = new HttpConduit(httpClient, host, port) {
          val pipeline = { simpleRequest[Request] ~> sendReceive ~> unmarshal[String] }
       }
-      val futureUrl = conduit.pipeline(Post(IMPORTER_URL, None))
+      val futureUrl = conduit.pipeline(Post(IMPORTER_URL, request))
       Await.result(futureUrl, intToDurationInt(5) seconds)
    }
 

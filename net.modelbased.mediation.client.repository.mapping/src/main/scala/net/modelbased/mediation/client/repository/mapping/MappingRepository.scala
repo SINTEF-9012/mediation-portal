@@ -50,7 +50,7 @@ import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProto
  */
 trait MappingRepository extends Portal {
 
-   val MAPPING_REPOSITORY = "/mediation/repositories/mappings"
+   val MAPPING_REPOSITORY = "/sensapp/mediation/repositories/mappings"
 
    /**
     * Retrieve the url of all the models stored in the repository
@@ -158,5 +158,98 @@ trait MappingRepository extends Portal {
       var r = conduit.pipeline(Delete(MAPPING_REPOSITORY + "/" + mapping.uid, None))
       Await.result(r, 5 seconds)
    }
+   
+   
+   /**
+    * Fetch a specific entry of the given mapping
+    * 
+    * @param uid the unique identifier of the mapping of interest
+    * 
+    * @param source the source element of the needed entry
+    * 
+    * @param target the target element of the needed entry
+    */
+   def fetchEntry(uid: String, source: String, target: String): Entry = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[Entry]
+      }
+      var r = conduit.pipeline(Get(MAPPING_REPOSITORY + "/" + uid + "/content/" + source + "/" + target, None))
+      Await.result(r, 5 seconds)      
+   }
+   
+   
+   /**
+    * Fetch all entries for a given source element, within a specific mapping.
+    * 
+    * @param uid the unique identifier of the mapping of interest
+    * 
+    * @param source the source element of the needed entries
+    */
+   def fetchEntriesBySource(uid: String, source: String): List[Entry] = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[List[Entry]]
+      }
+      var r = conduit.pipeline(Get(MAPPING_REPOSITORY + "/" + uid + "/content/" + source, None))
+      Await.result(r, 5 seconds)      
+   }
+   
+   
+   /**
+    * Approve a given entry in a given mapping. The mapping is identified by the
+    * mapping UID, and the entry is identified by its source and target element
+    * 
+    * @param uid the unique identifier that characterises the needed mapping
+    * 
+    * @param source the source element of the entry
+    * 
+    * @param target the target element of the entry
+    */
+   def approve(uid: String, source: String, target: String): String = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[String]
+      }
+      var r = conduit.pipeline(Put(MAPPING_REPOSITORY + "/" + uid + "/content/" + source + "/" + target + "/approve", None))
+      Await.result(r, 5 seconds)
+   }
+   
+   
+   /**
+    * Disapprove a given entry in a given mapping. The mapping is identified by the
+    * mapping UID, and the entry is identified by its source and target element
+    * 
+    * @param uid the unique identifier that characterises the needed mapping
+    * 
+    * @param source the source element of the entry
+    * 
+    * @param target the target element of the entry
+    */
+   def disapprove(uid: String, source: String, target: String): String = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[String]
+      }
+      var r = conduit.pipeline(Put(MAPPING_REPOSITORY + "/" + uid + "/content/" + source + "/" + target + "/disapprove", None))
+      Await.result(r, 5 seconds)
+   }
+
+   
+   /**
+    * Set a given entry in a given mapping as unknown/undecided (i.e., neither 
+    * approved or disapproved). The mapping is identified by the
+    * mapping UID, and the entry is identified by its source and target element
+    * 
+    * @param uid the unique identifier that characterises the needed mapping
+    * 
+    * @param source the source element of the entry
+    * 
+    * @param target the target element of the entry
+    */
+   def setAsUndecided(uid: String, source: String, target: String): String = {
+      val conduit = new HttpConduit(httpClient, host, port) {
+         val pipeline = simpleRequest ~> sendReceive ~> unmarshal[String]
+      }
+      var r = conduit.pipeline(Put(MAPPING_REPOSITORY + "/" + uid + "/content/" + source + "/" + target + "/unknown", None))
+      Await.result(r, 5 seconds)
+   }
+   
 
 }

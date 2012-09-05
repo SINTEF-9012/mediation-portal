@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.modelbased.mediation.samples</groupId>
+	<artifactId>net.modelbased.mediation.samples.invoicing</artifactId>
+	<name>Mediation Samples - Invoicing (XSD)</name>
+	<description>A simplistic mediation between two XML schemas about invoicing data</description>
+
+	<parent>
+		<relativePath>../net.modelbased.mediation.samples</relativePath>
+		<groupId>net.modelbased.mediation</groupId>
+		<artifactId>net.modelbased.mediation.samples</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>net.modelbased.mediation.library</groupId>
+			<artifactId>net.modelbased.mediation.library.algorithm</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.modelbased.mediation.client</groupId>
+			<artifactId>net.modelbased.mediation.client.portal</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.modelbased.mediation.client</groupId>
+			<artifactId>net.modelbased.mediation.client.repository.model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.modelbased.mediation.client</groupId>
+			<artifactId>net.modelbased.mediation.client.repository.mapping</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.modelbased.mediation.client</groupId>
+			<artifactId>net.modelbased.mediation.client.aggregator</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.modelbased.mediation.client</groupId>
+			<artifactId>net.modelbased.mediation.client.importer</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.modelbased.mediation.client</groupId>
+			<artifactId>net.modelbased.mediation.client.mediator</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+	</dependencies>
+</project>

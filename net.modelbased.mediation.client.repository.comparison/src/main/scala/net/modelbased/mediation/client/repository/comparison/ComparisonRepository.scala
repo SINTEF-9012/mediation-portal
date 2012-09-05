@@ -49,7 +49,7 @@ import net.modelbased.mediation.service.repository.comparison.data.JsonEvaluatio
  */
 trait ComparisonRepository extends Portal {
 
-   val COMPARISON_REPOSITORY = "/mediation/repositories/comparisons"
+   val COMPARISON_REPOSITORY = "/sensapp/mediation/repositories/comparisons"
 
    /**
     * Retrieve the list of comparisons from the repository

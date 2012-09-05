@@ -47,7 +47,7 @@ import net.modelbased.mediation.service.comparator.RequestJsonProtocol._
  */
 trait Comparator extends Portal {
  
-   val COMPARATOR_URL = "/comparator"
+   val COMPARATOR_URL = "/sensapp/comparator"
 
    /**
     * Invoke the comparator service

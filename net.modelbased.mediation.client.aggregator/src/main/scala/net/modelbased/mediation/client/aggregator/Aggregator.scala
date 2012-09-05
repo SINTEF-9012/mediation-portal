@@ -45,7 +45,7 @@ import net.modelbased.mediation.service.aggregator.RequestJsonProtocol._
  */
 trait Aggregator extends Portal {
  
-   val AGGREGATOR_URL = "/aggregator"
+   val AGGREGATOR_URL = "/sensapp/aggregator"
 
    /**
     * Invoke the aggregator service and return the URL of the resulting model

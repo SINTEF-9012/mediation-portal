@@ -8,15 +8,15 @@
     <meta name="author" content="">
 
     <!-- Le style -->
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet"/>
+    <link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet"/>
     <style>
       body {
-         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet"/>
-    <link href="bootstrap/css/DT_bootstrap.css" rel="stylesheet"/>
-    <link href="DataTables-1.9.1/media/css/demo_page.css" rel="stylesheet"/>
+    <link href="libs/bootstrap/css/bootstrap-responsive.css" rel="stylesheet"/>
+    <link href="libs/bootstrap/css/DT_bootstrap.css" rel="stylesheet"/>
+    <link href="libs/datatables-1.9.1/media/css/demo_page.css" rel="stylesheet"/>
 
     <!-- Le fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="bootstrap/img/apple-touch-icon-144-precomposed.png">
@@ -57,62 +57,66 @@
       </div>
 
       <div class="container-fluid">
+	
+	<div class="tabbable" style="margin-bottom: 18px;">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab1" data-toggle="tab">Models</a></li>
+            <li><a href="#tab2" data-toggle="tab">Mappings</a></li>
+            <li><a href="#tab3" data-toggle="tab">Comparisons</a></li>
+          </ul>
+	  
+          <div class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
+            <div class="tab-pane active" id="tab1">
+	      <div class="container-fluid">
+		<div class="row">
+		  <div class="span3">
+		    <!--Sidebar content-->
+		    <form class="well" id="import-form" onSubmit="doImportModel();">
+		      <h3>Import Model</h3>
+		      <p class="help-block"><strong>Note:</strong> Use the form below to import a model in the repository</p>
+		      <div id="import-feedback" class="progress progress-striped">
+			<div id="progress-import" class="bar" style="width: 20%;"></div>
+		      </div>    
+		      <div class="control-group">
+			<label class="control-label">Model ID:</label>
+			<div class="controls docs-input-sizes">
+			  <input class="input-large" id="model-name" type="text" placeholder="a unique ID for the new model"></input>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label">Description</label>
+			<div class="controls">
+			  <textarea class="input-large" id="model-description" rows="3" placeholder="a short description"></textarea>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label" for="model-content">Source File:</label>
+			<div class="controls">
+			  <input id="model-content" type="hidden"></input>
+			  <input class="input-file" id="model-file" type="file" onchange="prefetch(this.files[0]);"></input>
+			</div>
+		      </div>
+		      <div class="control-group">
+			<label class="control-label">Content Type:</label>
+			<div id="supported-formats" class="controls">
+			  <label class="radio">
+			    <input type="radio" name="optionsRadios" id="model-type" value="XSD"> XSD (XML schema)</input>
+			  </label>
+			  <label class="radio">
+			    <input type="radio" name="optionsRadios" id="model-type" value="ECORE" checked="true"> ECore (EMF MoF metamodel)</input>
+			  </label>
+			  <label class="radio">
+			    <input type="radio" name="optionsRadios" id="model-type" value="TEXT"> MoF textual (SINTEF syntax)</input>
+			  </label>
+			</div>
+		      </div>
+		      <div class="form-actions">
+			<button id="import-button" type="submit" class="btn btn-primary" disabled="true"><i class="icon-upload icon-white"></i> Import</button>
+		      </div>
+		    </form>
+		  </div>
 
-      <div class="tabbable" style="margin-bottom: 18px;">
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab1" data-toggle="tab">Models</a></li>
-          <li><a href="#tab2" data-toggle="tab">Mappings</a></li>
-          <li><a href="#tab3" data-toggle="tab">Comparisons</a></li>
-        </ul>
-
-        <div class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
-          <div class="tab-pane active" id="tab1">
-	    <div class="container-fluid">
-	      <div class="row">
-		<div class="span3">
-		  <!--Sidebar content-->
-		  <form class="well" onSubmit="importModel()">
-		    <h3>Import Model</h3>
-		    <p class="help-block"><strong>Note:</strong> Use the form below to import a model in the repository</p>
-		    
-		    <div class="control-group">
-		      <label class="control-label">Model ID:</label>
-		      <div class="controls docs-input-sizes">
-			<input class="input-large" id="model-name" type="text" placeholder="a unique ID for the new model">
-		      </div>
-		    </div>
-		    <div class="control-group">
-		      <label class="control-label">Description</label>
-		      <div class="controls">
-			<textarea class="input-large" id="model-description" rows="3" placeholder="a short description"></textarea>
-		      </div>
-		    </div>
-		    <div class="control-group">
-		      <label class="control-label" for="model-content">Source File:</label>
-		      <div class="controls">
-			<input class="input-file" id="model-content" type="file">
-		      </div>
-		    </div>
-		    <div class="control-group">
-		      <label class="control-label">Content Type:</label>
-		      <div class="controls">
-			<label class="radio">
-			  <input type="radio" name="optionsRadios" id="model-type" value="text/xsd"> XSD (XML schema)
-			</label>
-			<label class="radio">
-			  <input type="radio" name="optionsRadios" id="model-type" value="text/ecore" checked="true"> ECore (EMF MoF metamodel)
-			</label>
-			<label class="radio">
-			  <input type="radio" name="optionsRadios" id="model-type" value="text/mof"> MoF textual (SINTEF syntax)
-			</label>
-		      </div>
-		    </div>
-		    <div class="form-actions">
-		      <button type="submit" class="btn btn-primary"><i class="icon-upload icon-white"></i> Import</button>
-		    </div>
-		  </form>
-		</div>
-		<div class="span8">
+		  <div class="span8">
 		    <div>
 		      <h3>Existing Models</h3>
 		      <p class="help-block"><strong>Note:</strong> Below is the list of data models currently stored in the model repository.</p>
@@ -120,95 +124,95 @@
 		    <div>
 		      <table class="table table-striped" id="models-table">  
 		      </table>
-		  </div>
+
+		      <div id="model-view" class="modal hide fade in" style="display: none; ">  
+			<div class="modal-header">  
+			  <a class="close" data-dismiss="modal">&times;</a>  
+			  <h3>Model <span id="model-id">ID</span></h3>  
+			</div>  
+			<div class="modal-body">  
+			  <div id="model-details">  
+			  </div>
+			</div>  
+			<div class="modal-footer">  
+			  <a href="#" class="btn" data-dismiss="modal">Close</a>  
+			</div>  
+		      </div>  
+
 		    </div>
+		  </div>
+		</div>
 	      </div>
+            </div>
+	    
+	    <!-- MAPPINGS REPOSITORY VIEW -->
+            <div class="tab-pane" id="tab2">
+	      <table class="table" id="mappings-table">
+	      </table>
+	      
 	    </div>
-          </div>
-	  
-	  <!-- MAPPINGS REPOSITORY VIEW -->
-          <div class="tab-pane" id="tab2">
-	    <table class="table" id="mappings-table">
-	      <thead>
-		<th>Mapping ID</th>
-		<th>Source</th>
-		<th>Target</th>
-		<th>Status</th>
-	      </thead>
-	      <tbody>
-		<tr>
-		  <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		  <td>my-model</td>
-		  <td>my-other-model</td>
-		  <td>COMPLETE</td>
-		</tr>
-		<tr>
-		  <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		  <td>my-model</td>
-		  <td>my-other-model</td>
-		  <td>COMPLETE</td>
-		</tr>
-		<tr>
-		  <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		  <td>my-model</td>
-		  <td>my-other-model</td>
-		  <td>COMPLETE</td>
-		</tr>
-	      </tbody>
-	      <tfoot>
-		<tr>
-		  <th>Mapping ID</th>
-		  <th>Source</th>
-		  <th>Target</th>
+	    
+	    <!-- COMPARISON REPOSITORY VIEW -->
+            <div class="tab-pane" id="tab3">
+	      <table class="table table-striped" id="comparisons-table">
+		<thead>
+		  <th>Comparison ID</th>
+		  <th>Oracle</th>
+		  <th>Mapping</th>
 		  <th>Status</th>
-		</tr>
-	      </tfoot>
-	    </table>
+		</thead>
+		<tbody>
+		  <tr>
+		    <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
+		    <td>Mapping #1</td>
+		    <td>Mapping #2</td>
+		    <td>COMPLETE</td>
+		  </tr>
+		  <tr>
+		    <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
+		    <td>mapping #2</td>
+		    <td>mapping #3</td>
+		    <td>COMPLETE</td>
+		  </tr>
+		  <tr>
+		    <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
+		    <td>my-model</td>
+		    <td>my-other-model</td>
+		    <td>COMPLETE</td>
+		  </tr>
+		</tbody>
+		<tfoot>
+		  <tr>
+		    <th>Mapping ID</th>
+		    <th>Source</th>
+		    <th>Target</th>
+		    <th>Status</th>
+		  </tr>
+		</tfoot>
+	      </table>	      
+            </div>
           </div>
 
-	  <!-- COMPARISON REPOSITORY VIEW -->
-          <div class="tab-pane" id="tab3">
-	    <table class="table table-striped" id="comparisons-table">
-	      <thead>
-		<th>Comparison ID</th>
-		<th>Oracle</th>
-		<th>Mapping</th>
-		<th>Status</th>
-	      </thead>
-	      <tbody>
-		<tr>
-		  <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		  <td>Mapping #1</td>
-		  <td>Mapping #2</td>
-		  <td>COMPLETE</td>
-		</tr>
-		<tr>
-		  <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		  <td>mapping #2</td>
-		  <td>mapping #3</td>
-		  <td>COMPLETE</td>
-		</tr>
-		<tr>
-		  <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		  <td>my-model</td>
-		  <td>my-other-model</td>
-		  <td>COMPLETE</td>
-		</tr>
-	      </tbody>
-	      <tfoot>
-		<tr>
-		  <th>Mapping ID</th>
-		  <th>Source</th>
-		  <th>Target</th>
-		  <th>Status</th>
-		</tr>
-	      </tfoot>
+	</div> <!-- /tabbable -->
+
+
+
+	<div id="mapping-view" class="modal hide fade in" style="display: none; ">  
+	  <div class="modal-header">  
+	    <a class="close" data-dismiss="modal">&times;</a>  
+	    <h3>Entries in Mapping <span id="mapping-id">ID</span></h3>  
+	  </div>  
+	  <div class="modal-body">  
+	    <table class="table table-striped" id="mapping-details">  
 	    </table>
-          </div>
-        </div>
-      </div> <!-- /tabbable -->
+	  </div>  
+	  <div class="modal-footer">  
+	    <a href="#" class="btn" data-dismiss="modal">Close</a>  
+	  </div>  
+	</div>  
+	
+
       </div>
-
       
       <footer>
         <p>&copy; SINTEF IKT 2012</p>
@@ -221,23 +225,23 @@
     <!-- Placed at the end of the document so the pages load faster -->
     
     <script src="javascripts/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="./DataTables-1.9.1/media/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="./libs/datatables-1.9.1/media/js/jquery.dataTables.js"></script>
 
-    <script src="bootstrap/js/bootstrap-transition.js"></script>
-    <script src="bootstrap/js/bootstrap-alert.js"></script>
-    <script src="bootstrap/js/bootstrap-modal.js"></script>
-    <script src="bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="bootstrap/js/bootstrap-scrollspy.js"></script>
-    <script src="bootstrap/js/bootstrap-tab.js"></script>
-    <script src="bootstrap/js/bootstrap-tooltip.js"></script>
-    <script src="bootstrap/js/bootstrap-popover.js"></script>
-    <script src="bootstrap/js/bootstrap-button.js"></script>
-    <script src="bootstrap/js/bootstrap-collapse.js"></script>
-    <script src="bootstrap/js/bootstrap-carousel.js"></script>
-    <script src="bootstrap/js/bootstrap-typeahead.js"></script>
-    <script src="bootstrap/js/DT_bootstrap.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-transition.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-alert.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-modal.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-scrollspy.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-tab.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-tooltip.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-popover.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-button.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-collapse.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-carousel.js"></script>
+    <script src="libs/bootstrap/js/bootstrap-typeahead.js"></script>
+    <script src="libs/bootstrap/js/DT_bootstrap.js"></script>
     
-    <script type="text/javascript" src="javascripts/common.js"></script>
+    <script type="text/javascript" src="javascripts/mediation-portal-api.js"></script>
     <script type="text/javascript" src="javascripts/repositories.js"></script>
 
   </body>

@@ -231,7 +231,7 @@ object Conversions {
 
 }
 
-sealed case class Entry(val source: String, val target: String, val degree: Double, val origin: String, val isValidated: Boolean = false) {
+sealed case class Entry(val source: String, val target: String, val degree: Double, val origin: String, var isValidated: Option[Boolean] = None) {
 
    def toXml(): Node =
       <mapping source={ source } targetIdentifier={ target }/>

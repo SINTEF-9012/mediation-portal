@@ -48,7 +48,7 @@ trait MappingRepositoryService extends SensAppService {
                         context.complete(StatusCodes.OK, contents.map { m => toMappingInfo(m) })
                      }
                      else {
-                        val uris = contents.map{ e => URLHandler.build("/mediation/repositories/mappings/" + e.uid) }
+                        val uris = contents.map { e => URLHandler.build("/mediation/repositories/mappings/" + e.uid) }
                         context.complete(uris)
                      }
             }
@@ -154,10 +154,15 @@ trait MappingRepositoryService extends SensAppService {
          } ~
          path("mediation" / "repositories" / "mappings" / PathElement / "content" / PathElement / PathElement) { (uid, source, target) =>
             get { context =>
-               ifExists(context, uid, {
-                  val mapping: Mapping = (_registry pull ("uid", uid)).get
-                  context complete mapping.get(source, target)
-               })
+               try {
+                  val result = _registry.getEntry(uid, source, target).get
+                  context.complete(StatusCodes.OK, result)                  
+               
+               } catch {
+                  case e: IllegalArgumentException =>
+                      case e: IllegalArgumentException =>
+                      	   context.complete(StatusCodes.NotFound, e.getMessage())
+               }
             } ~
                delete { context =>
                   ifExists(context, uid, {
@@ -165,11 +170,54 @@ trait MappingRepositoryService extends SensAppService {
                      val init = mapping.size
                      mapping.removeAll(source, target)
                      _registry push mapping
-                     context complete ("0 added, %d removed".format(init - mapping.size))
+                     context.complete(StatusCodes.OK, "0 added, %d removed".format(init - mapping.size))
                   })
                } ~ cors("GET", "PUT", "DELETE")
+         } ~
+         path("mediation" / "repositories" / "mappings" / PathElement / "content" / PathElement / PathElement / "approve") { (uid, source, target) =>
+            put {
+               context =>
+                   try {
+                      _registry.confirm(uid, source, target, Some(true))
+                      context.complete(StatusCodes.OK, "Approval Successful!")
+
+                   } catch {
+                      case e: IllegalArgumentException =>
+                      	   context.complete(StatusCodes.NotFound, e.getMessage())
+
+                   }
+            } ~ cors("PUT")
+         } ~
+         path("mediation" / "repositories" / "mappings" / PathElement / "content" / PathElement / PathElement / "disapprove") { (uid, source, target) =>
+            put {
+               context =>
+                   try {
+                      _registry.confirm(uid, source, target, Some(false))
+                      context.complete(StatusCodes.OK, "Disapproval Successful!")
+
+                   } catch {
+                      case e: IllegalArgumentException =>
+                      	   context.complete(StatusCodes.NotFound, e.getMessage())
+
+                   }
+            } ~ cors("PUT")
+         } ~
+         path("mediation" / "repositories" / "mappings" / PathElement / "content" / PathElement / PathElement / "unknown") { (uid, source, target) =>
+            put {
+               context =>
+                   try {
+                      _registry.confirm(uid, source, target, None)
+                      context.complete(StatusCodes.OK, "Reset Successful!")
+
+                   } catch {
+                      case e: IllegalArgumentException =>
+                      	   context.complete(StatusCodes.NotFound, e.getMessage())
+
+                   }
+            } ~ cors("PUT")
          }
    }
+
 
    private[this] val _registry = new MappingRegistry()
 
@@ -179,4 +227,5 @@ trait MappingRepositoryService extends SensAppService {
       else
          context fail (StatusCodes.NotFound, "Unknown mapping [" + id + "]")
    }
+
 }

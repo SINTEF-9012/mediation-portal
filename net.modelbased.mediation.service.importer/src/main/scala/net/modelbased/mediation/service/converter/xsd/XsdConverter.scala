@@ -43,12 +43,15 @@ class XsdConverter extends Converter {
 
    var targetNamespace: String = _
    var prefix: String = _
+   
+   var counter: Int = 0
 
    override def apply(input: String): String = {
+      counter = 0
       val cleaned = clean(input)
 
       val xsd = Utility.trim(XML.loadString(cleaned))
-      //println(xsd.toString)
+      println(xsd.toString)
 
       targetNamespace = xsd.attribute("targetNamespace").map { x => x.text }.getOrElse(null)
       xsd match {
@@ -63,7 +66,10 @@ class XsdConverter extends Converter {
       val schemaClass = createSchemaClass(xsd)
 
       val packageName = if (prefix == null) "root" else prefix
-      "package %s { %s %s }".format(packageName, typeDefinition, schemaClass)
+      
+      val result = "package %s { %s %s }".format(packageName, typeDefinition, schemaClass)
+      println(result)
+      result
    }
 
    
@@ -81,7 +87,7 @@ class XsdConverter extends Converter {
    private[this] def toType(node: Node): String = {
       node match {
          case Elem(_, "simpleType", _, _, stc) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
+            val name = node.attribute("name").map { x => x.text }.getOrElse(createName)
             stc match {
                case Elem(_, "restriction", _, _, rc @ Elem(_, "enumeration", _, _) *) =>
                   toEnumeration(name, rc)
@@ -91,7 +97,7 @@ class XsdConverter extends Converter {
             }
 
          case Elem(_, "complexType", _, _, ctc) =>
-            val name = node.attribute("name").map { x => x.text }.getOrElse("Anonymous")
+            val name = node.attribute("name").map { x => x.text }.getOrElse(createName)
             ctc match {
                case Elem(_, "complexContent", _, _, ccc) =>
                   ccc match {
@@ -148,6 +154,12 @@ class XsdConverter extends Converter {
          case _ =>
             "crap!"
       }
+   }
+   
+   
+   private[this] def createName() = {
+      counter = counter + 1
+      "anonymous_%d".format(counter) 
    }
 
    private[this] def toEnumeration(name: String, literals: NodeSeq): String = {
