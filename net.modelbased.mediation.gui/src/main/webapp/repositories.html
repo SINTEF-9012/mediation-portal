@@ -71,7 +71,7 @@
 		<div class="row">
 		  <div class="span3">
 		    <!--Sidebar content-->
-		    <form class="well" id="import-form" onSubmit="doImportModel();">
+		    <div class="well" id="import-form">
 		      <h3>Import Model</h3>
 		      <p class="help-block"><strong>Note:</strong> Use the form below to import a model in the repository</p>
 		      <div id="import-feedback" class="progress progress-striped">
@@ -111,9 +111,9 @@
 			</div>
 		      </div>
 		      <div class="form-actions">
-			<button id="import-button" type="submit" class="btn btn-primary" disabled="true"><i class="icon-upload icon-white"></i> Import</button>
+			<button id="import-button" class="btn btn-primary" disabled="true" onclick="doImportModel();"><i class="icon-upload icon-white"></i> Import</button>
 		      </div>
-		    </form>
+		    </div>
 		  </div>
 
 		  <div class="span8">
@@ -155,46 +155,25 @@
 	    <!-- COMPARISON REPOSITORY VIEW -->
             <div class="tab-pane" id="tab3">
 	      <table class="table table-striped" id="comparisons-table">
-		<thead>
-		  <th>Comparison ID</th>
-		  <th>Oracle</th>
-		  <th>Mapping</th>
-		  <th>Status</th>
-		</thead>
-		<tbody>
-		  <tr>
-		    <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		    <td>Mapping #1</td>
-		    <td>Mapping #2</td>
-		    <td>COMPLETE</td>
-		  </tr>
-		  <tr>
-		    <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		    <td>mapping #2</td>
-		    <td>mapping #3</td>
-		    <td>COMPLETE</td>
-		  </tr>
-		  <tr>
-		    <td>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</td>
-		    <td>my-model</td>
-		    <td>my-other-model</td>
-		    <td>COMPLETE</td>
-		  </tr>
-		</tbody>
-		<tfoot>
-		  <tr>
-		    <th>Mapping ID</th>
-		    <th>Source</th>
-		    <th>Target</th>
-		    <th>Status</th>
-		  </tr>
-		</tfoot>
 	      </table>	      
             </div>
+
+	    <div id="comparison-view" class="modal hide fade in" style="display: none; ">  
+	      <div class="modal-header">  
+		<a class="close" data-dismiss="modal">&times;</a>  
+		<h3>Comparison Visualization</h3>  
+	      </div>  
+	      <div class="modal-body">  
+		<div id="chart-container"></div>
+	      </div>  
+	      <div class="modal-footer">  
+		<a href="#" class="btn" data-dismiss="modal">Close</a>  
+	      </div>  
+	    </div>  
+	    
           </div>
 
 	</div> <!-- /tabbable -->
-
 
 
 	<div id="mapping-view" class="modal hide fade in" style="display: none; ">  
@@ -210,8 +189,8 @@
 	    <a href="#" class="btn" data-dismiss="modal">Close</a>  
 	  </div>  
 	</div>  
-	
 
+	
       </div>
       
       <footer>
@@ -224,8 +203,10 @@
 	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     
-    <script src="javascripts/jquery-1.7.2.min.js"></script>
+    <script src="libs/jquery//jquery-1.8.1.min.js"></script>
     <script type="text/javascript" src="./libs/datatables-1.9.1/media/js/jquery.dataTables.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
     <script src="libs/bootstrap/js/bootstrap-transition.js"></script>
     <script src="libs/bootstrap/js/bootstrap-alert.js"></script>
@@ -242,6 +223,7 @@
     <script src="libs/bootstrap/js/DT_bootstrap.js"></script>
     
     <script type="text/javascript" src="javascripts/mediation-portal-api.js"></script>
+    <script type="text/javascript" src="javascripts/charts.js"></script>
     <script type="text/javascript" src="javascripts/repositories.js"></script>
 
   </body>

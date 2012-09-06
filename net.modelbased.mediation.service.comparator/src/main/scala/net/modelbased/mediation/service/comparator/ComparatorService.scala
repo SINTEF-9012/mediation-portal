@@ -42,7 +42,7 @@ trait ComparatorService extends SensAppService {
           context =>
             context complete runner.process(request)
         }
-      }
+      } ~ cors("POST")
     }
   }
 

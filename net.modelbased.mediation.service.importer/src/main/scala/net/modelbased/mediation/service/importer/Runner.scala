@@ -72,7 +72,7 @@ class Runner(partners: PartnerHandler) extends HttpSpraySupport {
       convertions.get(Format.withName(request.format)) match {
          case Some(convertion) =>
             val content = convertion(request.content)
-            val model = new Model(request.modelId, "text/mof", request.description, content)
+            val model = new Model(request.modelId, request.description, "text/mof", content)
             modelRepository.storeModel(model)
          case None =>
             "Unsupported format: %s".format(request.format) 

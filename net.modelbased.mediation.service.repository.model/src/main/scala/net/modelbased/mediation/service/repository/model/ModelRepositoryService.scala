@@ -85,6 +85,18 @@ trait ModelRepositoryService extends SensAppService {
                         })
                   }
                } ~ cors("GET", "DELETE", "PUT")
+         } ~
+         path ("mediation" / "repositories" / "models" / PathElement / "info" ) { name =>
+            get {
+            context => 
+               _registry.pull("name", name) match {
+                  case None => 
+                     context.complete(StatusCodes.NotFound, "There is no model whose name is '%s'".format(name))
+                  case Some(m) => 
+                     context.complete(StatusCodes.OK, toModelInfo(m))
+               }
+            } ~ cors("GET")
+            
          }
    }
 

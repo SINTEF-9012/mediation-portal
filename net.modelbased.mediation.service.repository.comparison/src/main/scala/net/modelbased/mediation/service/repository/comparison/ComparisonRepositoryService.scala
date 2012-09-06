@@ -99,6 +99,13 @@ trait ComparisonRepositoryService extends SensAppService {
                      context.complete(StatusCodes.OK, "%d comparison deleted.".format(evaluations.size))
                } ~ cors("GET", "PUT")
          } ~
+         path("mediation" / "repositories" / "comparisons" / PathElement / "stats") { oracle =>
+            get {
+               context =>
+                  val result = _registry.findByOracle(oracle).map{ c => c.toStatistics }
+                  context.complete(StatusCodes.OK, result);
+            } ~ cors("GET")
+         } ~
          path("mediation" / "repositories" / "comparisons" / PathElement / PathElement) { (oracle, mapping) =>
             get { context =>
                _registry.findByOracleAndMapping(oracle, mapping) match {

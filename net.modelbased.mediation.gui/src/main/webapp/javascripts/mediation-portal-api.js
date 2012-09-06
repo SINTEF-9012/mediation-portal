@@ -89,6 +89,16 @@ var MODEL_REPOSITORY_URL = "/mediation/repositories/models" ;
 
 
 /**
+ * @desc Extract the ID/name of the model from its url
+ */
+function extractModelId(url) {
+    var result = url.replace("/sensapp" + MODEL_REPOSITORY_URL + "/", "");
+    return result;
+}
+
+
+
+/**
  * @desc Fetch information about all the models stored in the
  * repository
  *
@@ -123,6 +133,25 @@ function fetchModelById(modelId, onSuccess) {
     );
 }
 
+
+/** 
+ * @desc Fetch the information about a specific model
+ *
+ * @param modelId the ID of the model
+ *
+ * @param onSuccess the function to callback in case of success
+ */
+function fetchModelInfoById(modelId, onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + MODEL_REPOSITORY_URL + "/" + modelId + "/info",
+	type: "get",
+        dataType: "json",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to retrieve info about model '" + modelId + "'!"); 
+	}
+    });
+}
 
 /**
  * @desc Store a new model in the repository
@@ -185,7 +214,6 @@ var MAPPING_REPOSITORY_URL = "/mediation/repositories/mappings" ;
  */
 function extractMappingId(url) {
     var result = url.replace("/sensapp" + MAPPING_REPOSITORY_URL + "/", "");
-    console.log(result);
     return result;
 }
 
@@ -246,7 +274,6 @@ function fetchMappingEntriesAt(url, onSuccess) {
  */
 function deleteMappingById(uid, onSuccess) {
    var url = getActiveBackEnd().url + MAPPING_REPOSITORY_URL + "/" + uid;
-    console.log(url);
     $.ajax({
 	url: url,
 	type: "delete",
@@ -271,7 +298,6 @@ function deleteMappingById(uid, onSuccess) {
  */
 function approve(uid, source, target, onSuccess) {
     var url = getActiveBackEnd().url + MAPPING_REPOSITORY_URL + "/" + uid + "/content/" + source + "/" + target + "/approve";
-    console.log(url);
     $.ajax({
 	url: url,
 	type: "put",
@@ -322,7 +348,6 @@ function disapprove(uid, source, target, onSuccess) {
  */
 function setAsUnknown(uid, source, target, onSuccess) {
     var url = getActiveBackEnd().url + MAPPING_REPOSITORY_URL + "/" + uid + "/content/" + source + "/" + target + "/unknown";
-    console.log(url);
     $.ajax({
 	url: url,
 	type: "put",
@@ -332,6 +357,7 @@ function setAsUnknown(uid, source, target, onSuccess) {
 	    alert("Unable to reach the mapping repository (approval failed)!");
 	}
     }); 
+    return false;
 }
 
 
@@ -343,7 +369,156 @@ function setAsUnknown(uid, source, target, onSuccess) {
 var COMPARISON_REPOSITORY_URL = "/mediation/repositories/comparisons" ;
 
 
+/**
+ * Extract the oracle ID from the URL of its comparisons
+ */
+function extractOracleId(url) {
+    var result = url.replace(COMPARISON_REPOSITORY_URL + "/", "");
+    return result;
+}
 
+
+/**
+ * Retrieve a specific comparison between a specific oracle and a
+ * given mapping. The complete comparison is returned.
+ *
+ * @param oracleId the unique ID of the oracle in the mapping
+ * repository
+ * 
+ * @param mappingId the unique ID of the mapping in the mapping
+ * repository
+ *
+ * @param onSuccess the function that should be call back in case of
+ * success
+ */
+function fetchComparisonById(oracleId, mappingId, onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + COMPARISON_REPOSITORY_URL + "/" + oracleId + "/" + mappingId,
+	type: "get",
+        dataType: "json",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the comparison repository!");
+	}
+    }); 
+    return false;
+}
+
+
+/**
+ * Retrieve teh statistics of a given comparison between a specific
+ * oracle and a given mapping. The complete comparison is returned.
+ *
+ * @param oracleId the unique ID of the oracle in the mapping
+ * repository
+ * 
+ * @param mappingId the unique ID of the mapping in the mapping
+ * repository
+ *
+ * @param onSuccess the function that should be call back in case of
+ * success
+ */
+function fetchComparisonAsStatsById(oracleId, mappingId, onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + COMPARISON_REPOSITORY_URL + "/" + oracleId + "/" + mappingId + "/stats",
+	type: "get",
+        dataType: "json",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the comparison repository!");
+	}
+    }); 
+    return false;
+}
+
+
+/** 
+ * Retrieve all the comparisons with a given oracle that exist in the
+ * repository. The complete comparisons are returned
+ * 
+ * @param oracleId the unique ID of the oracle in the mapping
+ * repository
+ * 
+ * @param onSuccess the function that should be call back in case of
+ * success
+ */
+function fetchComparisonByOracle(oracleId, onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + COMPARISON_REPOSITORY_URL + "/" + oracleId,
+	type: "get",
+        dataType: "json",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the comparison repository!");
+	}
+    }); 
+    return false;
+}
+
+
+/** 
+ * Retrieve all the comparisons with a given oracle that exist in the
+ * repository. The complete comparisons are returned
+ * 
+ * @param oracleId the unique ID of the oracle in the mapping
+ * repository
+ * 
+ * @param onSuccess the function that should be call back in case of
+ * success
+ */
+function fetchComparisonAsStatsByOracle(oracleId, onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + COMPARISON_REPOSITORY_URL + "/" + oracleId + "/stats",
+	type: "get",
+        dataType: "json",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the comparison repository!");
+	}
+    }); 
+    return false;
+}
+
+/**
+ * Fetch all the comparison available at the given URL.
+ * 
+ * @param url the URL where the comparisons are expected to be
+ *
+ * @param onSuccess the function to call back in case of success 
+ */
+function fetchComparisonsAt(url, onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + url,
+	type: "get",
+        dataType: "json",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the comparison repository!");
+	}
+    }); 
+    return false;
+}
+
+
+/**
+ * Fetch all the comparisons that exist in the repository. The
+ * complete comparisons are returned.
+ *
+ * @param onSuccess the function that should be called in case of
+ * success
+ */
+function fetchAllComparisons(onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + COMPARISON_REPOSITORY_URL + "?flatten=true",
+	type: "get",
+        dataType: "json",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the comparison repository!");
+	}
+    }); 
+    return false;
+}
 
 
 /*
@@ -372,21 +547,30 @@ var IMPORTER_URL = "/importer"
  * @param onSuccess the function to call back in case of success
  *
  */
-function importModel(id, description, format, content, onSuccess) {
- var request = {
-     "modelId": id,
-     "description": description,
-     "format": format,
-     "content": content,
- };
+function importModel(id, description, format, content, onSuccess, onComplete) {
+    var request = {
+	"modelId": id,
+	"description": description,
+	"format": format,
+	"content": content,
+    };
+    
+    $.ajax({
+	url: getActiveBackEnd().url + IMPORTER_URL,
+	type: "post",
+        contentType: "application/json",
+        data: JSON.stringify(request),
+        dataType: "text",
+	async: true,
+        cache: false,
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the mediation 'Importer' service' \n" + JSON.stringify(err));
+	},
+	complete: onComplete
+    });
 
- asyncRestRequest(
-     IMPORTER_URL,
-     "post",
-     JSON.stringify(request),
-     onSuccess,
-     "Unable to reach the mediation 'Importer' service at " + IMPORTER_URL
- );
+    return false;
 }
 
 
@@ -446,9 +630,7 @@ function mediate(sourceId, targetId, algorithm, onSuccess) {
 	"target": targetId,
 	"algorithm": algorithm
     };
-    console.log(JSON.stringify(request));
     var url = getActiveBackEnd().url + MEDIATOR_URL;
-    console.log(url);
     $.ajax({
 	url: url,
 	type: "post",
@@ -487,8 +669,43 @@ function fetchAlgorithms(onSuccess) {
 var COMPARATOR_URL = "/comparator";
 
 
-function compare() {
 
+/**
+ * Invoke the comparator service and return the resulting list of
+ * comparison in the comparison.
+ *
+ * @param oracleId the unique ID of the oracle mapping in the mapping
+ * repository
+ * 
+ * @param mappingsId the IDs of the mappings which need to be compared
+ * with the oracle
+ *
+ * @param onSuccess the function to callback in case of successfull
+ * comparison
+ *
+ * @param onComplete the function callback once the comparisons is
+ * over, regardless of whether it failed or it succeeded.
+ */
+function compare(oracleId, mappingsId, onSuccess, onComplete) {
+    var request = {
+	"oracle": oracleId,
+	"toCompare": mappingsId,
+	"note": "Requested by the mediation portal"
+    };
+    $.ajax({
+	url: getActiveBackEnd().url + COMPARATOR_URL,
+	type: "post",
+        contentType: "application/json",
+        data: JSON.stringify(request),
+        dataType: "text",
+        cache: false,
+	success: onSuccess,
+	error: function (err) {
+	    alert(JSON.stringify(err));
+	},
+	complete: onComplete
+    });
+    return false;
 }
 
 

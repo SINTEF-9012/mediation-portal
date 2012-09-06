@@ -70,47 +70,29 @@
 	  <div class="row-fluid">
 	    <div class="span3">
 	      <!--Sidebar content-->
-	      <form class="well">
+	      <div class="well">
 		<h2>Comparison Request</h2>
 		<p class="help-block"><strong>Note:</strong> Use the form below to specify what mappings have to be evaluated against what oracle.</p>
 		<fieldset>
 		<div class="controlup">
 		  <label class="control-label">Oracle Mapping:</label>
 		  <div class="controls docs-input-sizes">
-		    <select class="span12" >
-		      <option>550e8400-e29b-41d4-a716-446655440000</option>
-		      <option>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</option>
-		      <option>89ed71ce-5a66-4c10-a781-899f59614e25</option>
-		      <option>523abe18-cb2c-406c-9893-6f61ccf9190a</option>
-		      <option>7159ca3a-1d75-4d97-8908-e665e1b7d0f1</option>
-		      <option>69fea696-eb56-4c23-8aee-5848ac41fc6a</option>
-		      <option>ec50c6db-1e3e-420f-b416-9d2da5b5642a</option>
-		      <option>29ffebd6-c51f-4981-8a5d-0f91b6e99b33</option>
-		      <option>fab3ade3-34ce-4f5d-beed-7e009a69056a</option>
+		    <select id="oracle-selection" class="span12" onchange="validateComparison();">
 		    </select>
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label">Subject Mappings:</label>
 		  <div class="controls docs-input-sizes">
-		    <select multiple="multiple" class="span12" size="10">>
-		      <option>550e8400-e29b-41d4-a716-446655440000</option>
-		      <option>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</option>
-		      <option>89ed71ce-5a66-4c10-a781-899f59614e25</option>
-		      <option>523abe18-cb2c-406c-9893-6f61ccf9190a</option>
-		      <option>7159ca3a-1d75-4d97-8908-e665e1b7d0f1</option>
-		      <option>69fea696-eb56-4c23-8aee-5848ac41fc6a</option>
-		      <option>ec50c6db-1e3e-420f-b416-9d2da5b5642a</option>
-		      <option>29ffebd6-c51f-4981-8a5d-0f91b6e99b33</option>
-		      <option>fab3ade3-34ce-4f5d-beed-7e009a69056a</option>
+		    <select id="mappings-selection" multiple="multiple" class="span12" size="10" onchange="validateComparison();">
 		    </select>
 		  </div>
 		</div>
 		<div class="form-actions">
-		  <button type="submit" class="btn btn-primary">Launch Evaluation</button>
+		  <button id="compare-button" type="submit" class="btn btn-primary" disabled="true" onclick="doCompare();">Launch Evaluation</button>
 		</div>
 		</fieldset>
-	      </form>
+	      </div>
 	    </div>
 	    <div class="span9">
 	      <div id="chart-container"></div>
@@ -131,11 +113,11 @@
     <!-- Le javascript
 	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="javascripts/jquery-1.7.2.min.js"></script>
+    <script src="libs/jquery/jquery-1.8.1.min.js"></script>
 
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
-    <script src="javascripts/charts.js"></script>
+    <!-- <script src="javascripts/charts.js"></script> -->
     
     <script src="libs/bootstrap/js/bootstrap-transition.js"></script>
     <script src="libs/bootstrap/js/bootstrap-alert.js"></script>
@@ -149,6 +131,9 @@
     <script src="libs/bootstrap/js/bootstrap-collapse.js"></script>
     <script src="libs/bootstrap/js/bootstrap-carousel.js"></script>
     <script src="libs/bootstrap/js/bootstrap-typeahead.js"></script>
+
+    <script type="text/javascript" src="javascripts/mediation-portal-api.js"></script>
+    <script type="text/javascript" src="javascripts/comparator.js"></script>
 
   </body>
 </html>

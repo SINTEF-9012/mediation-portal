@@ -35,6 +35,7 @@ function prefetch(file) {
     } else {
 	alert("The File APIs are not fully supported in this browser.");
     }
+    return false;
 }
 
 
@@ -53,19 +54,50 @@ function doImportModel() {
 	    description, 
 	    type, 
 	    content, 
-	    function (data, textStatus, jqXHR) {
-		alert("The model has been successfully imported. (" + data + ")");
+	    importModelSuccessful,
+	    function (jqXHR, textStatus) {
 	    }
 	);
-
-	$("#import-button")[0].disabled = true;
 
     } else {
 	alert("The File APIs are not fully supported in this browser.");
    
     }
+    return false;
 }
 
+
+/**
+ * Calback function used to update the table of model, when a new
+ * model is successfully imported. It simply retrive the info related
+ * to the new model and add them in the table.
+ */
+function importModelSuccessful(data, textStatus, jqXHR) {		
+    var id = extractModelId(data);
+    fetchModelInfoById(
+	id, 
+	function (data, textStatus, jqXHR) {
+	    var table = $("#models-table").dataTable();
+	    table.fnAddData(data);
+	    table.fnDraw();
+	    alert("The model is now available!");
+	}
+    );
+    return false;
+}
+
+
+/**
+ * Callback function used when once a model has beem imported in the
+ * repository, regardless of whether it was successful or failed. It
+ * reset the form.
+ */
+function importModelComplete(jqXHR, textStatus) {
+    $("#import-button")[0].disabled = true;	    
+    $("#model-description").value = "";
+    $("#model-name").val("");
+    var content = $("#model-content")[0].value = "";
+}
 
 
 /**
@@ -154,6 +186,23 @@ function doDeleteMapping(uid, tr) {
 	);
     }
 }
+
+
+/**
+ * Retrieve a comparison identified by the oracle ID and the mapping
+ * ID, and visualize it as statistics;
+ */
+function viewComparison(oracleId, mappingId) {
+    fetchComparisonAsStatsById(
+	oracleId,
+	mappingId,
+	function (data, textStatus, jqXHR) {
+	    updateChart([data]);
+	    $("#comparison-view").modal("show");
+	}
+    );
+}
+
 
 
 /*
@@ -324,11 +373,66 @@ $(document).ready(function() {
 	    "sLengthMenu": "_MENU_ records per page"
 	}
     } );
-    
-    $('#comparisons-table').dataTable( {
-	"sPaginationType": "bootstrap",
-	"oLanguage": {
-	    "sLengthMenu": "_MENU_ records per page"
-	}
-    } );
+   
+
+
+    fetchAllComparisons(function (json) {
+	$('#comparisons-table').dataTable( {
+	    "sPaginationType": "bootstrap",
+	    "aaData": json,
+	    "aoColumns": [
+		{
+		    "sTitle": "Oracle ID",
+		    "mDataProp": "oracle",
+		    "fnRender": function ( object ) { 
+			var oracle = object.aData.oracle;
+			return "<a href=\"#\" onclick=\"viewMapping(\'" + oracle + "');\" >" + oracle + "</a>";
+		    },
+		    "bUseRendered": false
+		},
+		{
+		    "sTitle": "Mapping ID",
+		    "mDataProp": "mapping",
+		    "fnRender": function ( object ) { 
+			var mapping = object.aData.mapping;
+			return "<a href=\"#\" onclick=\"viewMapping(\'" + mapping + "');\" >" + mapping + "</a>";
+		    },
+		    "bUseRendered": false
+		},
+		{
+		    "sTitle": "T.P.",
+		    "mDataProp": "tp" 
+		},
+		{
+		    "sTitle": "T.N.",
+		    "mDataProp": "tn" 
+		},
+		{ 
+		    "sTitle": "F.P.",
+		    "mDataProp": "fp"
+		},
+		{ 
+		    "sTitle": "F.N.",
+		    "mDataProp": "fn"
+		},
+		{ 		
+		    "sTitle": "Actions",
+		    "mDataProp": null,
+		    "fnRender": function ( object ) {
+			var oracle = object.aData.oracle;
+			var mapping = object.aData.mapping;
+			return "<div class=\"btn-group\">"
+			    + "<button class=\"btn btn-mini\" onclick=\"doDeleteComparison('" + oracle + "', '" + mapping + "', $(this).parents('tr'));\"><i class=\"icon-remove-sign\"></i></button>"
+			    + "<button class=\"btn btn-mini\" onclick=\"viewComparison('" + oracle + "', '" + mapping + "');\"><i class=\"icon-zoom-in\"></i></button>"
+			    + "</div>";
+		    },
+		    "bUseRendered": false
+		}
+	    ],
+	    "oLanguage": {
+		"sLengthMenu": "_MENU_ records per page"
+	    }
+	} );
+    });
+
 } );
