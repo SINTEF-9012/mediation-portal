@@ -39,6 +39,6 @@ sealed case class Part(val modelId: String, val packageName: String)
  * The associated serialization JSON protocol
  */
 object RequestJsonProtocol extends DefaultJsonProtocol {
-   implicit val PartFormat = jsonFormat(Part, "modelId", "packageNam")
+   implicit val PartFormat = jsonFormat(Part, "modelId", "packageName")
    implicit val requestFormat = jsonFormat(Request, "resultId", "parts")
 }

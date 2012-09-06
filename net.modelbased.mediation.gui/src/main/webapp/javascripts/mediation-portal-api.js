@@ -597,8 +597,36 @@ function fetchSupportedFormats(onSuccess) {
 
 var AGGREGATOR_URL = "/aggregator" ;
 
-function aggregate() {
 
+/**
+ * Invoke the aggregator service
+ *
+ * @param resultId the unique ID that should be used to store the
+ * resulting aggregation
+ *
+ * @param parts an array of element of type (modelId, packageName)
+ */
+function aggregate(resultId, parts, onSuccess) {
+  var request = {
+	"resultId": resultId,
+	"parts": parts
+    };
+    
+    $.ajax({
+	url: getActiveBackEnd().url + AGGREGATOR_URL,
+	type: "post",
+        contentType: "application/json",
+        data: JSON.stringify(request),
+        dataType: "text",
+        cache: false,
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the mediation 'aggregator' service' \n" + JSON.stringify(err));
+	},
+	complete: onComplete
+    });
+
+    return false;
 }
 
 

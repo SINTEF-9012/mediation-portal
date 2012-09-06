@@ -1,0 +1,15 @@
+/**
+ * Customization of the twitter bootstrap look and feel
+ *
+ * @author Franck Chauvel - SINTEF ICT
+ */
+
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+body .modal {
+    width: 560px;
+    margin: -250px 0 0 -280px;
+}
