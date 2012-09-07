@@ -119,6 +119,11 @@ function doDeleteModel(id, tr) {
 }
 
 
+/**
+ * Show a modal panel containing the content of the model.
+ *
+ * @param id the unique ID that identifies the model in the repository
+ */
 function viewModel(id) {
     fetchModelById(
 	id,
@@ -129,6 +134,10 @@ function viewModel(id) {
 	}
     );
 }
+
+
+
+
 
 
 /**
@@ -204,6 +213,31 @@ function viewComparison(oracleId, mappingId) {
 }
 
 
+/**
+ * Invoke the deletetion of a given comparison. The comparison is
+ * identified by the ID of the oracle and the ID of the mapping.
+ *
+ * @param oracleId the unique ID identifying the oracle in the mapping
+ * repository
+ *
+ * @param mappingId the unique ID identifying the mapping in the
+ * mapping repository
+ */
+function doDeleteComparison(oracleId, mappingId, row) {
+    var confirmed = confirm("Do you really want to delete the comparison between '" + oracleId + "'  and '" + mappingId + "'?");
+    if (confirmed) {
+	deleteComparisonById(
+	    oracleId, 
+	    mappingId,
+	    function (data, textStatus, jqXHR) {
+		var comparisons = $("#comparisons-table").dataTable();
+		comparisons.fnDeleteRow(row);
+		comparisons.fnDraw();
+		alert("Comparison successfully deleted!");
+	    }
+	);
+    }
+}
 
 /*
  * MAIN PROGRAM
@@ -243,11 +277,11 @@ $(document).ready(function() {
 			"bUseRendered": false
 		    },
 		    { 
-			"sTitle": "description",
+			"sTitle": "Description",
 			"mDataProp": "description" 
 		    },
 		    { 
-			"sTitle": "type",
+			"sTitle": "Type",
 			"mDataProp": "kind" 
 		    },
 		    { 		
@@ -304,7 +338,7 @@ $(document).ready(function() {
 		    "fnRender": function ( object ) {
 			return "<div class=\"btn-group\">"
 			    + "<button class=\"btn btn-mini\" onclick=\"doDeleteMapping('" + object.aData.uid + "', $(this).parents('tr'));\"><i class=\"icon-remove-sign\"></i></button>"
-			    + "<button class=\"btn btn-mini\" onclick=\"doEditMapping('" + object.aData.uid + "', $(this).parents('tr'));\"><i class='icon-pencil'></i></button>"
+			    + "<button class=\"btn btn-mini\" onclick=\"doEditMapping('" + object.aData.uid + "', $(this).parents('tr'));\" disabled=\"true\"><i class='icon-pencil'></i></button>"
 			    + "</div>";
 		    },
 		    "bUseRendered": false

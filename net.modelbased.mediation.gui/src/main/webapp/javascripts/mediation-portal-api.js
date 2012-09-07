@@ -521,6 +521,29 @@ function fetchAllComparisons(onSuccess) {
 }
 
 
+/**
+ * Delete a comparison identified by the IDs of its oracle and of its
+ * mapping.
+ *  
+ * @param oracleId the ID that identifies the oracle in the mapping
+ * repository.
+ * 
+ * @param mappingId the ID that identifies the mapping in the mapping
+ * repository
+ */
+function deleteComparisonById(oracleId, mappingId, onSuccess) {
+    $.ajax({
+	url: getActiveBackEnd().url + COMPARISON_REPOSITORY_URL + "/" + oracleId + "/" + mappingId,
+	type: "delete",
+	success: onSuccess,
+	error: function (err) {
+	    alert("Unable to reach the comparison repository!");
+	}
+    }); 
+    return false;
+}
+
+
 /*
  * IMPORTER SERVICE
  * --------------------------------------------------------
@@ -665,7 +688,6 @@ function mediate(sourceId, targetId, algorithm, onSuccess) {
 	contentType: "application/json",
 	data: JSON.stringify(request),
 	success: onSuccess,
-	async: false,
 	cache: false,
 	error: function (err) {
 	    alert("Unable to reach the mediator!\n" + JSON.stringify(err) );

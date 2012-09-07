@@ -23,6 +23,12 @@ function doMediation() {
     return false;
 }
 
+
+/**
+ * Update the result panel and display the resulting mediation result
+ * 
+ * @param url the URL where the mapping is available
+ */
 function updateResult(url) {
     console.log(url);
     alert("Mediation started!");
@@ -57,7 +63,6 @@ $(document).ready(function() {
     })
 
     
-//    fetchMappingEntriesOf($("mapping-id").innerHTML, function(json){
     $('#results').dataTable( {
       	"sPaginationType": "bootstrap",
 	"aaData": [],

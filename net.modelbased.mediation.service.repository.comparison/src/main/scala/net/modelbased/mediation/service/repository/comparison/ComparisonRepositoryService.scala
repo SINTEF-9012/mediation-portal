@@ -97,7 +97,7 @@ trait ComparisonRepositoryService extends SensAppService {
                      val evaluations = _registry.findByOracle(oracle)
                      evaluations.foreach { evaluation => _registry.remove(evaluation) }
                      context.complete(StatusCodes.OK, "%d comparison deleted.".format(evaluations.size))
-               } ~ cors("GET", "PUT")
+               } ~ cors("GET", "PUT", "DELETE")
          } ~
          path("mediation" / "repositories" / "comparisons" / PathElement / "stats") { oracle =>
             get {
@@ -139,7 +139,7 @@ trait ComparisonRepositoryService extends SensAppService {
                      case None =>
                         context.complete(StatusCodes.BadRequest, "Unknown comparison (oracle=%s, mapping=%s)".format(oracle, mapping))
                   }
-            } ~ cors("GET", "PUT")
+            } ~ cors("GET", "PUT", "DELETE")
          } ~
          path("mediation" / "repositories" / "comparisons" / PathElement / PathElement / "stats") { (oracle, mapping) =>
             get { context =>
@@ -150,7 +150,7 @@ trait ComparisonRepositoryService extends SensAppService {
                   case Some(e) =>
                      context.complete(e.toStatistics)
                }
-            } ~ cors("GET", "PUT")
+            } ~ cors("GET")
          }
    }
 

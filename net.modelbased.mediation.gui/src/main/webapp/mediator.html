@@ -48,7 +48,7 @@ x<!DOCTYPE html>
     </div>
 
     <div class="container">
-     
+      
       <div class="page-header">
 	<h1>Mediator Service<small> &mdash; Getting matching recommendations</small></h1>
       </div>
@@ -58,7 +58,7 @@ x<!DOCTYPE html>
 	<div class="row-fluid">
 	  <div class="span3">
 	    <!--Sidebar content-->
-	    <form href="#" class="well" id="mediator-form">
+	    <div class="well" id="mediator-form">
 	      <h3>Mediation Request</h3>
 	      <p class="help-block"><strong>Note:</strong> Use the form below to specify the mediation you need to initiate.</p>
 	      <fieldset>
@@ -84,10 +84,10 @@ x<!DOCTYPE html>
 		  </div>
 		</div>
 		<div class="form-actions">
-		  <a class="btn btn-primary" onclick="doMediation();"><i class="icon-play icon-white"></i> Search for Matches</a>
+		  <button class="btn btn-primary" onclick="doMediation();"><i class="icon-play icon-white"></i> Search for Matches</button>
 		</div>
 	      </fieldset>
-	    </form>
+	    </div>
 	  </div>
 	  <div class="span9">
 	    <h3>Resulting Matches <small><span id="mapping-id">No Mapping selected</span></small></h3>
@@ -102,6 +102,7 @@ x<!DOCTYPE html>
       
       <footer>
         <p>&copy; SINTEF IKT 2012</p>
+    	<p><a href="https://github.com/SINTEF-9012/mediation-portal/issues?state=open">Report Bugs, Make Suggestions, etc.</a></p>  
       </footer>
 
     </div> <!-- /container -->
@@ -110,7 +111,7 @@ x<!DOCTYPE html>
 	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-    <script src="javascripts/jquery-1.7.2.min.js"></script>
+    <script src="libs/jquery/jquery-1.8.1.min.js"></script>
     <script type="text/javascript" src="libs/datatables-1.9.1/media/js/jquery.dataTables.js"></script>
 
     <script src="libs/bootstrap/js/bootstrap-transition.js"></script>
