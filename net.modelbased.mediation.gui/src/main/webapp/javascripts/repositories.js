@@ -364,8 +364,14 @@ $(document).ready(function() {
 		"mDataProp": "target" 
 	    },
 	    { 
-		"sTitle": "Similarity",
-		"mDataProp": "degree" 
+		"sTitle": "Degree",
+		"mDataProp": "degree",
+		"sClass": "alignRight",
+		"sWidth": "75px",
+		"fnRender": function ( object ) {
+		    return (object.aData.degree * 100).toFixed(2);
+		},
+		"bUseRendered": false
 	    },
 	    { 
 		"sTitle": "Origin",

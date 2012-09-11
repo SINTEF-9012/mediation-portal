@@ -27,7 +27,7 @@ import net.modelbased.mediation.service.repository.model.data.Model
 import net.modelbased.mediation.service.repository.mapping.data.{ Mapping, Entry }
 import net.modelbased.mediation.library.util.StringToolBox._
 import net.modelbased.mediation.library.algorithm.mof.reader.MofReader
-import net.modelbased.mediation.library.algorithm.mof.Collector 
+import net.modelbased.mediation.library.algorithm.mof.Collector
 import net.modelbased.mediation.library.util.MinEditDistance
 import net.modelbased.mediation.library.algorithm.mof._
 
@@ -49,33 +49,35 @@ class SyntacticMatch extends Mediation {
     * @inheritdoc
     */
    override def execute(context: Mapping, source: Model, target: Model) = {
-      out = new Mapping(sourceId=source.name, targetId=target.name)
 
-      val mofSource = reader.readPackage(source.content)
-      mofSource match {
-         case Right(sp: Package) =>
-            val mofTarget = reader.readPackage(target.content)
-            mofTarget match {
-               case Right(tp: Package) =>
-                  // Handle types
-                  val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-                  for (st <- allSourceTypes) {
-                     val n = st.name
-                     val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-                     val min = allTargetTypes.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
-                     out.add(new Entry(st.qualifiedName, min.qualifiedName, distance(st.name, min.name), "syntactic matching"))
-                  }
+      val sp = reader.readPackage(source.content) match {
+         case Right(p: Package) => p
+         case Left(errors)       => throw new IllegalArgumentException("Ill-formed source model! (%s)".format(source.name));
+      }
 
-                  // Handle features
-                  val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-                  for (sf <- allSourceFeatures) {
-                     val n = sf.name
-                     val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-                     val min = allTargetFeatures.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
-                     out.add(new Entry(sf.qualifiedName, min.qualifiedName, distance(sf.name, min.name), "syntactic matching"))
-                  }
+      val tp = reader.readPackage(target.content) match {
+         case Right(p: Package) => p
+         case Left(errors)       => throw new IllegalArgumentException("Ill-formed target model (%s)!".format(target.name));
+      }
 
-            }
+      val capacity = Mof.countTypesAndFeatures(sp) * Mof.countTypesAndFeatures(tp)
+      out = new Mapping(sourceId = source.name, targetId = target.name, capacity = capacity)
+
+      val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+      for (st <- allSourceTypes) {
+         val n = st.name
+         val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+         val min = allTargetTypes.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
+         out.add(new Entry(st.qualifiedName, min.qualifiedName, 1. - distance(st.name, min.name), "syntactic matching"))
+      }
+
+      // Handle features
+      val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      for (sf <- allSourceFeatures) {
+         val n = sf.name
+         val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+         val min = allTargetFeatures.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
+         out.add(new Entry(sf.qualifiedName, min.qualifiedName, 1. - distance(sf.name, min.name), "syntactic matching"))
       }
 
    }

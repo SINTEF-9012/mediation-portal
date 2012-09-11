@@ -53,43 +53,46 @@ class RandomMatch extends Mediation {
     *
     */
    override def execute(in: Mapping, source: Model, target: Model): Unit = {
-      out = new Mapping(sourceId=source.name, targetId=target.name)
+      val randomizer = new Random()
 
-      val mofSource = reader.readPackage(source.content)
-      mofSource match {
-         case Right(sp: Package) =>
-            val mofTarget = reader.readPackage(target.content)
-            mofTarget match {
-               case Right(tp: Package) =>
-                  val randomizer = new Random()
-
-                  // Manage the types
-                  val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-                  val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-                  allSourceTypes.foldLeft((randomizer.shuffle(allTargetTypes.toList), out)) {
-                     case ((Nil, m), v) =>
-                        val l = (randomizer.shuffle(allTargetTypes.toList))
-                        m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
-                        (l.tail, m)
-                     case ((head :: tail, m), v) =>
-                        m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
-                        (tail, m)
-                  }
-
-                  // Manage Elements
-                  val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-                  val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-                  val (m2, _) = allSourceFeatures.foldLeft((randomizer.shuffle(allTargetFeatures.toList), out)) {
-                     case ((Nil, m), v) =>
-                        val l = (randomizer.shuffle(allTargetFeatures.toList))
-                        m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
-                        (l.tail, m)
-                     case ((head :: tail, m), v) =>
-                        m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
-                        (tail, m)
-                  }
-
-            }
+      val sp = reader.readPackage(source.content) match {
+         case Right(p: Package) => p
+         case Left(errors)       => throw new IllegalArgumentException("Ill-formed source model! (%s)".format(source.name));
       }
+
+      val tp = reader.readPackage(target.content) match {
+         case Right(p: Package) => p
+         case Left(errors)       => throw new IllegalArgumentException("Ill-formed target model (%s)!".format(target.name));
+      }
+
+      val capacity = Mof.countTypesAndFeatures(sp) * Mof.countTypesAndFeatures(tp)
+      out = new Mapping(sourceId = source.name, targetId = target.name, capacity = capacity)
+
+      // Manage the types
+      val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+      val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+      allSourceTypes.foldLeft((randomizer.shuffle(allTargetTypes.toList), out)) {
+         case ((Nil, m), v) =>
+            val l = (randomizer.shuffle(allTargetTypes.toList))
+            m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
+            (l.tail, m)
+         case ((head :: tail, m), v) =>
+            m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
+            (tail, m)
+      }
+
+      // Manage Elements
+      val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      val (m2, _) = allSourceFeatures.foldLeft((randomizer.shuffle(allTargetFeatures.toList), out)) {
+         case ((Nil, m), v) =>
+            val l = (randomizer.shuffle(allTargetFeatures.toList))
+            m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
+            (l.tail, m)
+         case ((head :: tail, m), v) =>
+            m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
+            (tail, m)
+      }
+
    }
 }
