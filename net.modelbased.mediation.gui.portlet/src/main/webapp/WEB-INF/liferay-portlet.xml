@@ -7,7 +7,27 @@
 		<icon>/icon.png</icon>
 		<instanceable>false</instanceable>
 		<header-portlet-css>/css/main.css</header-portlet-css>
-		<footer-portlet-javascript>/js/main.js</footer-portlet-javascript>
+		<header-portlet-css>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/css/bootstrap.css</header-portlet-css>
+		<header-portlet-css>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/css/mediation-portal.css</header-portlet-css>
+		<header-portlet-css>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/css/bootstrap-responsive.css</header-portlet-css>
+		<header-portlet-css>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/css/DT_bootstrap.css</header-portlet-css>
+		<header-portlet-css>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/datatables-1.9.1/media/css/demo_page.css</header-portlet-css>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/jquery/jquery-1.8.1.min.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/datatables-1.9.1/media/js/jquery.dataTables.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-transition.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-alert.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-modal.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-dropdown.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-scrollspy.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-tab.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-tooltip.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-popover.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-button.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-collapse.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-carousel.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/bootstrap-typeahead.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/libs/bootstrap/js/DT_bootstrap.js</footer-portlet-javascript>
+		<footer-portlet-javascript>http://54.247.114.191/net.modelbased.mediation.gui-0.0.1-SNAPSHOT/javascripts/mediation-portal-api.js</footer-portlet-javascript>
 		<footer-portlet-javascript>/js/mediation.js</footer-portlet-javascript>
 	</portlet>
 	<role-mapper>

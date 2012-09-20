@@ -1,15 +1,14 @@
 <?xml version="1.0"?>
 
-<portlet-app
-	version="2.0"
+<portlet-app version="2.0"
 	xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
->
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:mediation="http://www.modelbased.net"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 	<portlet>
 		<portlet-name>net.modelbased.mediation.gui.portlet</portlet-name>
-		<display-name>Mediation Viewer</display-name>
-		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
+		<display-name>Mapping Viewer</display-name>
+		<portlet-class>net.modelbased.mediation.gui.portlet.MediationPortlet</portlet-class>
 		<init-param>
 			<name>view-jsp</name>
 			<value>/view.jsp</value>
@@ -19,21 +18,23 @@
 			<mime-type>text/html</mime-type>
 		</supports>
 		<portlet-info>
-			<title>net.modelbased.mediation.gui.portlet</title>
-			<short-title>net.modelbased.mediation.gui.portlet</short-title>
-			<keywords>net.modelbased.mediation.gui.portlet</keywords>
+			<title>Mediation Viewer</title>
+			<short-title>Visualise and modify data matching recommendations</short-title>
+			<keywords>Services, Data Mediation, Envision</keywords>
 		</portlet-info>
-		<security-role-ref>
-			<role-name>administrator</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
+		<supported-processing-event>
+			<qname>mediation:showMapping</qname>
+		</supported-processing-event>
+		<supported-publishing-event>
+			<qname>mediation:mappingComplete</qname>
+		</supported-publishing-event>
 	</portlet>
+	<event-definition>
+		<qname>mediation:showMapping</qname>
+		<value-type>java.lang.String</value-type>
+	</event-definition>
+	<event-definition>
+		<qname>mediation:mappingComplete</qname>
+		<value-type>java.lang.String</value-type>
+	</event-definition>
 </portlet-app>

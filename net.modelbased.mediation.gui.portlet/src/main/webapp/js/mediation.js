@@ -6,18 +6,37 @@
  *
  */
 
-// Global variable shared among all portlets
-var Receiver = {};
+
+var MediationEvents = {};
+
+
+MediationEvents.listeners = new Array(); 
+
+MediationEvents.addListener = function(listener) {
+	MediationEvents.listeners.push(listener); 
+};
+
+MediationEvents.invokeListeners = function(message) {
+	for (var i = 0; i < MediationEvents.listeners.length; i++) {
+		var callback = MediationEvents.listeners[i]; 
+		callback(message); 
+	}
+};
+
 
 /**
- * Notify the composition portlet that the mapping is now complete and can be
- * retrieved from the repository.
+ * Function trigger when the user press the Mapping Complete button. It 
+ * returns the focus to the composition portal
+ * 
  */
-function notifyMappingComplete() {
-	var mappingId = $("#mapping-id").innerHTML;
-	alert(mappingId);
-	Receiver.mappingComplete(mappingId);
+function doMappingComplete() {
+	var uid = 	$("#mapping-id").value;
+	var confirmed =	confirm("Are you sure that this mapping is complete'?");
+	if (confirmed) {
+		MediationEvents.invokeListeners(uid);
+	}
 }
+
 
 /**
  * Event Handler - Trigger when the URL of the needed mapping is passed to the
@@ -31,7 +50,8 @@ function notifyMappingComplete() {
  *            the unique ID identifing the mapping within the mapping repository
  * 
  */
-Receiver.loadMapping = function(sender, mId) {
+var loadMapping = function(mId) {
+	alert("Loading mapping '" + mId + "'!");
 	$("#mapping-id").text(mId); // Update the title of the page
 	fetchMappingEntriesOf(mId, function(json) {
 		var table = $("#results").dataTable();
@@ -40,14 +60,42 @@ Receiver.loadMapping = function(sender, mId) {
 	});
 };
 
+// we have to wait until the DOM is loaded, otherwise MyEvents namespace is not
+// ensured to exist
+var localOnLoad = function() {
+	CompositionEvents.addListener(loadMapping);
+};
+
+
+var currentOnload = window.onload;
+if (currentOnload != undefined) {
+	if(typeof(currentOnload) == "function"){
+		window.onload = function() {
+			currentOnload();
+			localOnLoad();
+		};
+	} else {
+		window.onload = localOnLoad;
+	};
+} else {
+	window.onload = localOnLoad;
+};
+
+
 /*
  * MAIN PROGRAM Bind various functions to pages event
  */
 
+$(document).ajaxStop(function() { 
+
+});
+
+
 $(document)
 		.ready(function() {
-
-			$('#results').dataTable({
+			
+			$('#results')
+					.dataTable({
 					"sPaginationType" : "bootstrap",
 					"aaData" : [],
 					"aoColumns" : [ {
