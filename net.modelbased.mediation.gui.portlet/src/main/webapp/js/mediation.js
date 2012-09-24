@@ -6,7 +6,6 @@
  *
  */
 
-
 var MediationEvents = {};
 
 
@@ -93,7 +92,7 @@ $(document).ajaxStop(function() {
 
 $(document)
 		.ready(function() {
-			
+			activateBackEnd("SINTEF-DEMO");
 			$('#results')
 					.dataTable({
 					"sPaginationType" : "bootstrap",
