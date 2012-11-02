@@ -615,7 +615,7 @@ function aggregate(resultId, parts, onSuccess) {
 		alert("Unable to reach the mediation 'aggregator' service' \n" + JSON
 				.stringify(err));
 	},
-	complete : onComplete
+	complete : onSuccess
 	});
 
 	return false;
