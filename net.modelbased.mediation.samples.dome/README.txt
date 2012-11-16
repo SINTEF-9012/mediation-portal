@@ -173,3 +173,36 @@ this demo: using local installation or using the SINTEF-DEMO server.
      - Select the mapping you want to compare with oracle
 
      - Click on "Launch evaluation" you should see
+
+
+
+
+3  TROUBLESHOOTING
+==================
+
+  (a) You may face integration tests that fails once you use your
+  local mongodb database for a while. To overcome this, you need to
+  delete the data base associate with the mediation
+  framework. Assuming MongoDB is running, the "mongo shell" permits to
+  do so in a few commands:
+
+  $> cd /opt/mongodb/bin
+  $> mongo
+     Mongo shell version: 2.0.6
+     Connection to: test
+     
+     > show dbs
+     local   (empty)
+     mediation_portal        0.078125GB
+     
+     > use mediation_portal  
+     switched to db mediation_portal
+     
+     > db.dropDatabase();
+     { "dropped" : "mediation_portal", "ok" : 1 }
+     
+     > exit
+     bye
+  $>
+
+
