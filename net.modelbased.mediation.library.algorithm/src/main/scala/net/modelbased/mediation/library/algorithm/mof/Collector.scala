@@ -52,6 +52,15 @@ class Collector(val filter: Element => Boolean) extends MofVisitor[List[Element]
       else input
    }
 
+   def visitDataType(dataType: DataType, input: List[Element]): List[Element] = {
+      if (filter(dataType)) {
+         dataType :: input
+      }
+      else {
+         input
+      }
+   }
+
    def visitEnumeration(enumeration: Enumeration, input: List[Element]): List[Element] = {
       val local = enumeration.literals.foldLeft(input) { (acc, l) => l.accept(this, acc) }.toList
       if (filter(enumeration)) {
@@ -90,7 +99,7 @@ class Collector(val filter: Element => Boolean) extends MofVisitor[List[Element]
       if (filter(byte)) byte :: input else input
    }
 
-    def visitAny(any: Any.type, input: List[Element]): List[Element] = {
+   def visitAny(any: Any.type, input: List[Element]): List[Element] = {
       if (filter(any)) any :: input else input
    }
 }

@@ -30,6 +30,8 @@ import org.specs2.mutable.Specification
  * package test {
  *
  *    package data {
+ *    
+ *    	data type DateTime
  *
  *    	enumeration WeekDay {
  *    		Saturday, Sunday
@@ -52,12 +54,14 @@ import org.specs2.mutable.Specification
 trait SampleMofAst extends Specification {
    
    val global = MofAst.createGlobalScope
+   
+   val dateTime = new DataTypeNode(Some(global), "DateTime")
 
    val saturday = new LiteralNode(Some(global), "Saturday")
    val sunday = new LiteralNode(Some(global), "Sunday")
    val weekDays = new EnumerationNode(Some(global), "WeekDays", Seq(saturday, sunday))
 
-   val data = new PackageNode(Some(global), "data", Seq(weekDays))
+   val data = new PackageNode(Some(global), "data", Seq(dateTime, weekDays))
 
    val name = new FeatureNode(Some(global), "name", new Reference("String"), opposite = None)
    val next = new FeatureNode(Some(global), "next", new Reference("Element"), opposite = Some(Reference("previous")))
@@ -66,8 +70,8 @@ trait SampleMofAst extends Specification {
    val element = new ClassNode(Some(global), "Element", false, Seq(name, next, previous, day), Seq.empty)
 
    
-   val description = new FeatureNode(Some(global), "description", new Reference("String"), opposite = None)
-   val specialElement = new ClassNode(Some(global), "SpecialElement", false, Seq(description), Seq(new Reference("Element")))
+   val creation = new FeatureNode(Some(global), "creation", new Reference("data", "DateTime"), opposite = None)
+   val specialElement = new ClassNode(Some(global), "SpecialElement", false, Seq(creation), Seq(new Reference("Element")))
    
    val test = new PackageNode(Some(global), "test", Seq(data, element, specialElement))
  

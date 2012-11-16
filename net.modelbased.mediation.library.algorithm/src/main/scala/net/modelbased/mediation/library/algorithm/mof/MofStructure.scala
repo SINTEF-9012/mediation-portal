@@ -339,6 +339,23 @@ object Any extends PrimitiveType("Any", null) {
 
 
 /**
+ * Represent the notion of data type, basically black-box types what we don't
+ * want to detail.
+ * 
+ * @author Franck Chauvel - SINTEF ICT
+ * 
+ * @since 0.0.1
+ */
+class DataType(initialName: String, initialContainer: Package = null) extends Type(initialName, initialContainer) {
+   
+   override def accept[I, O](visitor: MofVisitor[I, O], input: I): O =
+      visitor.visitDataType(this, input)
+      
+}
+
+
+
+/**
  * Represent enumeration of literal values, such as WeekDay= MonDay, Tuesday, etc.
  *
  * @author Franck Chauvel - SINTEF ICT

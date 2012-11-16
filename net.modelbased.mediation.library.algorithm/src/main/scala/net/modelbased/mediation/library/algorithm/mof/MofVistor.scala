@@ -36,6 +36,8 @@ abstract trait MofVisitor[I, O] {
    def visitClass(theClass: Class, input: I): O
 
    def visitFeature(feature: Feature, input: I): O
+   
+   def visitDataType(datatype: DataType, input: I): O
 
    def visitEnumeration(enumeration: Enumeration, input: I): O
 

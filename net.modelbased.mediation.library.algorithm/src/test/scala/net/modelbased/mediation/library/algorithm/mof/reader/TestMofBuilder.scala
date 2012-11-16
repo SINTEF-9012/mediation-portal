@@ -44,6 +44,28 @@ class TestMofBuilder extends SpecificationWithJUnit with SampleMofAst {
                ko
          }
       }
+      
+      
+      "build a DataType out of an DataTypeNode" in {
+         val errors = dateTime.accept(builder, Nil)
+         errors must beEmpty
+         dateTime.modelElement must beSome.which {
+            case dt: DataType =>
+            	dt.name must beEqualTo("DateTime")
+            case _ => ko
+         }   
+      }
+      
+      
+      "build properly the DataTypeNode contained in a package" in {
+         val errors = data.accept(builder, Nil)
+         errors must beEmpty
+         dateTime.modelElement must beSome.which {
+            case dt: DataType =>
+            	dt.name must beEqualTo("DateTime")
+            case _ => ko
+         }
+      }
 
       "build an Enumeration from a EnumerationNode" in {
          val errors = weekDays.accept(builder, Nil)

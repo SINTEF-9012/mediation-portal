@@ -92,13 +92,18 @@ class MofPrinter extends MofVisitor[StringBuilder, StringBuilder] {
       val tmp = if (feature.lower == 0 && feature.upper.isEmpty) print(input, " [0..*]")
       else if (feature.lower == 1 && feature.upper.map { v => v == 1 }.getOrElse(false)) print(input, "")
       else print(input, " [%d..%d]".format(feature.lower, feature.upper.getOrElse(-1)))
-      feature.opposite.map{ x => print(input, " ~ %s".format(x.qualifiedName)) }.getOrElse(tmp)
+      feature.opposite.map { x => print(input, " ~ %s".format(x.qualifiedName)) }.getOrElse(tmp)
    }
 
    def visitEnumeration(enumeration: Enumeration, input: StringBuilder): StringBuilder = {
       print(input, "enum ")
       print(input, enumeration.name)
       print(input, enumeration.literals.map { l => l.name }.mkString(" { ", ", ", " }"))
+   }
+
+   def visitDataType(dataType: DataType, input: StringBuilder): StringBuilder = {
+      print(input, "data type ")
+      print(input, dataType.name)
    }
 
    def visitLiteral(literal: Literal, input: StringBuilder): StringBuilder = {

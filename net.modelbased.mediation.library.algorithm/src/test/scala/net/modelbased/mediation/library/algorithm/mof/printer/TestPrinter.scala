@@ -39,6 +39,7 @@ class TestPrinter extends SpecificationWithJUnit {
    val printer = new MofPrinter()
 
    val fooPackage = new Package("foo")
+   val dateTime = new DataType("DateTime", fooPackage)
    val fooClass = new Class("MyClass", false, fooPackage)
    val theSingleFeature = new Feature(Some(fooClass), "singleFeature", String, 1, Some(1))
    val theOptionalFeature = new Feature(Some(fooClass), "optionalFeature", String, 0, Some(1))
@@ -70,6 +71,13 @@ class TestPrinter extends SpecificationWithJUnit {
          val output = thePackage.accept(printer, input)
          val expected = "package test {\n\tclass MyClass {\n\t\tfeatureA: Integer ~ test.CB.featureE\n\t\tfeatureB: String [0..1]\n\t}\n\t\n\tclass CB {\n\t\tfeatureE: Any [0..1] ~ test.MyClass.featureA\n\t}\n\t\n\tabstract class AbstractClass {\n\t\tfeatureC: Boolean [0..1]\n\t}\n\t\n\tclass MySubClass extends AbstractClass {\n\t\tfeatureD: Real\n\t}\n\t\n}"
          output.result must beEqualTo(expected)
+      }
+      
+      "print data type properly" in {
+         val input = new StringBuilder()
+         val output = dateTime.accept(printer, input)
+         val expected = "data type DateTime"
+         output.result must beEqualTo(expected)         
       }
 
       "print regular classes properly" in {

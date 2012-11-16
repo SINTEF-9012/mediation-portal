@@ -608,14 +608,12 @@ function aggregate(resultId, parts, onSuccess) {
 	type : "post",
 	contentType : "application/json",
 	data : JSON.stringify(request),
-	dataType : "text",
 	cache : false,
 	success : onSuccess,
 	error : function(err) {
 		alert("Unable to reach the mediation 'aggregator' service' \n" + JSON
 				.stringify(err));
-	},
-	complete : onSuccess
+	}
 	});
 
 	return false;

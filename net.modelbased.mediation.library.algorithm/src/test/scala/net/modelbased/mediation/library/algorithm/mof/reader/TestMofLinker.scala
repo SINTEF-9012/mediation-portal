@@ -51,7 +51,7 @@ class TestMofLinker extends SpecificationWithJUnit with SampleMofAst {
             case _ => ko
          }
       }
-      
+
       "properly link a feature with a Enumeration type" in {
          test.accept(builder, Nil)
          val errors = day.accept(linker, Nil)
@@ -59,6 +59,17 @@ class TestMofLinker extends SpecificationWithJUnit with SampleMofAst {
          weekDays.modelElement must beSome.like {
             case e: Enumeration =>
                day.modelElement.map { me => me.`type` must beEqualTo(e) }.getOrElse(ko)
+            case _ => ko
+         }
+      }
+
+      "properly link a feature with a data type" in {
+         test.accept(builder, Nil)
+         val errors = creation.accept(linker, Nil)
+         errors must beEmpty
+         dateTime.modelElement must beSome.like {
+            case dt: DataType =>
+               creation.modelElement.map { me => me.`type` must beEqualTo(dt) }.getOrElse(ko)
             case _ => ko
          }
       }

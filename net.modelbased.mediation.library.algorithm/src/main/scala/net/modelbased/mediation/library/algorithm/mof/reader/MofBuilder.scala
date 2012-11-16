@@ -48,28 +48,41 @@ class MofBuilder extends AstVisitor[List[MofError], List[MofError]] {
     */
    def visitPackageNode(node: PackageNode, input: List[MofError]): List[MofError] = {
       val result = new Package(node.name, null)
-      val errors = node.elements.foldLeft(input) { (acc, element) =>
-         val errors = element.accept(this, acc)
-         val modelElement: Packageable = element match {
-            case c: ClassNode       => c.modelElement.getOrElse(null)
-            case p: PackageNode     => p.modelElement.getOrElse(null)
-            case e: EnumerationNode => e.modelElement.getOrElse(null)
-            case _                  => null
-         }
-         if (modelElement == null) {
-            new InternalError(node, "Element should have been built before their containing package") :: errors
-         } else {
-        	 try {
-        	    result.addElement(modelElement)
-        	    errors
-        	 } catch {
-        	    case dpe: DuplicatePackageElement => 
-        	       new DuplicateElement(node, modelElement.name) :: errors
-        	 }
-         }
+      val errors = node.elements.foldLeft(input) {
+         (acc, element) =>
+            val errors = element.accept(this, acc)
+            val modelElement: Packageable = element match {
+               case c: ClassNode       => c.modelElement.getOrElse(null)
+               case p: PackageNode     => p.modelElement.getOrElse(null)
+               case e: EnumerationNode => e.modelElement.getOrElse(null)
+               case d: DataTypeNode    => d.modelElement.getOrElse(null)
+               case _                  => null
+            }
+            if (modelElement == null) {
+               new InternalError(node, "Element should have been built before their containing package") :: errors
+            }
+            else {
+               try {
+                  result.addElement(modelElement)
+                  errors
+               }
+               catch {
+                  case dpe: DuplicatePackageElement =>
+                     new DuplicateElement(node, modelElement.name) :: errors
+               }
+            }
       }
       node.modelElement = Some(result)
       errors
+   }
+
+   /**
+    * @inheritdoc
+    */
+   def visitDataTypeNode(node: DataTypeNode, input: List[MofError]): List[MofError] = {
+      val result = new DataType(node.name, null)
+      node.modelElement = Some(result)
+      input
    }
 
    /**
@@ -80,7 +93,7 @@ class MofBuilder extends AstVisitor[List[MofError], List[MofError]] {
       val errors = node.literals.foldLeft(input) { (acc, literal) =>
          val errors = literal.accept(this, acc)
          literal.modelElement match {
-            case None => new InternalError(node, "The literal '%s' should have built before its containing enumeration!") :: errors
+            case None => new InternalError(node, "The literal '%s' should have been built before its containing enumeration!") :: errors
             case Some(me) =>
                try {
                   result.addLiteral(me)

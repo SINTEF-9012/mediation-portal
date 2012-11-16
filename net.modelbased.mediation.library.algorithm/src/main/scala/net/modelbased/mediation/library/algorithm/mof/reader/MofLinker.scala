@@ -104,6 +104,12 @@ class MofLinker extends AstVisitor[List[MofError], List[MofError]] {
                      case Some(e: Enumeration) => feature.`type` = e; input
                         
                   }
+                case Some(dtn: DataTypeNode) =>
+                  dtn.modelElement match {
+                     case None => new InternalError(node, "DataType '%s' have not been properly initialized in the global scope".format(dtn.name)) :: input
+                     case Some(dt: DataType) => feature.`type` = dt; input
+                        
+                  }
                case _ => new InternalError(node, "Illegal type") :: input
             }
       }
@@ -131,6 +137,10 @@ class MofLinker extends AstVisitor[List[MofError], List[MofError]] {
       }
    }
 
+   def visitDataTypeNode(node: DataTypeNode, input: List[MofError]): List[MofError] = {
+      input
+   }
+   
    def visitEnumerationNode(node: EnumerationNode, input: List[MofError]): List[MofError] = {
       node.literals.foldLeft(input) { (acc, n) => n.accept(this, acc) }
    }

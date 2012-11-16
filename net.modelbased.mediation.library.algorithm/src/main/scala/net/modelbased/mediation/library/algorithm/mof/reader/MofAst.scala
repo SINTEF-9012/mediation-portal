@@ -83,6 +83,8 @@ abstract trait AstVisitor[I, O] {
 
    def visitPackageNode(node: PackageNode, input: I): O
 
+   def visitDataTypeNode(node: DataTypeNode, input: I): O
+
    def visitEnumerationNode(node: EnumerationNode, input: I): O
 
    def visitLiteralNode(node: LiteralNode, input: I): O
@@ -279,6 +281,7 @@ class PackageNode(thePackage: Option[Node] = None, val name: String, initialElem
          c.isInstanceOf[ClassNode] ||
             c.isInstanceOf[EnumerationNode] ||
             c.isInstanceOf[PrimitiveTypeNode] ||
+            c.isInstanceOf[DataTypeNode] ||
             c.isInstanceOf[PackageNode]
       }
 
@@ -306,6 +309,24 @@ class PackageNode(thePackage: Option[Node] = None, val name: String, initialElem
    override def accept[I, O](visitor: AstVisitor[I, O], input: I): O = {
       visitor.visitPackageNode(this, input)
    }
+}
+
+/**
+ * Specific class of nodes to represent block box data types
+ *
+ * @author Franck Chauvel - SINTEF ICT
+ *
+ * @since 0.0.1
+ */
+class DataTypeNode(var thePackage: Option[Node] = None,
+                   val name: String) extends Node(thePackage, false, Some(name)) {
+
+   var modelElement: Option[DataType] = None
+
+   override def accept[I, O](visitor: AstVisitor[I, O], input: I): O = {
+      visitor.visitDataTypeNode(this, input)
+   }
+
 }
 
 /**
@@ -401,11 +422,10 @@ class ClassNode(var thePackage: Option[Node] = None,
     */
    def addFeature(newFeature: FeatureNode) =
       addChild(newFeature)
-      
-   
+
    /**
     * Delete a given feature node from the feature of this class node
-    * 
+    *
     * @param feature the feature node to delete
     */
    def deleteFeature(feature: FeatureNode) =

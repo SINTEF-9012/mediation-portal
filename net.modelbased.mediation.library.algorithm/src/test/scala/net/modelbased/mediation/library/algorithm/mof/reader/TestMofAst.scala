@@ -147,6 +147,22 @@ class TestMofAst extends SpecificationWithJUnit with SampleMofAst {
       }
 
    }
+   
+   "A DataType node " should {
+      
+      "not be a scope" in {
+         dateTime.isScope must beFalse
+      }
+
+      "be a symbol" in {
+         dateTime.isSymbol must beTrue
+         dateTime.symbol must beSome.which { s => s == "DateTime" }
+      }
+      
+       "have a name" in {
+         dateTime.name must beEqualTo("DateTime")
+      }
+   }
 
    "An EnumerationNode" should {
 

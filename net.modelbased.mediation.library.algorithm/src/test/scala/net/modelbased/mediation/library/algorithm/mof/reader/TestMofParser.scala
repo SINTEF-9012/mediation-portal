@@ -38,6 +38,16 @@ class TestMofParser extends SpecificationWithJUnit {
 
    "A MoFParser" should {
 
+      "parse data types properly" in {
+         val text = "data type DateTime"
+         parser.parse(parser.dataType, text) match {
+            case parser.Success(dt: DataTypeNode, _) =>
+               dt.name must beEqualTo("DateTime")
+            case _ => ko
+         }
+    
+      }
+      
       "parse enum literals properly" in {
          val text = "Saturday"
          parser.parse(parser.enumerationLiteral, text) match {
@@ -190,7 +200,7 @@ class TestMofParser extends SpecificationWithJUnit {
          }
       }
 
-      "discard comment in a shell-script fashion" in {
+      "discard comment in a shell-script fashion (e.g., line starting like # ...)" in {
          val text = """
             # This is a comment
             package test {
@@ -241,6 +251,16 @@ class TestMofParser extends SpecificationWithJUnit {
          parser.parse(parser.multiplicity, text) match {
             case parser.Success((l, u), _) =>
                l must beEqualTo(3)
+               u must beNone
+            case _ => ko
+         }
+      }
+      
+      "parse unbound implicit multiplicities (e.g., [*])" in {
+         val text = "[*]"
+         parser.parse(parser.multiplicity, text) match {
+            case parser.Success((l, u), _) =>
+               l must beEqualTo(0)
                u must beNone
             case _ => ko
          }

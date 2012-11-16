@@ -63,7 +63,7 @@ class MofReader {
    }
 
    /**
-    * Read an enumeration literation from a string
+    * Read an enumeration literal from a string
     *
     * @param text the string containing the enumeration literal to be analysed
     *
@@ -87,6 +87,34 @@ class MofReader {
          case parser.Failure(message, next) => Left(List(new ParsingError(message, next.pos.line, next.pos.column)))
       }
    }
+   
+   
+   /**
+    * Read a data type declaration from a string
+    * 
+    * @param text the string containing the declaration of the data type literal
+    *
+    * @return the corresponding enumeration object of a list of syntactic/semantic
+    * errors
+    */
+   def readDataType(text: String): Either[List[MofError], DataType] = {
+      val parser = new MofParser()
+      val builder = new MofBuilder()
+      val linker = new MofLinker() 
+      parser.parse(parser.dataType, text) match {
+         case parser.Success(node: DataTypeNode, _) =>
+            val errors = node.accept(builder, Nil)
+            node.accept(linker, errors) match {
+               case Nil => node.modelElement match {
+                  case None              => Left(List(new InternalError(node, "The model element (data type) was not instantiated, while no error were reported")))
+                  case Some(dt) => Right(dt)
+               }
+               case e @ _ => Left(e)
+            }
+         case parser.Failure(message, next) => Left(List(new ParsingError(message, next.pos.line, next.pos.column)))
+      }
+   }
+   
 
    /**
     * Read a feature from a string

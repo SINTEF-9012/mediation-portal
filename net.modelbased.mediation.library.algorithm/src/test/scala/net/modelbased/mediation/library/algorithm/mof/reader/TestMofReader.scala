@@ -57,6 +57,15 @@ class TestMofReader extends SpecificationWithJUnit {
                x.literals.size must beEqualTo(3)
          }
       }
+      
+      "build data type from a well-formed declaration" in {
+         val text = "data type DateTime"
+         val result = reader.readDataType(text)
+         result must beRight.like {
+            case dt: DataType =>
+               dt.name must beEqualTo("DateTime")
+         }
+      }
 
       "report about duplicate enumeration literal" in {
          val text = "enumeration WeekDays { Monday, Tuesday, Tuesday }"

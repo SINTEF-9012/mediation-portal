@@ -47,6 +47,13 @@ class MofParser extends RegexParsers {
 
    def identifier: Parser[String] =
       """[a-zA-Z_][a-zA-Z0-9_]*""".r
+      
+      
+   def dataType: Parser[DataTypeNode] =
+      "data" ~> "type" ~> identifier ^^ {
+         case name =>
+         	new DataTypeNode(global, name.toString())
+      }
 
    def enumeration: Parser[EnumerationNode] =
       ("enumeration" ~> identifier) ~ ("{" ~> repsep(enumerationLiteral, ",") <~ "}") ^^ {
@@ -70,7 +77,8 @@ class MofParser extends RegexParsers {
    def definition: Parser[Node] = {
       `package` ^^ { case p => p } |
       `class` ^^ { case c => c } |
-      enumeration ^^ { case e => e }
+      enumeration ^^ { case e => e } |
+      dataType ^^ { case dt => dt }
    }
    
    
@@ -107,6 +115,9 @@ class MofParser extends RegexParsers {
       }
 
    def multiplicity: Parser[(Int, Option[Int])] =
+      "[" ~> "*" ~ "]" ^^ {
+         case c => (0, None)         
+      } |
       "[" ~> integerLiteral ~ (".." ~> upperBound) <~ "]" ^^ {
          case l ~ u => (l, u)
       }
