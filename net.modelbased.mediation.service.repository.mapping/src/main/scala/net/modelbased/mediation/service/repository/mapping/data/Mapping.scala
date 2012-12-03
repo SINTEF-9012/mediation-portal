@@ -206,6 +206,16 @@ class Mapping(val uid: String = UUID.randomUUID().toString(),
    def toXml(): Node = {
       <mediation>{ entries.map { e => e.toXml() } }</mediation>
    }
+   
+   
+   /**
+    * Convert only entries that were approved by the user into an XML document
+    * 
+    *  @return a XML containing only entries that were approved by the user
+    */
+   def approvedToXml: Node = {
+      <mediation>{ entries.filter { e => e.isValidated.getOrElse(false) }.map{ e => e.toXml() } }</mediation>
+   }
 
 }
 

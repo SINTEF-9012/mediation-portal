@@ -101,7 +101,7 @@ trait MappingRepositoryService extends SensAppService {
             get { context =>
                ifExists(context, uid, {
                   val mapping: Mapping = (_registry pull ("uid", uid)).get
-                  context complete mapping.toXml.toString
+                  context complete mapping.approvedToXml.toString
                })
             } ~ cors("GET")
          } ~

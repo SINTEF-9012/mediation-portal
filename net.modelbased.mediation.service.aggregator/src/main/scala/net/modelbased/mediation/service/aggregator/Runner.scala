@@ -91,7 +91,8 @@ class Runner(partners: PartnerHandler) extends HttpSpraySupport {
                   localPackage.addElement(thePackage)
                   root.addElement(localPackage)
                case Left(errors) =>
-                  throw new IllegalArgumentException() // FIXME refactor this exception 
+                  errors.foreach{ e => println(e) }
+                  throw new IllegalArgumentException("The model is ill-formed!") // FIXME refactor this exception 
             }
       }
 
