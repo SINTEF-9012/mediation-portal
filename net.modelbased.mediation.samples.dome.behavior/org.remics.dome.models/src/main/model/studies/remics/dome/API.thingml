@@ -1,0 +1,50 @@
+/**
+* This files defines the different messages used in the DOME case study
+* (C) REMICS 2010-2013
+* @author Brice MORIN, Franck BARBIER
+*/
+
+import "../../../datatypes.thingml"
+
+datatype Excursion
+@java_type "org.remics.dome.Excursion";
+
+datatype Period
+@java_type "org.remics.dome.Period";
+
+datatype Pickup
+@java_type "org.remics.dome.Pickup";
+
+
+thing fragment API_former {
+	message btn_add_period(p : String);
+	message btn_remove_period(p : String);
+	message btn_save_period();
+	
+	message btn_add_pickup(p : String);
+	message btn_remove_pickup(p : String);
+	message btn_save_pickup();
+	
+	//message done();
+}
+
+
+thing Client_former includes API_former 
+@mock "true"{
+	required port ManagePickUp {
+		sends btn_add_pickup, btn_remove_pickup, btn_save_pickup
+	}
+	
+	required port ManagePeriod {
+		sends btn_add_period, btn_remove_period, btn_save_period
+	} 
+}
+
+
+thing Server_former includes API_former
+{
+	provided port ManagePickUp {
+		receives btn_add_period, btn_remove_period, btn_save_period
+		receives btn_add_pickup, btn_remove_pickup, btn_save_pickup
+	}
+}
