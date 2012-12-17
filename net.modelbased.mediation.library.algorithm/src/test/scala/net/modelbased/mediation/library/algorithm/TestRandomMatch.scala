@@ -53,7 +53,7 @@ class TestRandomMatch extends SpecificationWithJUnit with SampleMediations {
     "return some mapping" in {
       val m = randomMediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
       //println(m)
-      m.size must_== (10 + 5)
+      m.size must_== (125) // Size of the product between document and article
     }
     
   } 

@@ -41,6 +41,8 @@ import net.modelbased.mediation.service.repository.model.data._
  */
 class RandomMatch extends Mediation {
 
+   private[this] val algorithmName = "Random Match"
+
    private[this] val reader = new MofReader
 
    /**
@@ -57,42 +59,55 @@ class RandomMatch extends Mediation {
 
       val sp = reader.readPackage(source.content) match {
          case Right(p: Package) => p
-         case Left(errors)       => throw new IllegalArgumentException("Ill-formed source model! (%s)".format(source.name));
+         case Left(errors)      => throw new IllegalArgumentException("Ill-formed source model! (%s)".format(source.name));
       }
 
       val tp = reader.readPackage(target.content) match {
          case Right(p: Package) => p
-         case Left(errors)       => throw new IllegalArgumentException("Ill-formed target model (%s)!".format(target.name));
+         case Left(errors)      => throw new IllegalArgumentException("Ill-formed target model (%s)!".format(target.name));
       }
 
       val capacity = Mof.countTypesAndFeatures(sp) * Mof.countTypesAndFeatures(tp)
       out = new Mapping(sourceId = source.name, targetId = target.name, capacity = capacity)
 
-      // Manage the types
-      val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-      val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-      allSourceTypes.foldLeft((randomizer.shuffle(allTargetTypes.toList), out)) {
-         case ((Nil, m), v) =>
-            val l = (randomizer.shuffle(allTargetTypes.toList))
-            m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
-            (l.tail, m)
-         case ((head :: tail, m), v) =>
-            m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
-            (tail, m)
-      }
+      for (
+         st <- sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil);
+         tt <- tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+      ) out.add(new Entry(st.qualifiedName,
+         tt.qualifiedName,
+         randomizer.nextDouble(),
+         algorithmName))
 
-      // Manage Elements
-      val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-      val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-      val (m2, _) = allSourceFeatures.foldLeft((randomizer.shuffle(allTargetFeatures.toList), out)) {
-         case ((Nil, m), v) =>
-            val l = (randomizer.shuffle(allTargetFeatures.toList))
-            m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
-            (l.tail, m)
-         case ((head :: tail, m), v) =>
-            m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
-            (tail, m)
-      }
+      for (
+         sf <- sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil);
+         tf <- tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      ) out.add(new Entry(sf.qualifiedName,
+         tf.qualifiedName,
+         randomizer.nextDouble(),
+         algorithmName))
+
+      //      allSourceTypes.foldLeft((randomizer.shuffle(allTargetTypes.toList), out)) {
+      //         case ((Nil, m), v) =>
+      //            val l = (randomizer.shuffle(allTargetTypes.toList))
+      //            m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
+      //            (l.tail, m)
+      //         case ((head :: tail, m), v) =>
+      //            m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
+      //            (tail, m)
+      //      }
+      //
+      //      // Manage Elements
+      //      val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      //      val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      //      val (m2, _) = allSourceFeatures.foldLeft((randomizer.shuffle(allTargetFeatures.toList), out)) {
+      //         case ((Nil, m), v) =>
+      //            val l = (randomizer.shuffle(allTargetFeatures.toList))
+      //            m.add(new Entry(v.qualifiedName, l.head.qualifiedName, randomizer.nextDouble(), "random matching"))
+      //            (l.tail, m)
+      //         case ((head :: tail, m), v) =>
+      //            m.add(new Entry(v.qualifiedName, head.qualifiedName, randomizer.nextDouble(), "random matching"))
+      //            (tail, m)
+      //      }
 
    }
 }

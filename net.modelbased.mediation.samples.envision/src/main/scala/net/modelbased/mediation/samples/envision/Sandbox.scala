@@ -43,11 +43,11 @@ object Sandbox extends App {
 //   val host: String = "localhost" // Locahost
 //   val port: Int = 8080
 
-   // Instantiate the portal
+   // Instantiate the portal 
    val portal = new Portal(host, port) with Importer with Aggregator with Mediator with MappingRepository with ModelRepository
 
-//   val source1Id = "Source XSD - Task ID 1"
-//   val source2Id = "Source XSD - Task ID 2"
+   val source1Id = "oryx_source_task_6c85e34e-7494-49aa-99f6-a26bc41caa50"
+   val source2Id = "oryx_source_task_a3658cca-49f9-40ce-dcf7-e47fcefb9d39"
 
       
     
@@ -71,36 +71,36 @@ object Sandbox extends App {
 //      source2)
 //   println("Complete.\n")
    
-    // Import the first source model
-   println("3. Importing the target ... ")
-   val targetId = "target_import_test"
-   val target = Utility.trim(XML.loadFile("src/main/resources/droughtIn-target.xsd")).toString
-   portal.importModel(targetId,
-      "Roy's bug in importing (target)",
-      Format.XSD,
-      target)
+//    // Import the first source model
+//   println("3. Importing the target ... ")
+//   val targetId = "target_import_test"
+//   val target = Utility.trim(XML.loadFile("src/main/resources/droughtIn-target.xsd")).toString
+//   portal.importModel(targetId,
+//      "Roy's bug in importing (target)",
+//      Format.XSD,
+//      target)
+//   println("Complete.\n")
+   
+   
+   println("Fetching the source model #2 ...")
+   val source2bis = portal.fetchModelById(source2Id)
+   println("Source model #1: " + source2bis + "\n")
    println("Complete.\n")
-   
-   
-//   println("Fetching the source model #2 ...")
-//   val source2bis = portal.fetchModelById(source2Id)
-//   println("Source model #1: " + source2bis + "\n")
-//   println("Complete.\n")
-//
-//   println("Fetching the source model #1 ...")
-//   val source1bis = portal.fetchModelById(source1Id)
-//   println("Source model #1: " + source1bis + "\n")
-//   println("Complete.\n")
-//
-//   println("Aggregation of the two models ... ")
-//   val aggregationId = "ENVISION-aggregated-source"
-//   portal.aggregate(aggregationId, List((source1Id, "sos"), (source2Id, "wfs")))
-//   println("Complete.\n")
-//
-//   println("Fetching results ... ")
-//   val result = portal.fetchModelById(aggregationId)
-//   println("Complete.\n")
-//
-//   println("The result is: \n" + result + "\n")
+
+   println("Fetching the source model #1 ...")
+   val source1bis = portal.fetchModelById(source1Id)
+   println("Source model #1: " + source1bis + "\n")
+   println("Complete.\n")
+
+   println("Aggregation of the two models ... ")
+   val aggregationId = "test-aggregation-Dec13"
+   portal.aggregate(aggregationId, List((source1Id, "sos"), (source2Id, "wfs")))
+   println("Complete.\n")
+
+   println("Fetching results ... ")
+   val result = portal.fetchModelById(aggregationId)
+   println("Complete.\n")
+
+   println("The result is: \n" + result + "\n")
 
 }

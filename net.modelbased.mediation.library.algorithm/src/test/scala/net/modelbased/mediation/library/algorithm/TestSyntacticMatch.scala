@@ -54,8 +54,8 @@ class TestSyntacticMatch extends SpecificationWithJUnit with SampleMediations {
 
     "return a mapping for all features and all types" in {
       val m = syntacticMediation(new Mapping(sourceId=source.name, targetId=target.name), source, target)
-      println(m)
-      m.size must_== (10 + 5)
+      //println(m)
+      m.size must_== (125) // Size of the product between document and article
     }
 
   }

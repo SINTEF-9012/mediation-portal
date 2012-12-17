@@ -42,6 +42,8 @@ import net.modelbased.mediation.library.algorithm.mof._
  */
 class SyntacticMatch extends Mediation {
 
+   private[this] val algorithmName = "Syntactic Match"
+
    private[this] val reader = new MofReader
    private[this] val distance = new MinEditDistance()
 
@@ -52,33 +54,51 @@ class SyntacticMatch extends Mediation {
 
       val sp = reader.readPackage(source.content) match {
          case Right(p: Package) => p
-         case Left(errors)       => throw new IllegalArgumentException("Ill-formed source model! (%s)".format(source.name));
+         case Left(errors)      => throw new IllegalArgumentException("Ill-formed source model! (%s)".format(source.name));
       }
 
       val tp = reader.readPackage(target.content) match {
          case Right(p: Package) => p
-         case Left(errors)       => throw new IllegalArgumentException("Ill-formed target model (%s)!".format(target.name));
+         case Left(errors)      => throw new IllegalArgumentException("Ill-formed target model (%s)!".format(target.name));
       }
 
       val capacity = Mof.countTypesAndFeatures(sp) * Mof.countTypesAndFeatures(tp)
       out = new Mapping(sourceId = source.name, targetId = target.name, capacity = capacity)
 
-      val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-      for (st <- allSourceTypes) {
-         val n = st.name
-         val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
-         val min = allTargetTypes.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
-         out.add(new Entry(st.qualifiedName, min.qualifiedName, 1. - distance(st.name, min.name), "syntactic matching"))
+      // Manage mappings between types
+      for (
+         st <- sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil);
+         tt <- tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+      ) {
+         val similarity = 1. - distance(st.qualifiedName, tt.qualifiedName)
+         out.add(new Entry(st.qualifiedName, tt.qualifiedName, similarity, algorithmName))
       }
 
-      // Handle features
-      val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-      for (sf <- allSourceFeatures) {
-         val n = sf.name
-         val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
-         val min = allTargetFeatures.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
-         out.add(new Entry(sf.qualifiedName, min.qualifiedName, 1. - distance(sf.name, min.name), "syntactic matching"))
+      // Manage mappings between features
+      for (
+         sf <- sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil);
+         tf <- tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      ) {
+         val similarity = 1. - distance(sf.qualifiedName, tf.qualifiedName)
+         out.add(new Entry(sf.qualifiedName, tf.qualifiedName, similarity, algorithmName))
       }
+
+      //      val allSourceTypes = sp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+      //      for (st <- allSourceTypes) {
+      //         val n = st.name
+      //         val allTargetTypes = tp.accept(new Collector(x => x.isInstanceOf[Type]), Nil)
+      //         val min = allTargetTypes.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
+      //         out.add(new Entry(st.qualifiedName, min.qualifiedName, 1. - distance(st.name, min.name), "syntactic matching"))
+      //      }
+      //
+      //      // Handle features
+      //      val allSourceFeatures = sp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      //      for (sf <- allSourceFeatures) {
+      //         val n = sf.name
+      //         val allTargetFeatures = tp.accept(new Collector(x => x.isInstanceOf[Feature]), Nil)
+      //         val min = allTargetFeatures.reduceLeft { (l, r) => if (distance(n, l.name) < distance(n, r.name)) l else r }
+      //         out.add(new Entry(sf.qualifiedName, min.qualifiedName, 1. - distance(sf.name, min.name), "syntactic matching"))
+      //      }
 
    }
 
