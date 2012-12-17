@@ -1,0 +1,66 @@
+import "./service_alternative.thingml"
+import "./service_former.thingml"
+
+thing MediatorToAlternative 
+includes Server_former, Client_alternative
+{
+
+	property period : String
+	property pickup : String
+
+	statechart behavior init WaitPeriod {
+	
+		state WaitPeriod {
+			transition t1 -> AddPeriod
+			event e : ManagePickUp?btn_add_period
+			action do
+				period = e.p
+			end
+		}
+		
+		state AddPeriod {			
+			transition t3 -> WaitPickup
+			event e : ManagePickUp?btn_save_period
+		}
+		
+		state WaitPickup {
+			transition t5 -> AddPickup
+			event e : ManagePickUp?btn_add_pickup
+			action do
+				pickup = e.p
+			end				
+		}
+		
+		state AddPickup {
+			transition t7 -> WaitPeriod
+			event e : ManagePickUp?btn_save_pickup
+			action do
+				ManageTrip!btn_add_trip(period, pickup)
+				print("  OK!!!")
+			end			
+		}
+		
+	}
+
+}
+
+configuration Dome_demo 
+{
+    //Client using the former service
+    instance server_former : ManagePickUpPoints
+	instance client_former : Client_former
+	
+	connector client_former.ManagePickUp => server_former.ManagePickUp
+	connector client_former.ManagePeriod => server_former.ManagePickUp
+    
+
+    //Same type of Client using the alternative service, via the mediator
+	instance client : Client_former
+	instance mediator : MediatorToAlternative
+	instance server : ManageTrips
+	
+	
+	connector client.ManagePickUp => mediator.ManagePickUp
+	connector client.ManagePeriod => mediator.ManagePickUp
+	connector mediator.ManageTrip => server.ManageTrip	
+}

@@ -1,0 +1,32 @@
+/**
+* This files defines the different messages used in the DOME case study
+* (C) REMICS 2010-2013
+* @author Brice MORIN, Franck BARBIER
+*/
+
+import "../../../datatypes.thingml"
+
+datatype Trip
+@java_type "org.remics.dome.Trip";
+
+thing fragment API_alternative {
+	message btn_add_trip(period : String, pickup : String);
+	message btn_remove_trip(period : String, pickup : String);
+}
+
+
+thing Client_alternative includes API_alternative 
+@mock "true"
+{
+	required port ManageTrip {
+		sends btn_add_trip, btn_remove_trip
+	}
+}
+
+
+thing Server_alternative includes API_alternative 
+{
+	provided port ManageTrip {
+		receives btn_add_trip, btn_remove_trip
+	}
+}

@@ -1,0 +1,130 @@
+/**
+* This file describes the behavior of the DOME service
+* (C) REMICS 2010-2013
+* @author Brice MORIN, Franck BARBIER
+*/
+
+import "./API.thingml"
+
+thing ManagePickUpPoints includes Server_former 
+@maven_dep
+"<dependency>
+   <groupId>org.remics</groupId>
+   <artifactId>org.remics.dome</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+</dependency>"
+{
+
+	readonly property excursion : Excursion = 'new org.remics.dome.Excursion()'
+	
+	statechart behavior init ManagePickUpPoints {
+	
+		state ManagePickUpPoints {
+            on entry do
+                print("Waiting...")
+            end
+    
+			transition addPeriod -> AddARowToPeriodTable
+			event e : ManagePickUp?btn_add_period
+			action do
+                print("addPeriod -> AddARowToPeriodTable")
+				'' & excursion & '.add_period(new org.remics.dome.Period(' & e.p & '));'
+			end
+			
+			
+			transition removePeriod -> RemoveARowFromPeriodTable
+			event e : ManagePickUp?btn_remove_period
+			action do
+                print("removePeriod -> RemoveARowFromPeriodTable")
+				'' & excursion & '.remove_period(new org.remics.dome.Period(' & e.p & '));'
+			end
+			
+			transition savePeriod -> SavePeriod
+			event e : ManagePickUp?btn_save_period
+			action do
+                print("savePeriod -> SavePeriod")
+            end
+			
+			
+			
+			transition addPickup -> AddARowToPickupTable
+			event e : ManagePickUp?btn_add_pickup
+			action do
+                print("addPickup -> AddARowToPickupTable")
+				'' & excursion '.add_pickup(new org.remics.dome.Pickup(' & e.p & '));'
+			end
+			
+			
+			transition removePickup-> RemoveARowFromPickupTable
+			event e : ManagePickUp?btn_remove_pickup
+			action do
+                print("removePickup-> RemoveARowFromPickupTable")
+				'' & excursion '.remove_pickup(new org.remics.dome.Pickup(' & e.p & '));'
+			end
+			
+			transition savePickup -> SavePickup
+			event e : ManagePickUp?btn_save_pickup
+            action do
+                print("savePickup -> SavePickup")
+            end
+		}
+		
+		state ReloadExcursion {	
+            on entry print("Reloading excursion...")
+    
+			transition done -> ManagePickUpPoints
+		}
+		
+		state AddARowToPeriodTable {
+            on entry print("Adding row to period table...")
+    
+			transition done -> ManagePickUpPoints
+		}
+		
+		state RemoveARowFromPeriodTable {
+            on entry print("Removing row from period table...")
+    
+			transition done -> ManagePickUpPoints
+		}
+		
+		state SavePeriod {
+            on entry print("Saving period...")
+            
+			transition done -> ReloadExcursion
+		}
+		
+		state ReloadPeriod {
+            on entry print("Reloading period...")
+    
+			transition done -> ReloadExcursion
+		}
+		
+		state AddARowToPickupTable {
+            on entry print("Adding row to pickup table...")
+    
+			transition done -> ManagePickUpPoints
+		}
+	
+		state RemoveARowFromPickupTable {
+            on entry print("Removing row from pickup table...")
+            
+			transition done -> ManagePickUpPoints
+		}
+		
+		state SavePickup {
+            on entry print("Saving pickup...")
+        
+			transition done -> ReloadPeriod
+		}	
+		
+	}
+
+}
+
+/*configuration dome_former {
+	instance server : ManagePickUpPoints
+	instance client : Client_former
+	
+	connector client.ManagePickUp => server.ManagePickUp
+	connector client.ManagePeriod => server.ManagePickUp
+}*/

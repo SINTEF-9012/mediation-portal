@@ -1,0 +1,38 @@
+import "./API2.thingml"
+import "./service_former.thingml"
+
+thing MediatorFromAlternative includes Server_alternative, Client_former
+{
+
+	statechart behavior init WaitTrip {
+	
+		state WaitTrip {
+		
+			internal event e : ManageTrip?btn_add_trip
+			action do
+				ManagePeriod!btn_add_period(e.period)
+				ManagePeriod!btn_save_period()
+				
+				ManagePickUp!btn_add_pickup(e.pickup)
+				ManagePickUp!btn_save_pickup()
+				print("  OK!!!")
+			end
+			
+		}
+	}
+
+}
+
+configuration fromAlternative 
+{
+
+	instance client : Client_alternative
+	instance mediator : MediatorFromAlternative
+	instance server : ManagePickUpPoints
+	
+	
+	connector client.ManageTrip => mediator.ManageTrip
+	connector mediator.ManagePeriod => server.ManagePickUp
+	connector mediator.ManagePickUp => server.ManagePickUp
+	
+}
