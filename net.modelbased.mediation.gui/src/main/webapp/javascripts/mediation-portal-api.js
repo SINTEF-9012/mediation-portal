@@ -329,7 +329,7 @@ function setAsUnknown(uid, source, target, onSuccess) {
 	dataType : "text",
 	success : onSuccess,
 	error : function(err) {
-		alert("Unable to reach the mapping repository (approval failed)!");
+		alert("Unable to reach the mapping repository (set as 'unknown' failed)!");
 	}
 	});
 	return false;
