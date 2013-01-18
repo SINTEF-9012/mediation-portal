@@ -1,22 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>services</artifactId>
-		<groupId>net.modelbased.mediation</groupId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+	
 	<groupId>net.modelbased.mediation</groupId>
 	<artifactId>services.repositories</artifactId>
 	<packaging>pom</packaging>
 	<name>Services :: Repositories</name>
 	<description>A set of REST services to ensure data access and persistence</description>
 
+	<parent>
+		<artifactId>services</artifactId>
+		<groupId>net.modelbased.mediation</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
 	<modules>
 		<module>model</module>
 		<module>mapping</module>
 		<module>comparison</module>
+		<module>algorithm</module>
 	</modules>
 
 	<dependencies>
