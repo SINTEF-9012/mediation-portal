@@ -1,0 +1,111 @@
+/*
+ * This file is part of Mediation Portal [ http://mosser.github.com/mediation-portal ]
+ *
+ * Copyright (C) 2012-  SINTEF ICT
+ * Contact: Franck Chauvel <franck.chauvel@sintef.no>
+ *
+ * Module: root
+ *
+ * Mediation Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Mediation Portal is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General
+ * Public License along with Mediation Portal. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+/**
+ * Skies theme for Highcharts JS
+ * @author Torstein Hønsi
+ */
+
+Highcharts.theme = {
+	colors: ["#514F78", "#42A07B", "#9B5E4A", "#72727F", "#1F949A", "#82914E", "#86777F", "#42A07B"],
+	chart: {
+		className: 'skies',
+		borderWidth: 0,
+		plotShadow: true,
+		plotBackgroundImage: '/demo/gfx/skies.jpg',
+		plotBackgroundColor: {
+			linearGradient: [0, 0, 250, 500],
+			stops: [
+				[0, 'rgba(255, 255, 255, 1)'],
+				[1, 'rgba(255, 255, 255, 0)']
+			]
+		},
+		plotBorderWidth: 1
+	},
+	title: {
+		style: {
+			color: '#3E576F',
+			font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+		}
+	},
+	subtitle: {
+		style: {
+			color: '#6D869F',
+			font: '12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+		}
+	},
+	xAxis: {
+		gridLineWidth: 0,
+		lineColor: '#C0D0E0',
+		tickColor: '#C0D0E0',
+		labels: {
+			style: {
+				color: '#666',
+				fontWeight: 'bold'
+			}
+		},
+		title: {
+			style: {
+				color: '#666',
+				font: '12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+			}
+		}
+	},
+	yAxis: {
+		alternateGridColor: 'rgba(255, 255, 255, .5)',
+		lineColor: '#C0D0E0',
+		tickColor: '#C0D0E0',
+		tickWidth: 1,
+		labels: {
+			style: {
+				color: '#666',
+				fontWeight: 'bold'
+			}
+		},
+		title: {
+			style: {
+				color: '#666',
+				font: '12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+			}
+		}
+	},
+	legend: {
+		itemStyle: {
+			font: '9pt Trebuchet MS, Verdana, sans-serif',
+			color: '#3E576F'
+		},
+		itemHoverStyle: {
+			color: 'black'
+		},
+		itemHiddenStyle: {
+			color: 'silver'
+		}
+	},
+	labels: {
+		style: {
+			color: '#3E576F'
+		}
+	}
+};
+
+// Apply the theme
+var highchartsOptions = Highcharts.setOptions(Highcharts.theme);

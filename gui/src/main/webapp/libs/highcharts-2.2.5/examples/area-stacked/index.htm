@@ -1,0 +1,110 @@
+<!--
+
+    This file is part of Mediation Portal [ http://mosser.github.com/mediation-portal ]
+
+    Copyright (C) 2012-  SINTEF ICT
+    Contact: Franck Chauvel <franck.chauvel@sintef.no>
+
+    Module: root
+
+    Mediation Portal is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+
+    Mediation Portal is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General
+    Public License along with Mediation Portal. If not, see
+    <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'area'
+            },
+            title: {
+                text: 'Historic and Estimated Worldwide Population Growth by Region'
+            },
+            subtitle: {
+                text: 'Source: Wikipedia.org'
+            },
+            xAxis: {
+                categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
+                tickmarkPlacement: 'on',
+                title: {
+                    enabled: false
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Billions'
+                },
+                labels: {
+                    formatter: function() {
+                        return this.value / 1000;
+                    }
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    return ''+
+                        this.x +': '+ Highcharts.numberFormat(this.y, 0, ',') +' millions';
+                }
+            },
+            plotOptions: {
+                area: {
+                    stacking: 'normal',
+                    lineColor: '#666666',
+                    lineWidth: 1,
+                    marker: {
+                        lineWidth: 1,
+                        lineColor: '#666666'
+                    }
+                }
+            },
+            series: [{
+                name: 'Asia',
+                data: [502, 635, 809, 947, 1402, 3634, 5268]
+            }, {
+                name: 'Africa',
+                data: [106, 107, 111, 133, 221, 767, 1766]
+            }, {
+                name: 'Europe',
+                data: [163, 203, 276, 408, 547, 729, 628]
+            }, {
+                name: 'America',
+                data: [18, 31, 54, 156, 339, 818, 1201]
+            }, {
+                name: 'Oceania',
+                data: [2, 2, 2, 6, 13, 30, 46]
+            }]
+        });
+    });
+    
+});
+		</script>
+	</head>
+	<body>
+<script src="../../js/highcharts.js"></script>
+<script src="../../js/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+
+	</body>
+</html>

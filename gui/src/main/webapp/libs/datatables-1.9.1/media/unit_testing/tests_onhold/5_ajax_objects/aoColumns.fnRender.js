@@ -1,0 +1,199 @@
+/*
+ * This file is part of Mediation Portal [ http://mosser.github.com/mediation-portal ]
+ *
+ * Copyright (C) 2012-  SINTEF ICT
+ * Contact: Franck Chauvel <franck.chauvel@sintef.no>
+ *
+ * Module: root
+ *
+ * Mediation Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Mediation Portal is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General
+ * Public License along with Mediation Portal. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+// DATA_TEMPLATE: empty_table
+oTest.fnStart( "aoColumns.fnRender" );
+
+$(document).ready( function () {
+	/* Check the default */
+	var mTmp = 0;
+	var oTable = $('#example').dataTable( {
+		"sAjaxSource": "../../../examples/ajax/sources/objects.txt",
+		"aoColumns": [
+			{ "mDataProp": "engine" },
+			{
+				"mDataProp": "browser",
+				"fnRender": function (a) {
+					mTmp++;
+					return a.aData['browser'];
+				}
+			},
+			{ "mDataProp": "platform" },
+			{ "mDataProp": "version" },
+			{ "mDataProp": "grade" }
+		]
+	} );
+	var oSettings = oTable.fnSettings();
+	
+	oTest.fnWaitTest( 
+		"Single column - fnRender is called twice for each row",
+		null,
+		function () { return mTmp == 57; }
+	);
+	
+	oTest.fnWaitTest( 
+		"Confirm that fnRender passes two arguments with four parameters",
+		function () {
+			mTmp = true;
+			oSession.fnRestore();
+			oTable = $('#example').dataTable( {
+				"sAjaxSource": "../../../examples/ajax/sources/objects.txt",
+				"aoColumns": [
+					{ "mDataProp": "engine" },
+					{ 
+						"fnRender": function (a) {
+							if ( arguments.length != 2 || typeof a.iDataRow=='undefined' ||
+							 	typeof a.iDataColumn=='undefined' || typeof a.aData=='undefined' ||
+							 	typeof a.mDataProp=='undefined' )
+							{
+								mTmp = false;
+							}
+							return a.aData['browser'];
+						},
+						"mDataProp": "browser"
+					},
+					{ "mDataProp": "platform" },
+					{ "mDataProp": "version" },
+					{ "mDataProp": "grade" }
+				]
+			} );
+		},
+		function () { return mTmp; }
+	);
+	
+	oTest.fnWaitTest( 
+		"fnRender iDataColumn is the column",
+		function () {
+			mTmp = true;
+			oSession.fnRestore();
+			oTable = $('#example').dataTable( {
+				"sAjaxSource": "../../../examples/ajax/sources/objects.txt",
+				"aoColumns": [
+					{ "mDataProp": "engine" },
+					{
+						"mDataProp": "browser",
+						"fnRender": function (a) {
+							if ( a.iDataColumn != 1 )
+							{
+								mTmp = false;
+							}
+							return a.aData['browser'];
+						}
+					},
+					{ "mDataProp": "platform" },
+					{ "mDataProp": "version" },
+					{ "mDataProp": "grade" }
+				]
+			} );
+		},
+		function () { return mTmp; }
+	);
+	
+	oTest.fnWaitTest( 
+		"fnRender aData is data array of correct size",
+		function () {
+			mTmp = true;
+			oSession.fnRestore();
+			oTable = $('#example').dataTable( {
+				"sAjaxSource": "../../../examples/ajax/sources/objects.txt",
+				"aoColumns": [
+					{ "mDataProp": "engine" },
+					{
+						"mDataProp": "browser",
+						"fnRender": function (a) {
+							if ( a.aData.length != 5 )
+							{
+								mTmp = false;
+							}
+							return a.aData['browser'];
+						}
+					},
+					{ "mDataProp": "platform" },
+					{ "mDataProp": "version" },
+					{ "mDataProp": "grade" }
+				]
+			} );
+		},
+		function () { return mTmp; }
+	);
+	
+	oTest.fnWaitTest( 
+		"Passed back data is put into the DOM",
+		function () {
+			oSession.fnRestore();
+			oTable = $('#example').dataTable( {
+				"sAjaxSource": "../../../examples/ajax/sources/objects.txt",
+				"aoColumns": [
+					{ "mDataProp": "engine" },
+					{
+						"mDataProp": "browser",
+						"fnRender": function (a) {
+							return 'unittest';
+						}
+					},
+					{ "mDataProp": "platform" },
+					{ "mDataProp": "version" },
+					{ "mDataProp": "grade" }
+				]
+			} );
+		},
+		function () { return $('#example tbody tr:eq(0) td:eq(1)').html() == 'unittest'; }
+	);
+	
+	oTest.fnWaitTest( 
+		"Passed back data is put into the DOM",
+		function () {
+			oSession.fnRestore();
+			oTable = $('#example').dataTable( {
+				"sAjaxSource": "../../../examples/ajax/sources/objects.txt",
+				"aoColumns": [
+					{ "mDataProp": "engine" },
+					{ "mDataProp": "browser" },
+					{ 
+						"mDataProp": "platform",
+						"fnRender": function (a) {
+							return 'unittest1';
+						}
+					},
+					{ 
+						"mDataProp": "version",
+						"fnRender": function (a) {
+							return 'unittest2';
+						}
+					},
+					{ "mDataProp": "grade" }
+				]
+			} );
+		},
+		function () {
+			var bReturn = 
+				$('#example tbody tr:eq(0) td:eq(2)').html() == 'unittest1' &&
+				$('#example tbody tr:eq(0) td:eq(3)').html() == 'unittest2';
+			return bReturn; }
+	);
+	
+	
+	
+	
+	
+	oTest.fnComplete();
+} );

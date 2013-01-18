@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.modelbased.mediation</groupId>
+	<artifactId>clients.repositories</artifactId>
+	<name>Client API :: Repositories</name>
+	<description>The client API that allows for access to various data repositories</description>
+	<inceptionYear>2012</inceptionYear>
+	<packaging>pom</packaging>
+	
+	<parent>
+		<groupId>net.modelbased.mediation</groupId>
+		<artifactId>clients</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<modules>
+		<module>model</module>
+		<module>mapping</module>
+		<module>comparison</module>
+	</modules>
+
+</project>
