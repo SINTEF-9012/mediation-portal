@@ -23,6 +23,7 @@
 		<module>comparator</module>
 		<module>aggregator</module>
 		<module>importer</module>
+		<module>algorithm</module>
 	</modules>
 
 	<dependencies>

@@ -5,7 +5,8 @@
 	<artifactId>library.algorithm</artifactId>
 	<name>Library :: Algorithms</name>
 	<description>Provide algorithms that can be composed to obtain complex mediation solutions</description>
-	<inceptionYear>2010</inceptionYear>
+	<inceptionYear>2012</inceptionYear>
+	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>net.modelbased.mediation</groupId>
@@ -14,6 +15,12 @@
 		<relativePath>..</relativePath>
 	</parent>
 
+	<modules>
+		<module>commons</module>
+		<module>random</module>
+		<module>syntactic</module>
+	</modules>
+	
 	<dependencies>
 		
 		<dependency>
