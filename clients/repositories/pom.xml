@@ -20,6 +20,7 @@
 		<module>model</module>
 		<module>mapping</module>
 		<module>comparison</module>
+		<module>algorithm</module>
 	</modules>
 
 </project>

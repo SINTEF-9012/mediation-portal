@@ -28,6 +28,8 @@ import cc.spray._
 import net.modelbased.mediation.service.repository.model.ModelRepositoryService
 import net.modelbased.mediation.service.repository.mapping.MappingRepositoryService
 import net.modelbased.mediation.service.repository.comparison.ComparisonRepositoryService
+import net.modelbased.mediation.services.repositories.algorithm.AlgorithmRepositoryService
+
 import net.modelbased.mediation.service.mediator.MediatorService
 import net.modelbased.mediation.service.comparator.ComparatorService
 import net.modelbased.mediation.service.aggregator.AggregatorService
@@ -46,6 +48,7 @@ class Boot(override val system: ActorSystem) extends System {
       new ModelRepositoryService() with iod { },
       new MappingRepositoryService() with iod { },
       new ComparisonRepositoryService() with iod { },
+      new AlgorithmRepositoryService() with iod { },
       new MediatorService() with iod { },
       new ComparatorService() with iod { },
       new AggregatorService() with iod { },

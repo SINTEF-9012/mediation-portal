@@ -20,16 +20,42 @@
  * Public License along with Mediation Portal. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.library.data
+package net.modelbased.mediation.services.repositories.algorithm
 
+import cc.spray.json._
+import net.modelbased.sensapp.library.datastore._
+import net.modelbased.mediation.library.data.Algorithm 
 
 
 /**
- * Represent a reference to an algorithm exposed as a REST service. It includes
- * a name, a short description, and the URL where the service is available. We
- * assume that all mediation services implement exactly the same interface.
+ * Spray support for JSON serialization of the Algorithm descriptions
  * 
  * @author Franck Chauvel - SINTEF ICT
  * @since 0.0.1
  */
-case class Algorithm(val id: String, val description: String, val url: String)
+object AlgorithmJsonProtocol extends DefaultJsonProtocol {
+  implicit val algorithmFormat = jsonFormat(Algorithm, "id", "description", "url")
+}
+
+
+
+/**
+ * Define the Algorithm registry
+ * 
+ * @author Franck Chauvel - SINTEF ICT
+ * @since 0.0.1
+ */
+class AlgorithmRegistry extends DataStore[Algorithm] {
+  
+  import AlgorithmJsonProtocol._
+
+  override val databaseName = "mediation_portal"
+  override val collectionName = "repository.algorithms"
+  override val key = "id"
+
+  override def getIdentifier(e: Algorithm) = e.id
+
+  override def deserialize(json: String): Algorithm = { json.asJson.convertTo[Algorithm] } 
+
+  override def serialize(e: Algorithm): String = { e.toJson.toString } 
+}
