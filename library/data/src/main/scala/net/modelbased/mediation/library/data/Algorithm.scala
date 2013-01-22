@@ -29,7 +29,24 @@ package net.modelbased.mediation.library.data
  * a name, a short description, and the URL where the service is available. We
  * assume that all mediation services implement exactly the same interface.
  * 
+ * @param id the name which identifies the algorithm
+ * 
  * @author Franck Chauvel - SINTEF ICT
  * @since 0.0.1
  */
-case class Algorithm(val id: String, val description: String, val url: String)
+case class Algorithm(val id: String, val description: String, val dns: String, val port: Int) {
+  
+   /**
+    * A alternative version of the name which can be used "safely" in URL
+    * 
+    * @return the name where some illegal character have been replaced
+    */
+   lazy val escapedName: String = id.replace(" ", "_")
+  
+   
+   /**
+    * Derive the URL where the service is available from the host, port and algorithm name
+    */
+   lazy val url: String = "http://" + dns + ":" + port + "/sensapp/algorithm/" + escapedName 
+  
+}

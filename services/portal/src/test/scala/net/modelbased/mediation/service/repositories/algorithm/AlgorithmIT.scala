@@ -21,6 +21,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 package net.modelbased.mediation.service.repositories.algorithm
+
+
 import org.specs2.mutable._
 
 import net.modelbased.mediation.library.data.Algorithm 
@@ -54,9 +56,9 @@ class AlgorithmRepositoryIT extends SpecificationWithJUnit {
    class Repository extends BeforeAfter {
       
       override def before = {
-         algoA = new Algorithm("syntactic-match", "Simple match based on the similarity between model elements' names", "http://www.mediation.org/syntactic")
+         algoA = new Algorithm("syntactic-match", "Simple match based on the similarity between model elements' names", "www.mediation.org", 8080)
          portal.addAlgorithm(algoA)
-         algoB = new Algorithm("random-match", "Simple random match (usefull for comparison with the null hypothesis)", "http://www.mediation.org/random")
+         algoB = new Algorithm("random-match", "Simple random match (usefull for comparison with the null hypothesis)", "www.mediation.org", 8080)
          portal.addAlgorithm(algoB)
       }
       
@@ -75,7 +77,7 @@ class AlgorithmRepositoryIT extends SpecificationWithJUnit {
          algos.size must beEqualTo(2)
          
          // We add a new algorithm in the repository
-         val algoC = new Algorithm("remics-match", "Complex macth based on fuzzy-clustering of elements' names", "http://www.mediation.org/remics")
+         val algoC = new Algorithm("remics-match", "Complex macth based on fuzzy-clustering of elements' names", "www.mediation.org", 8080)
  
          portal.addAlgorithm(algoC)
         

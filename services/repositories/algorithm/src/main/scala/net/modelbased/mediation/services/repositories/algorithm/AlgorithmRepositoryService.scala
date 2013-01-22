@@ -44,7 +44,7 @@ trait AlgorithmRepositoryService extends SensAppService {
                   context =>
                      val contents = _registry.retrieve(List())
                      if (flatten) {
-                        context.complete(StatusCodes.OK, contents.map{ a => a}) 
+                        context.complete(StatusCodes.OK, contents.map{ a => a})  
                      } else {
                         val uris = contents.map { e => URLHandler.build("/mediation/repositories/algorithms/" + e.id) }
                         context complete uris

@@ -34,7 +34,7 @@ import net.modelbased.mediation.library.data.Algorithm
  * @since 0.0.1
  */
 object AlgorithmJsonProtocol extends DefaultJsonProtocol {
-  implicit val algorithmFormat = jsonFormat(Algorithm, "id", "description", "url")
+  implicit val algorithmFormat = jsonFormat(Algorithm, "id", "description", "dns", "port")
 }
 
 
