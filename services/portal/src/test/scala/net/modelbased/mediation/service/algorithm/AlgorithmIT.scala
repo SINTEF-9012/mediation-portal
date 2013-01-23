@@ -94,7 +94,7 @@ trait AlgorithmIT extends SpecificationWithJUnit {
      
 
     "populate the mapping repository" in new Repository {
-    	val url = portal.invoke(random, source.name, target.name)
+    	val url = portal.invoke(random, source.name, target.name) 
         println("Mapping available at: " +  url)
         mapping = portal.fetchMappingAt(url)   
         mapping must not beNull ;

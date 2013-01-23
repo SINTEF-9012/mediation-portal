@@ -70,7 +70,12 @@ trait AlgorithmRepository extends Portal {
    *
    * @param id the unique ID (i.e., name) of the algorithm of interest
    *
+<<<<<<< HEAD
    * @return the algorithm if the given name matches an algorithm in the repository
+=======
+   * @return Some(algo) if the given name matches an algorithm in the repository
+   * or None otherwise
+>>>>>>> 6e49550c048a4a7b70a1a046be9355c2b2f5b5fd
    */
   def fetchAlgorithmById(id: String): Algorithm = {
     val conduit = new HttpConduit(httpClient, host, port) {
