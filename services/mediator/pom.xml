@@ -1,10 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>net.modelbased.mediation</groupId>
   <artifactId>services.mediator</artifactId>
   <name>Services :: Mediator</name>
   <description>Service that actually executes mediation algorithms</description>
   <inceptionYear>2012</inceptionYear>
+  <packaging>jar</packaging>
   
   <parent>
   	<groupId>net.modelbased.mediation</groupId>
@@ -13,34 +15,34 @@
   	<relativePath>..</relativePath>
   </parent>
   
-  <dependencies>
   
+  <dependencies>
+
+  	<dependency>
+  		<groupId>net.modelbased.mediation</groupId>
+  		<artifactId>library.data</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+
   	<dependency>
   		<groupId>net.modelbased.mediation</groupId>
   		<artifactId>clients.portal</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
-  
-  <dependency>
-  		<groupId>net.modelbased.mediation</groupId>
-  		<artifactId>clients.repositories.model</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
 
   	<dependency>
   		<groupId>net.modelbased.mediation</groupId>
-  		<artifactId>clients.repositories.mapping</artifactId>
+  		<artifactId>clients.repositories.algorithm</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
-
+  
   	<dependency>
   		<groupId>net.modelbased.mediation</groupId>
-  		<artifactId>library.algorithm</artifactId>
+  		<artifactId>clients.algorithm</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
 
-	</dependencies>
+  </dependencies>
   
-  <packaging>jar</packaging>
   
 </project>

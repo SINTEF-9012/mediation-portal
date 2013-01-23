@@ -33,6 +33,7 @@ import cc.spray.typeconversion.SprayJsonSupport._
 import cc.spray.typeconversion.DefaultUnmarshallers._
 import cc.spray.json.DefaultJsonProtocol._
 
+import net.modelbased.mediation.library.data.{ Algorithm => Algo }
 import net.modelbased.mediation.client.portal.Portal;
 
 import net.modelbased.mediation.library.algorithm.facade._
@@ -47,10 +48,8 @@ import net.modelbased.mediation.library.algorithm.facade.MediationRequestJsonPro
  * @since 0.0.1
  */
 trait Algorithm extends Portal {
-
-  def name: String
   
-  val ALGORITHM_URL = "algorithms/"
+  val ALGORITHM_URL = "/sensapp/algorithms/"
     
   /**
    * Invoke the mediator service
@@ -61,12 +60,12 @@ trait Algorithm extends Portal {
    *
    * @return the URL of the resulting mapping as a string
    */
-  def invoke(sourceId: String, targetId: String): String = {
+  def invoke(algo: Algo, sourceId: String, targetId: String): String = {
     val mediationRequest = new MediationRequest(sourceId, targetId)
-    val conduit = new HttpConduit(httpClient, host, port) {
+    val conduit = new HttpConduit(httpClient, algo.dns, algo.port) {
       val pipeline = { simpleRequest[MediationRequest] ~> sendReceive ~> unmarshal[String] }
     }
-    val futureUrl = conduit.pipeline(Post(ALGORITHM_URL + name, mediationRequest))
+    val futureUrl = conduit.pipeline(Post(ALGORITHM_URL + algo.escapedName, mediationRequest))
     Await.result(futureUrl, intToDurationInt(5) seconds)
   }
 

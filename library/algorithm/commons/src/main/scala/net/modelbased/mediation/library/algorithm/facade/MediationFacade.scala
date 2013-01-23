@@ -72,14 +72,14 @@ trait AbstractMediationService extends SensAppService {
   // Define the name of caller
   override lazy val partnerName = name
 
-  val runner = new Runner(algorithm, modelRepository, mappingRepository)
+  lazy val runner = new Runner(algorithm, modelRepository, mappingRepository)
 
   /**
    * REST API of the mediation service.
    *
    * Accepts POST of mediation request at the proper name
    */
-  val service = {
+  lazy val service = {
     path("algorithms" / name.replace(" ", "_")) {
       post {
         content(as[MediationRequest]) { request =>

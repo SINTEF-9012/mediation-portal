@@ -20,7 +20,7 @@
  * Public License along with Mediation Portal. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package net.modelbased.mediation.service.repository.model
+package net.modelbased.mediation.service.algorithm
 
 import scala.xml.XML
 import org.specs2.mutable._
@@ -30,19 +30,19 @@ import net.modelbased.mediation.client.portal.Portal
 import net.modelbased.mediation.client.repository.model.ModelRepository
 import net.modelbased.mediation.client.repository.mapping.MappingRepository
 import net.modelbased.mediation.client.mediator.Mediator
+import net.modelbased.mediation.client.algorithm.{Algorithm => AlgorithmInvoker}
 import net.modelbased.mediation.client.repositories.algorithm.AlgorithmRepository
 import net.modelbased.mediation.library.data.Algorithm
 import java.text.SimpleDateFormat
 
 
-
-class MediatorIT extends SpecificationWithJUnit {
+trait AlgorithmIT extends SpecificationWithJUnit {
 
   val portal = new Portal("localhost", 8080) 
   	with ModelRepository 
   	with MappingRepository
   	with AlgorithmRepository
-  	with Mediator
+  	with AlgorithmInvoker
 
   val modelName = "test-mediator"
 
@@ -52,9 +52,7 @@ class MediatorIT extends SpecificationWithJUnit {
   var target: Model = _
   
   var random: Algorithm = _
-  
-  var syntactic: Algorithm = _
-  
+
   var mapping: Mapping = _
   
   val sourceMof = scala.io.Source.fromFile("src/test/resources/mof/article.txt").mkString
@@ -79,8 +77,6 @@ class MediatorIT extends SpecificationWithJUnit {
         portal.storeModel(target)
         random = new Algorithm("random", "Simple matching algorithm which matches randomly models elements", "localhost", 8080)
         portal.addAlgorithm(random)
-        syntactic = new Algorithm("syntactic", "Simple matching algorithm which mathes model elements based on name similarity", "localhost", 8080)
-        portal.addAlgorithm(syntactic)
      }
      
      
@@ -89,22 +85,21 @@ class MediatorIT extends SpecificationWithJUnit {
         portal.deleteModel(target)
         portal.deleteMapping(mapping)
         portal.deleteAlgorithm(random)
-        portal.deleteAlgorithm(syntactic)
      }
      
   }
   
   
-  "The Mediator" should {
+  "The Algorithm" should {
      
 
     "populate the mapping repository" in new Repository {
-    	val url = portal.mediate(source.name, target.name, "syntactic")
-    	println("Mapping available at: " +  url)
+    	val url = portal.invoke(random, source.name, target.name)
+        println("Mapping available at: " +  url)
         mapping = portal.fetchMappingAt(url)   
         mapping must not beNull ;
         mapping.entries must not beEmpty
     }
+    
   }
-
 }

@@ -31,16 +31,10 @@ import cc.spray.typeconversion.SprayJsonSupport._
 import cc.spray.typeconversion.DefaultUnmarshallers._
 
 import net.modelbased.sensapp.library.system._
-import net.modelbased.mediation.library.algorithm._
-import net.modelbased.mediation.service.repository.mapping.data._
-import net.modelbased.mediation.service.repository.mapping.data.Conversions._
-import net.modelbased.mediation.service.repository.mapping.data.MappingJsonProtocol._
-import net.modelbased.mediation.service.repository.model.data._
-import net.modelbased.mediation.service.repository.model.data.ModelJsonProtocol._
 
 import net.modelbased.mediation.client.portal.Portal
-import net.modelbased.mediation.client.repository.model.ModelRepository
-import net.modelbased.mediation.client.repository.mapping.MappingRepository
+import net.modelbased.mediation.client.repositories.algorithm.AlgorithmRepository 
+import net.modelbased.mediation.client.algorithm.{ Algorithm => AlgorithmInvoker }
 
 /**
  * Implementation of the Mediator service as template method pattern
@@ -52,49 +46,21 @@ import net.modelbased.mediation.client.repository.mapping.MappingRepository
  */
 class Runner(partners: PartnerHandler) extends HttpSpraySupport {
 
-   val modelRepository = {
+   val portal = {
       val (host, port) = partners("model-repository").get
-      new Portal(host, port) with ModelRepository
-   }
-
-   val mappingRepository = {
-      val (host, port) = partners("mapping-repository").get
-      new Portal(host, port) with MappingRepository
+      new Portal(host, port) with AlgorithmRepository with AlgorithmInvoker
    }
 
    val httpClientName = "mediator"
 
-   /**
-    * Bind each mediation algorithm to a specific name. This is definitely quick
-    * and dirty
-    *
-    * @todo refactor
-    */
-   private[this] val mediations: Map[String, Mediation] = Map(
-      "random" -> new RandomMatch(),
-      "syntactic" -> new SyntacticMatch())
-
-   /**
-    * @return the list of mediation algorithm supported by the mediator service
-    */
-   def algorithms: List[String] =
-      mediations.keySet.toList
 
    /**
     * Process a mediation request: it fetches both the source and target models,
     * create an initial mapping, and run the given mediation algorithm
     */
    def process(request: Request): String = {
-      println("Fetching source ...")
-      val source = modelRepository.fetchModelById(request.source)
-      val target = modelRepository.fetchModelById(request.target)
-      mediations.get(request.algo) match {
-         case Some(mediation) =>
-            val mapping = mediation(new Mapping(sourceId = source.name, targetId = target.name), source, target)
-            mappingRepository.storeMapping(mapping)
-         case _ =>
-            throw new UnknownAlgorithmException(request.algo, mediations.keySet.toList)
-      }
+      val algo = portal.fetchAlgorithmById(request.algo)
+      portal.invoke(algo, request.source, request.target)
    } 
 
 }

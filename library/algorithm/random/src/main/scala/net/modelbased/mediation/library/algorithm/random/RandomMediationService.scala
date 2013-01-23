@@ -38,7 +38,7 @@ import net.modelbased.mediation.library.algorithm.facade.AbstractMediationServic
 trait RandomMediationService extends AbstractMediationService {
 
   // We set up the name of the mediation service
-  override val name = "Random"
+  override val name = "random"
   
   // We define here the algorithm to use
   override val algorithm = new RandomMatch()

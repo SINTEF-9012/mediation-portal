@@ -51,13 +51,7 @@ trait MediatorService extends SensAppService {
                   }
             }
          } ~ cors("POST")
-      } ~
-         path("mediator" / "algorithms") { // Return the list of existing algorithms
-            get {
-               context =>
-                  context.complete(StatusCodes.OK, runner.algorithms)
-            } ~ cors("GET")
-         }
+      } 
    }
 
 }
