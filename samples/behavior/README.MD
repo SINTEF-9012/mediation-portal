@@ -8,6 +8,7 @@ The objectives of this demo are:
 
  (3) To compile this DSL to FP7 DiVA models@runtime, which provide model-based dynamic deployment capabilities, in order to validate the dynamic replacement of a service by another one
 
+ 
 
 ## Setup
 
