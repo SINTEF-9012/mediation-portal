@@ -4,10 +4,10 @@
 * @author Brice MORIN, Franck BARBIER
 */
 
-import "../../../datatypes.thingml"
+import "../../../thingml.thingml"
 
 datatype Trip
-@java_type "org.remics.dome.Trip";
+@java_type "org.ota.specs.Trip";
 
 thing fragment API_alternative {
 	message btn_add_trip(period : String, pickup : String);

@@ -9,13 +9,13 @@ import "./API2.thingml"
 thing ManageTrips includes Server_alternative 
 @maven_dep
 "<dependency>
-   <groupId>org.remics</groupId>
-   <artifactId>org.remics.dome</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
+   <groupId>org.ota</groupId>
+   <artifactId>org.ota.specs</artifactId>
+   <version>1.0.0</version>
 </dependency>"
 {
 
-	readonly property trip : Trip = 'new org.remics.dome.Trip()'
+	readonly property trip : Trip = 'new org.ota.specs.Trip()'
 	
 	statechart behavior init ManageTrips {
 	
@@ -28,13 +28,13 @@ thing ManageTrips includes Server_alternative
             transition t1 -> AddTrip
             event e : ManageTrip?btn_add_trip
 			action do
-				'' & trip & '.add_trip(new org.remics.dome.Period(' & e.period & '), new org.remics.dome.Pickup(' & e.pickup & '));'
+				'' & trip & '.add_trip(' & e.period & ', ' & e.pickup & ');'
 			end
 			
 			transition t2 -> RemoveTrip
             event e : ManageTrip?btn_remove_trip
 			action do
-				'' & trip & '.remove_trip(new org.remics.dome.Period(' & e.period & '), new org.remics.dome.Pickup(' & e.pickup & '));'
+				'' & trip & '.remove_trip(' & e.period & ', ' & e.pickup & ');'
 			end			
 		}
 
