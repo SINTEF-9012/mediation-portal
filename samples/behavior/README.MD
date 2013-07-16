@@ -1,9 +1,5 @@
-			---------------------
-			  REMICS "DOME" DEMO
-			      SINTEF ICT
-				 2012
-			---------------------
-
+ REMICS "DOME" DEMO
+ ==================
 
 The objectives of this demo are: 
 
