@@ -1,5 +1,4 @@
- REMICS "DOME" DEMO
- ==================
+ # REMICS "DOME" DEMO
 
 The objectives of this demo are: 
 
@@ -10,8 +9,7 @@ The objectives of this demo are:
  (3) To compile this DSL to FP7 DiVA models@runtime, which provide model-based dynamic deployment capabilities, in order to validate the dynamic replacement of a service by another one
 
 
-1. Setup
-========
+## Setup
 
 Make sure you have Java and Maven installed on your computer. This first step consists in installing the DOME and OTA projects, which represents a simplification of the DOME case studies and of the Open Travel Alliance standard.
 
@@ -22,8 +20,7 @@ Make sure you have Java and Maven installed on your computer. This first step co
 
 
 
-1. Overview of the DSL
-======================
+## Overview of the DSL
 
 - Launch ThingMLEditor.jar
 - choose org.remics.dome.models/src/main/models as the folder where to initialize the editor
@@ -31,8 +28,7 @@ Make sure you have Java and Maven installed on your computer. This first step co
 - open the "mediatorToAlternative" model, which is the most complete sample
 
 
-2. Compiling to WP6 Models@runtime engine
-=========================================
+## Compiling to WP6 Models@runtime engine
 
 - in the editor: Compile->Experimental/PauWare
 - it will generate a new folder in C:\Users\your-login\AppData\Local\Temp\ThingML_temp\Dome_demo or in a similar temp folder if you are using Linux or Mac OS.
@@ -64,8 +60,7 @@ done
 - in a web browser, go to: localhost:8082
 - it open a web page where you can actually interact with the 
 
-2. Compiling to FP7 DiVA models@runtime engine
-==============================================
+## Compiling to FP7 DiVA models@runtime engine
 
 - remove the "Dome_demo" folder from your temp folder
 - in the editor, Compile->Java/Swing, Compile->Scala/SMaC (please close the pop-up window/terminal), Compile->Java/Kevoree
