@@ -1,4 +1,4 @@
- # REMICS "DOME" DEMO
+# REMICS "DOME" DEMO
 
 The objectives of this demo are: 
 
@@ -14,10 +14,12 @@ The objectives of this demo are:
 
 Make sure you have Java and Maven installed on your computer. This first step consists in installing the DOME and OTA projects, which represents a simplification of the DOME case studies and of the Open Travel Alliance standard.
 
-- cd into org.remics.dome (this project contains the business object of the DOME case study)
-- mvn clean install
-- cd into org.ota (this project contains the business object of the OTA standard)
-- mvn clean install
+```
+cd org.remics.dome
+mvn clean install
+cd org.ota
+mvn clean install
+```
 
 
 
@@ -34,9 +36,12 @@ Make sure you have Java and Maven installed on your computer. This first step co
 - in the editor: Compile->Experimental/PauWare
 - it will generate a new folder in C:\Users\your-login\AppData\Local\Temp\ThingML_temp\Dome_demo or in a similar temp folder if you are using Linux or Mac OS.
 - cd into this generated folder, then execute:
-  $ mvn clean package exec:java -Dexec.mainClass="org.thingml.generated.MainPauWareDome_demo"
+```
+mvn clean package exec:java -Dexec.mainClass="org.thingml.generated.MainPauWareDome_demo"
+```
 - you should see something like:
 
+```
 Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO]
@@ -56,7 +61,7 @@ done
 Waiting...
 done
         {INFO}behavior((((((((ManagePickUpPoints))))))))
-
+```
 
 - in a web browser, go to: localhost:8082
 - it open a web page where you can actually interact with the 
@@ -69,6 +74,7 @@ done
 	$ mvn clean install
 - it should produce something like:
 
+```
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
@@ -76,6 +82,7 @@ done
 [INFO] Finished at: Wed Nov 21 15:44:51 CET 2012
 [INFO] Final Memory: 35M/451M
 [INFO] ------------------------------------------------------------------------
+```
 
 - you can now run KevoreeEditorSnapshot.jar
 - Model->Load CoreLibrary->JaveSE
