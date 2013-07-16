@@ -4,7 +4,7 @@
 * @author Brice MORIN, Franck BARBIER
 */
 
-import "../../../thingml.thingml"
+import "../../thingml.thingml"
 
 datatype Excursion
 @java_type "org.remics.dome.Excursion";
